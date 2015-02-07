@@ -3,30 +3,62 @@ package com.napontaratan.vibernate;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 public class MainActivity extends Activity {
 
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
-    private Toolbar toolbar;
+    Toolbar toolbar;
+    TextView toolbarSubtitle;
+    ImageButton addButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbarSubtitle = (TextView) findViewById(R.id.toolbar_subtitle);
+        setActionBar(toolbar);
+
+        addButton = (ImageButton) findViewById(R.id.add_button);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "to be implemented ;)", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
-        getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
-        getActionBar().setElevation(4.0f);
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {}
+            @Override
+            public void onPageSelected(int i) {
+                switch (i) {
+                    case 0:
+                        toolbarSubtitle.setText(R.string.title_section0);
+                        break;
+                    case 1:
+                        toolbarSubtitle.setText(R.string.title_section1);
+                        break;
+                }
+            }
+            @Override
+            public void onPageScrollStateChanged(int i) {}
+        });
     }
 
     @Override
@@ -65,5 +97,7 @@ public class MainActivity extends Activity {
         public int getCount() {
             return 2;
         }
+
+
     }
 }
