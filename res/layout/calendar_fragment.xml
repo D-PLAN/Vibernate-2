@@ -14,4 +14,17 @@
         android:layout_centerHorizontal="true"
         android:padding="10dp" />
 
+    <ImageButton
+            android:id="@+id/add_button"
+            android:layout_width="@dimen/diameter"
+            android:layout_height="@dimen/diameter"
+            android:layout_gravity="end|bottom"
+            android:src="@android:drawable/ic_input_add"
+            android:tint="@android:color/white"
+            android:background="@drawable/oval"
+            android:elevation="@dimen/elevation_low"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="30dp"/>
+
 </RelativeLayout>
