@@ -3,7 +3,7 @@ package com.napontaratan.vibernate.database;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import com.napontaratan.vibernate.VibrateTimer;
+import com.napontaratan.vibernate.model.TimerSession;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -23,24 +23,24 @@ import android.util.Log;
  * http://hmkcode.com/android-simple-sqlite-database-tutorial/
  */
 
-public class VibrateTimerDB extends SQLiteOpenHelper {
+public class VibernateDB extends SQLiteOpenHelper {
 
 	// Database Version
 	private static final int DATABASE_VERSION = 2;
 	// Database Name
 	private static final String DATABASE_NAME = "VibrateTimerDB";
 	
-	private static VibrateTimerDB vibrateTimerDBInstance = null;
+	private static VibernateDB vibrateTimerDBInstance = null;
 	
-	public static VibrateTimerDB getInstance(Context context){
+	public static VibernateDB getInstance(Context context){
 		// source: http://stackoverflow.com/questions/18147354/sqlite-connection-leaked-although-everything-closed?answertab=oldest#tab-top
 		// ensures only one database helper will exist across the entire application's lifecycle
 		if(vibrateTimerDBInstance == null)
-			vibrateTimerDBInstance = new VibrateTimerDB(context.getApplicationContext());
+			vibrateTimerDBInstance = new VibernateDB(context.getApplicationContext());
 		return vibrateTimerDBInstance;
 	}
 	
-	private VibrateTimerDB(Context context) {
+	private VibernateDB(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);  
 	}
 
@@ -71,14 +71,14 @@ public class VibrateTimerDB extends SQLiteOpenHelper {
 	 * Add a VibrateTimer to the database based on the ID
 	 * @author Napon, Paul, Amelia
 	 */
-	public void addToDB(VibrateTimer vt) {
+	public void addToDB(TimerSession vt) {
 		System.out.println("add to db");
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues values = new ContentValues();
 
 		try {
 			values.put(KEY_ID, vt.getId());
-			values.put(KEY_ALARM, VibrateTimer.serialize(vt));
+			values.put(KEY_ALARM, TimerSession.serialize(vt));
 		} catch (Exception e) {
 			System.out.println("IOException caught in addToDB()");
 		}
@@ -92,18 +92,18 @@ public class VibrateTimerDB extends SQLiteOpenHelper {
 	 * @return List<VibrateTimer>
 	 * @author Napon, Paul, Amelia
 	 */
-	public List<VibrateTimer> getAllVibrateTimers() {
+	public List<TimerSession> getAllVibrateTimers() {
 
-		List<VibrateTimer> result = new LinkedList<VibrateTimer>();
+		List<TimerSession> result = new LinkedList<TimerSession>();
 		String query = "SELECT  * FROM " + TABLE_NAME;
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(query, null);
-		VibrateTimer vt = null;
+		TimerSession vt = null;
 
 		if (cursor.moveToFirst()) {
 			do {
 				try {
-					vt = (VibrateTimer) VibrateTimer.deserialize(cursor.getBlob(1));
+					vt = (TimerSession) TimerSession.deserialize(cursor.getBlob(1));
 				} catch (ClassNotFoundException e) {
 					Log.d("Exception", "ClassNotFoundException caught in getAllAlarmsFromDB()");
 				} catch (IOException e) {
@@ -128,10 +128,10 @@ public class VibrateTimerDB extends SQLiteOpenHelper {
 
 	/**
 	 * Remove a VibrateTimer entry from the database that matches the given id
-	 * @param VibrateTimer vt
+	 * @param TimerSession vt
 	 * @author Napon, Paul, Amelia
 	 */
-	public void remove(VibrateTimer vt) {
+	public void remove(TimerSession vt) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		db.delete(TABLE_NAME, KEY_ID+" =?", new String[] { String.valueOf(vt.getId()) });
 		db.close();

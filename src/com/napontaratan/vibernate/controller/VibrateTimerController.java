@@ -1,10 +1,10 @@
-package com.napontaratan.vibratetimer.controller;
+package com.napontaratan.vibernate.controller;
 
 import java.util.Calendar;
 import java.util.List;
 
-import com.napontaratan.vibratetimer.database.VibrateTimerDB;
-import com.napontaratan.vibratetimer.model.VibrateTimer;
+import com.napontaratan.vibernate.database.VibernateDB;
+import com.napontaratan.vibernate.model.TimerSession;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -15,13 +15,13 @@ import android.content.SharedPreferences;
 public final class VibrateTimerController {
 
 	private static final int WEEK_MILLISECONDS = 604800000;
-	private VibrateTimerDB datastore;
+	private VibernateDB datastore;
 	private AlarmManager am; 
 	private Context parent;
 
 	public VibrateTimerController(Context context){
 		am = (AlarmManager) context.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-		datastore = VibrateTimerDB.getInstance(context);
+		datastore = VibernateDB.getInstance(context);
 		parent = context;
 	}
 
@@ -31,7 +31,7 @@ public final class VibrateTimerController {
 	 * @param vt is the vibrateAlarm object to create a timer for
 	 * @author Napon, Sunny
 	 */
-	public void setAlarm(VibrateTimer vt, Context context){
+	public void setAlarm(TimerSession vt, Context context){
 		if(!datastore.contains(vt.getId()))
 			datastore.addToDB(vt);
 		List<Calendar> startTimes = vt.getStartAlarmCalendars();
@@ -54,7 +54,7 @@ public final class VibrateTimerController {
 	 * @param vt VibrateTimer object to cancel
 	 * @author Napon, Sunny
 	 */
-	public void cancelAlarm(VibrateTimer vt, Context context){
+	public void cancelAlarm(TimerSession vt, Context context){
 		datastore.remove(vt);
 		List<Calendar> times = vt.getStartAlarmCalendars();
 		for(Calendar time : times){
@@ -72,7 +72,7 @@ public final class VibrateTimerController {
 		}
 	}
 
-	public List<VibrateTimer> getVibrateTimers() {
+	public List<TimerSession> getVibrateTimers() {
 		return datastore.getAllVibrateTimers();
 	}
 	/**

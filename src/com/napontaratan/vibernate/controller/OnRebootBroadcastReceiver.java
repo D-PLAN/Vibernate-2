@@ -1,9 +1,9 @@
-package com.napontaratan.vibratetimer.controller;
+package com.napontaratan.vibernate.controller;
 
 import java.util.List;
 
-import com.napontaratan.vibratetimer.database.VibrateTimerDB;
-import com.napontaratan.vibratetimer.model.VibrateTimer;
+import com.napontaratan.vibernate.database.VibernateDB;
+import com.napontaratan.vibernate.model.TimerSession;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,10 +13,10 @@ public class OnRebootBroadcastReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		VibrateTimerDB datastore = VibrateTimerDB.getInstance(context);
+		VibernateDB datastore = VibernateDB.getInstance(context);
 		VibrateTimerController controller = new VibrateTimerController(context);
-		List<VibrateTimer> timers = datastore.getAllVibrateTimers();
-		for(VibrateTimer vt : timers) {
+		List<TimerSession> timers = datastore.getAllVibrateTimers();
+		for(TimerSession vt : timers) {
 			controller.setAlarm(vt,context);
 		}
 	}
