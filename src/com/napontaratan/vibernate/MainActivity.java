@@ -1,21 +1,21 @@
 package com.napontaratan.vibernate;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.Toolbar;
 
-public class MainActivity extends Activity {
+
+public class MainActivity extends ActionBarActivity {
 
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
@@ -30,7 +30,7 @@ public class MainActivity extends Activity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbarSubtitle = (TextView) findViewById(R.id.toolbar_subtitle);
-        setActionBar(toolbar);
+        setSupportActionBar(toolbar);
 
         addButton = (ImageButton) findViewById(R.id.add_button);
         addButton.setOnClickListener(new View.OnClickListener() {
