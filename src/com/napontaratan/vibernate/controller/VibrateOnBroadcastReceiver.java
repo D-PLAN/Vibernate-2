@@ -1,4 +1,4 @@
-package com.napontaratan.vibratetimer.controller;
+package com.napontaratan.vibernate.controller;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

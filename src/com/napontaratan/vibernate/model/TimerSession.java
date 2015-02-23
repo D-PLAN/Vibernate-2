@@ -1,4 +1,4 @@
-package com.napontaratan.vibratetimer.model;
+package com.napontaratan.vibernate.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,7 +14,7 @@ import java.util.List;
  * VibrateTimer model
  * @author Paul, Amelia
  */
-public final class VibrateTimer implements Serializable{
+public final class TimerSession implements Serializable{
 	private static final long serialVersionUID = 2881690379292284022L;
 	private final Calendar startTime;
 	private final Calendar endTime;
@@ -22,7 +22,7 @@ public final class VibrateTimer implements Serializable{
 	private final boolean[] days;
 
 	// Constructor
-	public VibrateTimer (Calendar startTime, Calendar endTime, boolean[] days, int id) {
+	public TimerSession (Calendar startTime, Calendar endTime, boolean[] days, int id) {
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.days = days;
