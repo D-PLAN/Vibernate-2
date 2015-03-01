@@ -1,8 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/black">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white" android:nestedScrollingEnabled="true">
 
-</RelativeLayout>
+    <!-- Weekdays -->
+
+    <LinearLayout android:orientation="horizontal"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:padding="5dp"
+                  android:background="@color/white">
+
+        <TextView android:text="@string/day_sun" style="@style/WeekText"/>
+        <TextView android:text="@string/day_mon" style="@style/WeekText"/>
+        <TextView android:text="@string/day_tues" style="@style/WeekText"/>
+        <TextView android:text="@string/day_wed" style="@style/WeekText"/>
+        <TextView android:text="@string/day_thurs" style="@style/WeekText"/>
+        <TextView android:text="@string/day_fri" style="@style/WeekText"/>
+        <TextView android:text="@string/day_sat" style="@style/WeekText"/>
+
+    </LinearLayout>
+
+    <View style="@style/HorizontalDivider"/>
+
+    <!-- Timers -->
+    <LinearLayout  android:orientation="horizontal"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:paddingLeft="10dp"
+                   android:paddingRight="10dp"
+                   android:background="@color/grey">
+
+        <View style="@style/TimerContainer"/>
+        <View style="@style/VerticalDivider"/>
+
+        <View style="@style/TimerContainer"/>
+        <View style="@style/VerticalDivider"/>
+
+        <View style="@style/TimerContainer"/>
+        <View style="@style/VerticalDivider"/>
+
+        <View style="@style/TimerContainer"/>
+        <View style="@style/VerticalDivider"/>
+
+        <View style="@style/TimerContainer"/>
+        <View style="@style/VerticalDivider"/>
+
+        <View style="@style/TimerContainer"/>
+        <View style="@style/VerticalDivider"/>
+
+        <View style="@style/TimerContainer"/>
+
+    </LinearLayout>
+
+    <View style="@style/HorizontalDivider"/>
+
+    <!-- Individual timer info -->
+    <android.support.v7.widget.CardView android:orientation="horizontal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="150dp"
+                                        android:background="@color/white">
+
+        <RelativeLayout android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="Timer Name  //TODO "
+                      android:textSize="18sp"/>
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
