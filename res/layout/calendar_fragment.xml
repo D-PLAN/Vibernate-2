@@ -34,7 +34,7 @@
                    android:layout_weight="5"
                    android:paddingLeft="10dp"
                    android:paddingRight="10dp"
-                   android:background="@color/grey">
+                   android:background="@color/background">
 
         <View style="@style/TimerContainer"/>
         <View style="@style/VerticalDivider"/>
