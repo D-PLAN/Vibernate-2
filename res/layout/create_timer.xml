@@ -1,15 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-    
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
     android:orientation="vertical" >
 
+    <!-- Toolbar at the top -->
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:contentInsetStart="0dp"
+        android:elevation="1dp"
+        android:minHeight="56dp" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/create_timer_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="X      New Timer"
+                android:textColor="@color/white"
+                android:textSize="18dp" />
+
+            <TextView
+                android:id="@+id/create_timer_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="25dp"
+                android:text="Save"
+                android:textColor="@color/white"
+                android:textSize="12dp" />
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+    <!-- End of Toolbar code -->
+
+
+    <!-- Enter Timer Name + Vibrate/Silent ToggleButtons -->
+
     <EditText
         android:id="@+id/editText"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="55dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
@@ -23,84 +64,80 @@
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:columnCount="1" >
-
-        <ToggleButton
-            android:id="@+id/toggleButton3"
-            android:layout_width="182dp"
-            android:layout_height="85dp"
-            android:layout_column="0"
-            android:layout_gravity="left|top"
-            android:layout_row="1"
-            android:text="ToggleButton" />
+        android:columnCount="2" >
 
         <ToggleButton
             android:id="@+id/ToggleButton01"
-            android:layout_width="176dp"
-            android:layout_height="85dp"
-            android:layout_column="0"
+            android:layout_width="185dp"
+            android:layout_height="55dp"
+            android:layout_column="1"
             android:layout_gravity="right|top"
             android:layout_row="1"
             android:text="ToggleButton" />
 
-        <LinearLayout
-            android:layout_column="0"
+        <ToggleButton
+            android:id="@+id/toggleButton3"
+            android:layout_width="185dp"
+            android:layout_height="55dp"
+            android:layout_column="1"
             android:layout_gravity="left|top"
-            android:layout_row="3" >
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_column="0"
-            android:layout_gravity="left|top"
-            android:layout_row="6"
-            android:orientation="vertical" >
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_column="0"
-            android:layout_gravity="left|top"
-            android:layout_row="4"
-            android:text="Large Text"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <TimePicker
-            android:id="@+id/timePicker1"
-            android:layout_width="143dp"
-            android:layout_height="278dp"
-            android:layout_column="0"
-            android:layout_gravity="left|top"
-            android:layout_row="7" />
-
-        <LinearLayout
-            android:layout_column="0"
-            android:layout_gravity="left|top"
-            android:layout_row="7"
-            android:orientation="vertical" >
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_column="0"
-            android:layout_gravity="right|top"
-            android:layout_row="5"
-            android:text="Large Text"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:layout_row="1"
+            android:text="ToggleButton" />
     </GridLayout>
 
+    <!-- End of Timer Name + Vibrate/Silent ToggleButtons -->
+
+
+    <!-- Container with Start Time to End Time Set + Display -->
+
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Large Text"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="250dp"
+            android:orientation="horizontal" >
 
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="Start Time"
+                android:layout_weight="1"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="											End Time"
+                android:layout_weight="1"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="250dp"
+            android:orientation="horizontal" >
+        </LinearLayout>
     </LinearLayout>
+
+    <!-- End of Container with Start Time to End Time Set + Display -->
+
+
+    <!-- Container for Weekday/Weekend Headings -->
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_column="1"
+        android:layout_gravity="left|top"
+        android:layout_row="6"
+        android:text="Choose Which Days"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -110,14 +147,15 @@
             android:id="@+id/button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Button" />
+            android:text="Weekdays" />
 
         <Button
             android:id="@+id/button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Button" />
+            android:text="Weekends" />
 
+        <!-- End of Container for Weekday/Weekend Headings -->
     </LinearLayout>
 
 </LinearLayout>
