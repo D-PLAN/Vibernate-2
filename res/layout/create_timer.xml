@@ -5,6 +5,36 @@
               android:layout_height="match_parent"
               android:background="@color/colorPrimary">
 
+    <!-- Toolbar at the top -->
+    <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
+                                       android:layout_width="fill_parent"
+                                       android:layout_height="wrap_content"
+                                       android:minHeight="56dp"
+                                       android:background="@color/colorPrimary"
+                                       android:contentInsetStart="0dp"
+                                       android:elevation="1dp">
+        <RelativeLayout android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="vertical">
+            <TextView android:id="@+id/create_timer_title"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="X      New Timer"
+                      android:layout_centerVertical="true"
+                      android:textSize="18dp"
+                      android:textColor="@color/white"/>
+            <TextView android:id="@+id/create_timer_save"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="Save"
+                      android:textSize="12dp"
+                      android:layout_alignParentRight="true"
+                      android:layout_marginRight="25dp"
+                      android:layout_centerVertical="true"
+                      android:textColor="@color/white"/>
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+    <!-- End of Toolbar code -->
 
     <EditText
             android:layout_width="fill_parent"
