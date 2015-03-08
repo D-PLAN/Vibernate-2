@@ -48,9 +48,18 @@
         <item name="android:background">@color/dividers</item>
     </style>
 
-    <style name="TimerText">
-        <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textSize">18sp</item>
+    <!-- Timer info card -->
+    <style name="TimerTitleText">
+        <item name="android:fontFamily">san-serif</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+    <style name="TimerTimeText">
+        <item name="android:fontFamily">san-serif</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="TimerDaysText">
+        <item name="android:fontFamily">san-serif-medium</item>
+        <item name="android:textSize">10sp</item>
     </style>
 
 </resources>

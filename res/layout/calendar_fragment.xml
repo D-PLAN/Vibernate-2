@@ -64,24 +64,64 @@
     <android.support.v7.widget.CardView android:orientation="horizontal"
                                         android:layout_width="match_parent"
                                         android:layout_height="0dp"
-                                        android:layout_weight="2"
+                                        android:layout_weight="3"
                                         android:background="@color/white">
 
-        <RelativeLayout android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-            <TextView android:layout_width="wrap_content"
-                      android:layout_height="66px"
-                      android:text="MACM 101 //TODO "
-                      style="@style/TimerText"
-                      android:id="@+id/TimerName"/>
-            <ImageView android:layout_height="66px"
-                       android:layout_width="wrap_content"
-                    android:layout_toRightOf="@+id/TimerName"/>
-            <Switch android:layout_height="66px"
-                    android:layout_width="wrap_content"
-                    android:layout_alignParentRight="true"></Switch>
-        </RelativeLayout>
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="vertical"
+                      android:visibility="gone">
+            <RelativeLayout android:layout_width="match_parent"
+                        android:layout_height="83px">
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:text="MACM 101"
+                          style="@style/TimerTitleText"
+                          android:id="@+id/TimerName"/>
+                <ImageView android:layout_height="wrap_content"
+                           android:layout_width="wrap_content"
+                           android:layout_toRightOf="@+id/TimerName"/>
+                <Switch android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_alignParentRight="true"/>
+            </RelativeLayout>
 
+            <RelativeLayout android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+                <ImageView android:layout_height="83px"
+                           android:layout_width="wrap_content"
+                           android:layout_alignParentLeft="true"/>
+                <LinearLayout android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:orientation="vertical">
+                    <TextView android:layout_width="wrap_content"
+                              android:layout_height="0dp"
+                              android:layout_weight="1"
+                              android:text="12.45 - 05:00"
+                              style="@style/TimerTimeText"/>
+                    <TextView android:layout_width="wrap_content"
+                              android:layout_height="0dp"
+                              android:layout_weight="1"
+                              android:text="MON, TUES"
+                              style="@style/TimerDaysText"/>
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout android:layout_height="wrap_content"
+                      android:layout_width="match_parent"
+                      android:orientation="vertical">
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="0dp"
+                      android:layout_weight="1"
+                      android:text="Click on a block"
+                      style="@style/TimerTimeText"/>
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="0dp"
+                      android:layout_weight="1"
+                      android:text="to view details"
+                      style="@style/TimerDaysText"/>
+        </LinearLayout>
 
     </android.support.v7.widget.CardView>
 
