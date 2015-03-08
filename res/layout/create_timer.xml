@@ -1,39 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
+    
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/colorPrimary">
-
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical" >
 
     <EditText
-            android:layout_width="fill_parent"
+        android:id="@+id/editText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/white"
+        android:height="50dp"
+        android:hint="Please enter a name"
+        android:textSize="14dp" />
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="1" >
+
+        <ToggleButton
+            android:id="@+id/toggleButton3"
+            android:layout_width="182dp"
+            android:layout_height="85dp"
+            android:layout_column="0"
+            android:layout_gravity="left|top"
+            android:layout_row="1"
+            android:text="ToggleButton" />
+
+        <ToggleButton
+            android:id="@+id/ToggleButton01"
+            android:layout_width="176dp"
+            android:layout_height="85dp"
+            android:layout_column="0"
+            android:layout_gravity="right|top"
+            android:layout_row="1"
+            android:text="ToggleButton" />
+
+        <LinearLayout
+            android:layout_column="0"
+            android:layout_gravity="left|top"
+            android:layout_row="3" >
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_column="0"
+            android:layout_gravity="left|top"
+            android:layout_row="6"
+            android:orientation="vertical" >
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_column="0"
+            android:layout_gravity="left|top"
+            android:layout_row="4"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TimePicker
+            android:id="@+id/timePicker1"
+            android:layout_width="143dp"
+            android:layout_height="278dp"
+            android:layout_column="0"
+            android:layout_gravity="left|top"
+            android:layout_row="7" />
+
+        <LinearLayout
+            android:layout_column="0"
+            android:layout_gravity="left|top"
+            android:layout_row="7"
+            android:orientation="vertical" >
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_column="0"
+            android:layout_gravity="right|top"
+            android:layout_row="5"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    </GridLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/editText" android:layout_alignParentTop="true" android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:hint="Please enter a name"
-            android:height="50dp"
-            android:background="@color/white"
-            android:textSize="14dp"/>
-    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
-            android:layout_below="@id/editText">
-        <ToggleButton
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="New ToggleButton"
-                android:id="@+id/toggleButton" android:layout_below="@+id/editText" android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"/>
-        <ToggleButton
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:height="50dp"
-                android:text="New ToggleButton"
-                android:id="@+id/toggleButton2"
-                android:layout_below="@+id/editText" android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" android:layout_alignBottom="@+id/toggleButton"/>
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Button" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Button" />
+
     </LinearLayout>
 
 </LinearLayout>
