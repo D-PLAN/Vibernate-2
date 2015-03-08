@@ -5,7 +5,35 @@
               android:layout_height="match_parent"
               android:background="@color/colorPrimary">
 
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-              android:text="ADD A TIMER HERE" android:id="@+id/add_timer_text" android:gravity="center" android:textSize="20pt"/>
+
+    <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/editText" android:layout_alignParentTop="true" android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:hint="Please enter a name"
+            android:height="50dp"
+            android:background="@color/white"
+            android:textSize="14dp"/>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+            android:layout_below="@id/editText">
+        <ToggleButton
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="New ToggleButton"
+                android:id="@+id/toggleButton" android:layout_below="@+id/editText" android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"/>
+        <ToggleButton
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:height="50dp"
+                android:text="New ToggleButton"
+                android:id="@+id/toggleButton2"
+                android:layout_below="@+id/editText" android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" android:layout_alignBottom="@+id/toggleButton"/>
+    </LinearLayout>
 
 </LinearLayout>
