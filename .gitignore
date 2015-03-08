@@ -29,6 +29,7 @@ proguard/
 .classpath
 .project
 .settings/
+project.properties
 
 # # Intellij
 .idea/
