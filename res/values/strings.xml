@@ -17,5 +17,8 @@
     <string name="day_fri">Fri</string>
     <string name="day_sat">Sat</string>
 
+    <string name="timer_hint_1">Click on a block</string>
+    <string name="timer_hint_2">to view details</string>
+
 
 </resources>

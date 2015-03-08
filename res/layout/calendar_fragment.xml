@@ -70,9 +70,9 @@
         <LinearLayout android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:orientation="vertical"
-                      android:visibility="gone">
+                      android:visibility="visible">
             <RelativeLayout android:layout_width="match_parent"
-                        android:layout_height="83px">
+                        android:layout_height="wrap_content">
                 <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
                           android:text="MACM 101"
@@ -88,21 +88,21 @@
 
             <RelativeLayout android:layout_width="match_parent"
                             android:layout_height="match_parent">
-                <ImageView android:layout_height="83px"
+                <ImageView android:layout_height="wrap_content"
                            android:layout_width="wrap_content"
                            android:layout_alignParentLeft="true"/>
                 <LinearLayout android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
                               android:orientation="vertical">
-                    <TextView android:layout_width="wrap_content"
+                    <TextView android:id="@+id/timer_time"
+                              android:layout_width="wrap_content"
                               android:layout_height="0dp"
                               android:layout_weight="1"
-                              android:text="12.45 - 05:00"
                               style="@style/TimerTimeText"/>
-                    <TextView android:layout_width="wrap_content"
+                    <TextView android:id="@+id/timer_days"
+                              android:layout_width="wrap_content"
                               android:layout_height="0dp"
                               android:layout_weight="1"
-                              android:text="MON, TUES"
                               style="@style/TimerDaysText"/>
                 </LinearLayout>
             </RelativeLayout>
@@ -110,16 +110,17 @@
 
         <LinearLayout android:layout_height="wrap_content"
                       android:layout_width="match_parent"
-                      android:orientation="vertical">
+                      android:orientation="vertical"
+                      android:visibility="gone">
             <TextView android:layout_width="wrap_content"
                       android:layout_height="0dp"
                       android:layout_weight="1"
-                      android:text="Click on a block"
+                      android:text="@string/timer_hint_1"
                       style="@style/TimerTimeText"/>
             <TextView android:layout_width="wrap_content"
                       android:layout_height="0dp"
                       android:layout_weight="1"
-                      android:text="to view details"
+                      android:text="@string/timer_hint_2"
                       style="@style/TimerDaysText"/>
         </LinearLayout>
 
