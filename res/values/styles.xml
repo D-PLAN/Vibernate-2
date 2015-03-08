@@ -48,4 +48,9 @@
         <item name="android:background">@color/dividers</item>
     </style>
 
+    <style name="TimerText">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
 </resources>
