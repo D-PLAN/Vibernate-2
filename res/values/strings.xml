@@ -8,4 +8,14 @@
     <string name="title_section2">Section 3</string>
     <string name="action_settings">Settings</string>
 
+    <!-- Calendar Fragment strings -->
+    <string name="day_sun">Sun</string>
+    <string name="day_mon">Mon</string>
+    <string name="day_tues">Tues</string>
+    <string name="day_wed">Wed</string>
+    <string name="day_thurs">Thurs</string>
+    <string name="day_fri">Fri</string>
+    <string name="day_sat">Sat</string>
+
+
 </resources>
