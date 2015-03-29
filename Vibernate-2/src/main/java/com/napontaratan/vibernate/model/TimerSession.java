@@ -14,7 +14,7 @@ import java.util.List;
  * VibrateTimer model
  * @author Paul, Amelia
  */
-public final class TimerSession implements Serializable{
+public final class TimerSession implements Serializable, Comparable<TimerSession>{
 	private static final long serialVersionUID = 2881690379292284022L;
 	private final Calendar startTime;
 	private final Calendar endTime;
@@ -40,6 +40,42 @@ public final class TimerSession implements Serializable{
 	public Calendar getStartTime() {
 		return startTime;
 	}
+
+    /**
+     * @author daniel
+     * @return start time in seconds
+     */
+    public int getStartTimeInMinutes() {
+        return timeInMinutes(startTime);
+    }
+
+    /**
+     * @author daniel
+     * @return end time in seconds
+     */
+    public int getEndTimeInMinutes() {
+        return timeInMinutes(endTime);
+    }
+
+	/**
+	 * @author daniel
+	 * @return helper function converting calendar time to minutes
+	 */
+    private int timeInMinutes(Calendar time) {
+        return time.get(Calendar.MINUTE)  +
+				(time.get(Calendar.HOUR_OF_DAY) * 60);
+    }
+
+    /**
+     * @author daniel
+     * compare current timer to other timer by start time
+     * @return a negative integer, zero, or a positive integer if this timer is less than, equal to, or greater than
+     *          the other timer
+     */
+    @Override
+    public int compareTo(TimerSession another) {
+        return this.startTime.compareTo(another.getStartTime());
+    }
 
 	public boolean[] getDays() {
 		return days;

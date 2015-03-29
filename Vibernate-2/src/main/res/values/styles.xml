@@ -17,7 +17,7 @@
     </style>
 
     <!-- Calendar Fragment styles -->
-    <style name="WeekText">
+    <style name="week_text">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">fill_parent</item>
         <item name="android:layout_weight">1</item>
@@ -27,13 +27,13 @@
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="TimerContainer">
+    <style name="timer_container">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">15</item>
     </style>
 
-    <style name="VerticalDivider">
+    <style name="vertical_divider">
         <item name="android:clickable">false</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
@@ -41,7 +41,7 @@
         <item name="android:layout_weight">1</item>
     </style>
 
-    <style name="HorizontalDivider">
+    <style name="horizontal_divider">
         <item name="android:clickable">false</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1px</item>
@@ -49,15 +49,15 @@
     </style>
 
     <!-- Timer info card -->
-    <style name="TimerTitleText">
+    <style name="timer_title_text">
         <item name="android:fontFamily">san-serif</item>
         <item name="android:textSize">24sp</item>
     </style>
-    <style name="TimerTimeText">
+    <style name="timer_time_text">
         <item name="android:fontFamily">san-serif</item>
         <item name="android:textSize">14sp</item>
     </style>
-    <style name="TimerDaysText">
+    <style name="timer_days_text">
         <item name="android:fontFamily">san-serif-medium</item>
         <item name="android:textSize">10sp</item>
     </style>
