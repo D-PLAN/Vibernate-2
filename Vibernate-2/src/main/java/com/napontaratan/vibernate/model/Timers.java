@@ -39,38 +39,46 @@ public class Timers implements Iterable<TimerSession> {
     }
 
     public void addTimer(TimerSession ...  timerSessions) throws TimerConflictException {
-        //TODO: check for overlapping times, and reject the conflict times
-        //          get time start and compare to other time ends
-        //          throw add timer exception to catch in UI activity to tell user
-        //          the timer has conflict and not allow them to add
-        //          CURRENTLY THE CHECK IS A PLACEHOLDER, STILL NEEDS TO BE IMPLEMENTED
-
         //TODO: we can maybe try to coagulate 2 timers which are back to back of the same type
         for(TimerSession timerSession: timerSessions) {
-            if(isTimerConflict(timerSession, getAllStartTimes())) {
+            if(isTimerConflict(timerSession)) {
                 throw new TimerConflictException();
             } else {
                 timers.add(timerSession);
                 timersMap.put(timerSession.getId(), timerSession);
             }
         }
-
     }
 
     public void removeTimer(TimerSession timerSession) {
         timers.remove(timerSession);
     }
 
-    private List<Calendar> getAllStartTimes() {
-        List<Calendar> startTimes = new ArrayList<Calendar>();
-        for(TimerSession timer: timers) {
-            startTimes.add(timer.getStartTime());
+    private boolean isTimerConflict(TimerSession timer) {
+        boolean[] days =  timer.getDays();
+        for(int i = 0; i < days.length; i++) {
+            if(days[i]) {
+                if(hasConflict(timer, i)) {
+                    return true;
+                }
+            }
         }
-        return startTimes;
+        return false;
     }
 
-    private boolean isTimerConflict(TimerSession timer, List<Calendar> startTimes) {
-        //TODO only check timers on the same day
+    private boolean hasConflict(TimerSession timerToAdd, int day) {
+        // get all the days for which this timer is on
+        // check this timer's start time for conflict with the timers on these days
+        List<TimerSession> timersOnThisDay = timerOnThisDay(day);
+        int startTime = timerToAdd.getStartTimeInMinutes();
+        int endTime = timerToAdd.getEndTimeInMinutes();
+        for(TimerSession timer: timersOnThisDay) {
+            // if you start earlier, then you have to end earlier than the next timer's start time
+            if((startTime < timer.getEndTimeInMinutes()) && (endTime > timer.getStartTimeInMinutes())) {
+                return true;
+            }
+
+        }
         return false;
     }
 
