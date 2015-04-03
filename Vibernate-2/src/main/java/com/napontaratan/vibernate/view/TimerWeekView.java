@@ -66,9 +66,9 @@ public class TimerWeekView extends View {
     private final String TIME_STRING_FORMAT = "HH:mm";
 
     private HashMap<Integer, List<RectF>> timerRects =  new HashMap<Integer, List<RectF>>(); // List of timer rectangles
-    private HashMap<Integer, List<TimerSession>> timersByDay = new HashMap<Integer, List<TimerSession>>();;  // get timers by day (0 - 7)
     //TODO figure out where to get actual Timers since constructor is called when view is infalted
     private Timers timers;
+    private int prevTimer;
 
     public TimerWeekView(Context context) {
         super(context);
@@ -94,10 +94,12 @@ public class TimerWeekView extends View {
         start = createCalendar(17,0,0,0);
         end = createCalendar(18, 0, 0, 0);
         TimerSession five = new TimerSession(start, end, new boolean[] { true, false, false, false, false, false, false}, 5);
+        start = createCalendar(12,0,0,0);
+        end = createCalendar(17, 0, 0, 0);
+        TimerSession six = new TimerSession(start, end, new boolean[] { true, false, false, false, false, false, false}, 6);
         try {
             timers = new Timers();
-            timers.addTimer(one, two, three, four, five);
-            populateDayTimers();
+            timers.addTimer(one, two, three, four, five, six);
         } catch (TimerConflictException e) {
             e.printStackTrace();
         }
@@ -122,16 +124,15 @@ public class TimerWeekView extends View {
         // Load attributes
 //        final TypedArray a = getContext().obtainStyledAttributes(
 //                attrs, R.styleable.TimerWeekView, defStyle, 0);
-
         containerPaint.setStyle(Paint.Style.FILL);
-        containerPaint.setColor(Color.RED);
+        containerPaint.setColor(getResources().getColor(R.color.background));
 
         dividerPaint.setStyle(Paint.Style.FILL);
-        dividerPaint.setColor(Color.BLACK);
+        dividerPaint.setColor(getResources().getColor(R.color.dividers));
 
+        // TODO surround timers with shadow to create 3D illusion
         timerPaint.setStyle(Paint.Style.FILL);
         timerPaint.setColor(Color.BLUE);
-
     }
 
     @Override
@@ -188,12 +189,10 @@ public class TimerWeekView extends View {
             //for each timer in this day
             timerXLeft = containerXLeft + timerPaddingLeft;
             timerXRight = timerXLeft + timerWidth; // - timer padding right?
-            //TODO actually using storing the real timers, not the fake ones
-            List<TimerSession> timersForTheDay = timersByDay.get(i);
+            List<TimerSession> timersForTheDay = timers.timerOnThisDay(i);
             float timerYStart = timerYTop;
             float timerYEnd = 0;
             for(TimerSession timer: timersForTheDay) {
-                //TODO for each timer, there will be a padding top
                 timerYStart = scaled(timer.getStartTimeInMinutes()) * timerLength;
                 timerYEnd = scaled(timer.getEndTimeInMinutes()) * timerLength;
                 System.out.println("timer " + i + "drawing " + timerYStart + ", " + timerYEnd);
@@ -201,12 +200,11 @@ public class TimerWeekView extends View {
                 System.out.println("ADDING THIS TIMER    =====   "   + timer.getId());
                 // if timer id is already in map, add current timer to it's value
                 List<RectF> currTimers = (timerRects.get(timer.getId()) == null)? new ArrayList<RectF>() :
-                                            timerRects.get(timer.getId());
+                        timerRects.get(timer.getId());
                 currTimers.add(timerRect);
                 timerRects.put(timer.getId(), currTimers);
                 canvas.drawRoundRect(timerRect, 15, 15, timerPaint);
             }
-
         }
 
         for(int i = 0; i < numDividers; i++) {
@@ -227,11 +225,13 @@ public class TimerWeekView extends View {
         // interested in events where the touch position changed.
         float x = e.getX();
         float y = e.getY();
-        // TODO determine the timer clicked by using contains
-        // and show the corresponding timer info on the bottom cardview
+        //  show the corresponding timer info on the bottom cardview
         TimerSession selectedTimer = getSelectedTimer(x, y);
-        if(selectedTimer != null) {
+        if(selectedTimer != null && (prevTimer != selectedTimer.getId())) {
+            // if selectedtimer is the same as last, do not need to update
+            System.out.println("update timer info");
             displayTimerInfo(selectedTimer);
+            prevTimer = selectedTimer.getId();
         }
         return true;
     }
@@ -310,14 +310,6 @@ public class TimerWeekView extends View {
         return realTime - earliestTime;
     }
 
-    /**
-     * populate @field timersByDay with timers categorized by the day
-     */
-    private void populateDayTimers() {
-        for(int i = 0; i < 7; i++) {
-            timersByDay.put(i, timers.timerOnThisDay(i));
-        }
-    }
 
     /**
      * Determines if the dimension has been set, all preset to -1
