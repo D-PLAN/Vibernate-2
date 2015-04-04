@@ -44,7 +44,7 @@
     <android.support.v7.widget.CardView android:orientation="horizontal"
                                         android:layout_width="match_parent"
                                         android:layout_height="0dp"
-                                        android:layout_weight="3"
+                                        android:layout_weight="2.5"
                                         android:background="@color/white">
 
         <LinearLayout android:id="@+id/timer_info_layout"
