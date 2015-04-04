@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
+    <style name="AppTheme" parent="Theme.AppCompat">
         <item name="windowActionBar">false</item>
         <!-- colorPrimary is used for the default action bar background -->
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -48,6 +48,19 @@
         <item name="android:background">@color/dividers</item>
     </style>
 
+    <!-- Timer placeholder -->
+    <style name="timer_placeholder_1">
+        <item name="android:fontFamily">san-serif</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/dividers</item>
+    </style>
+    <style name="timer_placeholder_2">
+        <item name="android:fontFamily">san-serif</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/dividers</item>
+    </style>
+
+
     <!-- Timer info card -->
     <style name="timer_title_text">
         <item name="android:fontFamily">san-serif</item>
@@ -56,10 +69,12 @@
     <style name="timer_time_text">
         <item name="android:fontFamily">san-serif</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/black</item>
     </style>
     <style name="timer_days_text">
         <item name="android:fontFamily">san-serif-medium</item>
         <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/dividers</item>
     </style>
 
 </resources>
