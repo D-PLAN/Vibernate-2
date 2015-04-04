@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -20,7 +19,6 @@ public class MainActivity extends ActionBarActivity {
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
     Toolbar toolbar;
-    TextView toolbarSubtitle;
     ImageButton addButton;
 
     @Override
@@ -29,8 +27,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbarSubtitle = (TextView) findViewById(R.id.toolbar_subtitle);
-        setSupportActionBar(toolbar);
+        toolbar.setTitle(R.string.app_name);
 
         addButton = (ImageButton) findViewById(R.id.add_button);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -55,32 +52,54 @@ public class MainActivity extends ActionBarActivity {
             public void onPageSelected(int i) {
                 switch (i) {
                     case 0:
-                        toolbarSubtitle.setText(R.string.title_section0);
+                        // highlight the correct menu item
                         break;
                     case 1:
-                        toolbarSubtitle.setText(R.string.title_section1);
+                        // highlight the correct menu item
                         break;
                 }
             }
             @Override
             public void onPageScrollStateChanged(int i) {}
         });
+
+        // Set an OnMenuItemClickListener to handle menu item clicks
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                // Handle the menu item
+                switch (item.getItemId()) {
+                    case R.id.action_calendar:
+                        mViewPager.setCurrentItem(0);
+                        break;
+                    case R.id.action_list:
+                        mViewPager.setCurrentItem(1);
+                        break;
+                    default:
+                        break;
+                }
+                return true;
+            }
+        });
+
+        // Inflate a menu to be displayed in the toolbar
+        toolbar.inflateMenu(R.menu.main);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.main, menu);
+//        return true;
+//    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int id = item.getItemId();
+////        if (id == R.id.action_settings) {
+////            return true;
+////        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
