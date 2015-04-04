@@ -43,7 +43,7 @@ public class TimerWeekView extends View {
     private int containerXRight;
 
     // timer layout
-    private int timerYTop;
+    private int timerYPadding;
     private int timerWidth;
     private int timerPaddingLeft;
 
@@ -97,6 +97,7 @@ public class TimerWeekView extends View {
         start = createCalendar(12,0,0,0);
         end = createCalendar(17, 0, 0, 0);
         TimerSession six = new TimerSession(start, end, new boolean[] { true, false, false, false, false, false, false}, 6);
+        start = createCalendar(8,0,0,0);
         try {
             timers = new Timers();
             timers.addTimer(one, two, three, four, five, six);
@@ -163,10 +164,13 @@ public class TimerWeekView extends View {
             containerXLeft = 0;
             containerXRight = 0;
 
-            // timers
-            timerLength = (float)contentHeight / (float) getTimerDuration();
+            timerYPadding = (int) (contentHeight * 0.025);
 
-            timerYTop = contentHeight;
+            // timers, account for padding bottom, will account for padding top when drawing later
+            timerLength = (float) (contentHeight - timerYPadding) / (float) getTimerDuration();
+
+            System.out.println("timer total length   "  + (contentHeight- timerYPadding) + ", timer each length  " + timerLength);
+
             timerWidth = (int) (columnWidth * 0.5);
             timerPaddingLeft = (int) (columnWidth * 0.25);
 
@@ -190,14 +194,20 @@ public class TimerWeekView extends View {
             timerXLeft = containerXLeft + timerPaddingLeft;
             timerXRight = timerXLeft + timerWidth; // - timer padding right?
             List<TimerSession> timersForTheDay = timers.timerOnThisDay(i);
-            float timerYStart = timerYTop;
+            float timerYStart = 0;
             float timerYEnd = 0;
-            for(TimerSession timer: timersForTheDay) {
-                timerYStart = scaled(timer.getStartTimeInMinutes()) * timerLength;
-                timerYEnd = scaled(timer.getEndTimeInMinutes()) * timerLength;
-                System.out.println("timer " + i + "drawing " + timerYStart + ", " + timerYEnd);
+            for(int j = 0; j < timersForTheDay.size(); j++) {
+                TimerSession timer = timersForTheDay.get(j);
+                if(j == 0) {
+                    // to start the padding at top
+                    timerYStart = (scaled(timer.getStartTimeInHours()) * timerLength) + timerYPadding;
+                } else {
+                    timerYStart = scaled(timer.getStartTimeInHours()) * timerLength;
+                }
+                timerYEnd = scaled(timer.getEndTimeInHours()) * timerLength;
                 RectF timerRect = new RectF(timerXLeft, timerYStart, timerXRight, timerYEnd);
                 System.out.println("ADDING THIS TIMER    =====   "   + timer.getId());
+                System.out.println("drawing starts at   " + timerYStart + ", ends at      " + timerYEnd);
                 // if timer id is already in map, add current timer to it's value
                 List<RectF> currTimers = (timerRects.get(timer.getId()) == null)? new ArrayList<RectF>() :
                         timerRects.get(timer.getId());
@@ -286,11 +296,11 @@ public class TimerWeekView extends View {
      * @return drawing height for each second(s) for a timer
      */
     private int getTimerDuration() {
-        earliestTime = 86400;
+        earliestTime = 23;
         int latest = 0;
         for(TimerSession timerSession: timers) {
-            int start = timerSession.getStartTimeInMinutes();
-            int end = timerSession.getEndTimeInMinutes();
+            int start = timerSession.getStartTimeInHours();
+            int end = timerSession.getEndTimeInHours();
             if(start < earliestTime) {
                 earliestTime = start;
             }
@@ -298,7 +308,7 @@ public class TimerWeekView extends View {
                 latest = end;
             }
         }
-        return latest - earliestTime;
+        return (latest - earliestTime);
     }
 
     /**
@@ -307,7 +317,7 @@ public class TimerWeekView extends View {
      * @return the scaled time for onDraw
      */
     private int scaled(int realTime) {
-        return realTime - earliestTime;
+        return (realTime - earliestTime);
     }
 
 

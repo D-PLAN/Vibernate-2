@@ -45,25 +45,16 @@ public final class TimerSession implements Serializable, Comparable<TimerSession
      * @author daniel
      * @return start time in seconds
      */
-    public int getStartTimeInMinutes() {
-        return timeInMinutes(startTime);
+    public int getStartTimeInHours() {
+        return startTime.get(Calendar.HOUR_OF_DAY);
     }
 
     /**
      * @author daniel
      * @return end time in seconds
      */
-    public int getEndTimeInMinutes() {
-        return timeInMinutes(endTime);
-    }
-
-	/**
-	 * @author daniel
-	 * @return helper function converting calendar time to minutes
-	 */
-    private int timeInMinutes(Calendar time) {
-        return time.get(Calendar.MINUTE)  +
-				(time.get(Calendar.HOUR_OF_DAY) * 60);
+    public int getEndTimeInHours() {
+        return endTime.get(Calendar.HOUR_OF_DAY);
     }
 
     /**

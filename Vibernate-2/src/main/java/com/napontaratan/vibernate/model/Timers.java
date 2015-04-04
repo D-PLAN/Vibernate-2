@@ -70,11 +70,11 @@ public class Timers implements Iterable<TimerSession> {
         // get all the days for which this timer is on
         // check this timer's start time for conflict with the timers on these days
         List<TimerSession> timersOnThisDay = timerOnThisDay(day);
-        int startTime = timerToAdd.getStartTimeInMinutes();
-        int endTime = timerToAdd.getEndTimeInMinutes();
+        int startTime = timerToAdd.getStartTimeInHours();
+        int endTime = timerToAdd.getEndTimeInHours();
         for(TimerSession timer: timersOnThisDay) {
             // if you start earlier, then you have to end earlier than the next timer's start time
-            if((startTime < timer.getEndTimeInMinutes()) && (endTime > timer.getStartTimeInMinutes())) {
+            if((startTime < timer.getEndTimeInHours()) && (endTime > timer.getStartTimeInHours())) {
                 return true;
             }
 
