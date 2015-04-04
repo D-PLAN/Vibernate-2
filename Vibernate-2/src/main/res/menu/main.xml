@@ -3,14 +3,14 @@
       tools:context="com.napontaratan.vibernate.MainActivity">
 
     <item
-            android:id="@+id/action_calendar"
-            android:orderInCategory="100"
-            Vibernate2:showAsAction="always"
-            android:title="Calendar"/>
-    <item
             android:id="@+id/action_list"
-            android:orderInCategory="100"
             Vibernate2:showAsAction="always"
-            android:title="List"/>
+            android:title="List"
+            android:icon="@drawable/ic_action_view_as_list"/>
+    <item
+            android:id="@+id/action_calendar"
+            Vibernate2:showAsAction="always"
+            android:title="Calendar"
+            android:icon="@drawable/ic_action_go_to_today"/>
 
 </menu>
