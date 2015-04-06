@@ -188,6 +188,7 @@
                         android:textColor="@color/toggle_color_btn"
                         android:layout_weight="1"
                         android:layout_marginRight="5dp"
+                        android:stateListAnimator="@anim/float_button_anim"
                         style="?android:attr/borderlessButtonStyle"/>
 
                 <ToggleButton
@@ -202,6 +203,7 @@
                         android:textOn="WEEKENDS"
                         android:textOff="WEEKENDS"
                         android:layout_marginLeft="5dp"
+                        android:stateListAnimator="@anim/float_button_anim"
                         style="?android:attr/borderlessButtonStyle"/>
 
                 <Space android:layout_width="fill_parent" android:layout_height="30dp" android:layout_weight="1"/>
@@ -226,6 +228,7 @@
                         android:textOn="SU"
                         android:textOff="SU"
                         android:layout_marginRight="5dp"
+                        android:stateListAnimator="@anim/float_button_anim"
                         style="?android:attr/borderlessButtonStyle"/>
 
                 <ToggleButton
@@ -240,6 +243,7 @@
                         android:textOn="MO"
                         android:textOff="MO"
                         android:layout_marginRight="5dp"
+                        android:stateListAnimator="@anim/float_button_anim"
                         style="?android:attr/borderlessButtonStyle"/>
 
                 <ToggleButton
@@ -254,6 +258,7 @@
                         android:textColor="@color/toggle_color_btn"
                         android:textOff="TU"
                         android:layout_marginRight="5dp"
+                        android:stateListAnimator="@anim/float_button_anim"
                         style="?android:attr/borderlessButtonStyle"/>
 
                 <ToggleButton
@@ -268,6 +273,7 @@
                         android:textOn="WE"
                         android:textOff="WE"
                         android:layout_marginRight="5dp"
+                        android:stateListAnimator="@anim/float_button_anim"
                         style="?android:attr/borderlessButtonStyle"/>
 
                 <ToggleButton
@@ -282,6 +288,7 @@
                         android:textOn="TH"
                         android:textOff="TH"
                         android:layout_marginRight="5dp"
+                        android:stateListAnimator="@anim/float_button_anim"
                         style="?android:attr/borderlessButtonStyle"/>
 
                 <ToggleButton
@@ -296,6 +303,7 @@
                         android:textOff="FR"
                         android:textColor="@color/toggle_color_btn"
                         android:layout_marginRight="5dp"
+                        android:stateListAnimator="@anim/float_button_anim"
                         style="?android:attr/borderlessButtonStyle"/>
 
                 <ToggleButton
@@ -310,6 +318,7 @@
                         android:textOn="SA"
                         android:textOff="SA"
                         android:layout_marginRight="5dp"
+                        android:stateListAnimator="@anim/float_button_anim"
                         style="?android:attr/borderlessButtonStyle"/>
             </LinearLayout>
 
