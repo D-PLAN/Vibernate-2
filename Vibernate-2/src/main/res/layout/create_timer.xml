@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+    android:background="@color/background"
     android:orientation="vertical" >
 
     <!-- Toolbar at the top -->
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:contentInsetStart="0dp"
-        android:elevation="1dp"
+        android:elevation="2dp"
         android:minHeight="56dp" >
     </android.support.v7.widget.Toolbar>
     <!-- End of Toolbar code -->
@@ -25,37 +25,32 @@
         android:id="@+id/editText"
         android:layout_width="fill_parent"
         android:layout_height="70dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:background="@color/white"
         android:height="50dp"
         android:hint="Please enter a name"
+        android:ellipsize="start"
         android:lines="1"
         android:maxLines="1"
         android:textSize="14dp"
+        android:focusable="false"
+        android:elevation="1dp"
         android:paddingLeft="10dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:padding="0dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
+
         android:orientation="horizontal"
-        android:layout_margin="0dp"
-        android:background="@color/white">
+        android:layout_margin="0dp">
 
         <ToggleButton
             android:id="@+id/create_timer_type_vibrate"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
             android:background="@color/background"
+            android:fontFamily="sans-serif-regular"
+            android:textSize="14dp"
             android:textOn="Vibrate"
             android:textOff="Vibrate"
             android:textColor="@color/toggle_color"
@@ -68,6 +63,8 @@
             android:layout_height="match_parent"
             android:background="@color/background"
             android:layout_weight="1"
+            android:fontFamily="sans-serif-regular"
+            android:textSize="14dp"
             android:textColor="@color/toggle_color"
             android:textOn="Silent"
             android:textOff="Silent"
@@ -80,132 +77,238 @@
 
     <!-- Container with Start Time to End Time Set + Display -->
 
-    <LinearLayout
+    <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="223dp"
-        android:orientation="vertical">
+        android:layout_height="96dp"
+        android:orientation="vertical"
+        android:background="@color/background"
+        android:stretchColumns="*"
+        android:shrinkColumns="*"
+        android:paddingTop="10dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
+        <TableRow android:layout_width="fill_parent"
+                  android:paddingTop="10dp"
+                  android:layout_marginLeft="25dp">
             <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="		Start Time"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
+                    android:id="@+id/create_timer_start_label"
+                    android:textSize="14dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Start time" />
             <TextView
-                android:id="@+id/textView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="																																End Time"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-        </LinearLayout>
+                    android:id="@+id/create_timer_end_label"
+                    android:textSize="14dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_width="wrap_content"
+                    android:textColor="@color/black"
+                    android:layout_height="wrap_content"
+                    android:text="End time"/>
+        </TableRow>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+        <TableRow android:layout_width="fill_parent"
+                  android:layout_marginLeft="25dp">
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/create_timer_start_time_clock"
+                    android:textSize="36dp"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif-light"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/create_timer_end_time_clock"
+                    android:textSize="36dp"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif-light"/>
+        </TableRow>
 
-            <TimePicker
-                android:id="@+id/timePicker1"
-                android:layout_width="130dp"
-                android:layout_height="250dp"
-                />
-
-            <TimePicker
-                android:id="@+id/timePicker2"
-                android:layout_width="130dp"
-                android:layout_height="250dp"
-                />
-        </LinearLayout>
-    </LinearLayout>
+    </TableLayout>
 
     <!-- End of Container with Start Time to End Time Set + Display -->
 
 
     <!-- Container for Weekday/Weekend Headings -->
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_column="1"
-        android:layout_gravity="left|top"
-        android:layout_row="6"
-        android:text="Choose Which Days"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+    <TableLayout android:layout_width="fill_parent" android:layout_height="162dp"
+                 android:background="@color/background"
+                 android:stretchColumns="*"
+                 android:shrinkColumns="*"
+                 android:paddingTop="10dp"
+                 android:paddingLeft="25dp"
+                android:paddingRight="25dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        <TableRow>
+            <TextView
+                    android:id="@+id/textView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Choose which days"
+                    android:textSize="14dp"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif-medium"/>
+        </TableRow>
 
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Weekdays" />
+        <TableRow>
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:padding="0dp"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp">
 
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Weekends" />
-    </LinearLayout>
+                <ToggleButton
+                        android:id="@+id/create_timer_weekdays_btn"
+                        android:layout_width="fill_parent"
+                        android:layout_height="30dp"
+                        android:background="@drawable/rounded_rectangle"
+                        android:fontFamily="sans-serif-medium"
+                        android:textSize="12dp"
+                        android:textOn="WEEKDAYS"
+                        android:textOff="WEEKDAYS"
+                        android:textColor="@color/toggle_color"
+                        android:textColorHighlight="@color/colorAccent"
+                        android:layout_weight="1"
+                        android:layout_marginRight="5dp"/>
 
-    <!-- End of Container for Weekday/Weekend Headings -->
+                <ToggleButton
+                        android:id="@+id/create_timer_weekends_btn"
+                        android:layout_width="fill_parent"
+                        android:layout_height="30dp"
+                        android:background="@drawable/rounded_rectangle"
+                        android:layout_weight="1"
+                        android:fontFamily="sans-serif-medium"
+                        android:textSize="12dp"
+                        android:textColor="@color/toggle_color"
+                        android:textOn="WEEKENDS"
+                        android:textOff="WEEKENDS"
+                        android:textColorHighlight="@color/colorAccent"
+                        android:layout_marginLeft="5dp"/>
+
+                <Space android:layout_width="fill_parent" android:layout_height="30dp" android:layout_weight="1"/>
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow>
+            <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp">
+
+                <ToggleButton
+                        android:id="@+id/create_timer_sun"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/circle_btn"
+                        android:textSize="12dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:layout_weight="1"
+                        android:textColor="@color/black"
+                        android:textOn="SU"
+                        android:textOff="SU"
+                        android:layout_marginRight="5dp"/>
+
+                <ToggleButton
+                        android:id="@+id/create_timer_mon"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/circle_btn"
+                        android:textSize="12dp"
+                        android:layout_weight="1"
+                        android:fontFamily="sans-serif-medium"
+                        android:textOn="MO"
+                        android:textColor="@color/black"
+                        android:textOff="MO"
+                        android:layout_marginRight="5dp"/>
+
+                <ToggleButton
+                        android:id="@+id/create_timer_tue"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/circle_btn"
+                        android:textSize="12dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:layout_weight="1"
+                        android:textOn="TU"
+                        android:textColor="@color/black"
+                        android:textOff="TU"
+                        android:layout_marginRight="5dp"/>
+
+                <ToggleButton
+                        android:id="@+id/create_timer_wed"
+                        android:layout_width="40dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:layout_height="40dp"
+                        android:background="@drawable/circle_btn"
+                        android:textSize="12dp"
+                        android:textColor="@color/black"
+                        android:layout_weight="1"
+                        android:textOn="WE"
+                        android:textOff="WE"
+                        android:layout_marginRight="5dp"/>
+
+                <ToggleButton
+                        android:id="@+id/create_timer_thu"
+                        android:layout_width="40dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:layout_height="40dp"
+                        android:textColor="@color/black"
+                        android:background="@drawable/circle_btn"
+                        android:textSize="12dp"
+                        android:layout_weight="1"
+                        android:textOn="TH"
+                        android:textOff="TH"
+                        android:layout_marginRight="5dp"/>
+
+                <ToggleButton
+                        android:id="@+id/create_timer_fri"
+                        android:layout_width="40dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:layout_height="40dp"
+                        android:background="@drawable/circle_btn"
+                        android:textSize="12dp"
+                        android:layout_weight="1"
+                        android:textOn="FR"
+                        android:textOff="FR"
+                        android:textColor="@color/black"
+                        android:layout_marginRight="5dp"/>
+
+                <ToggleButton
+                        android:id="@+id/create_timer_sat"
+                        android:layout_width="40dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:layout_height="40dp"
+                        android:background="@drawable/circle_btn"
+                        android:textSize="12dp"
+                        android:textColor="@color/black"
+                        android:layout_weight="1"
+                        android:textOn="SA"
+                        android:textOff="SA"
+                        android:layout_marginRight="5dp"/>
+            </LinearLayout>
+
+            <Space android:layout_width="fill_parent" android:layout_height="1dp"/>
+
+        </TableRow>
 
 
-    <!-- Container for Days of the Week ToggleButtons -->
+    </TableLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <ToggleButton
-            android:id="@+id/toggleButton1"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:text="ToggleButton" />
-
-        <ToggleButton
-            android:id="@+id/toggleButton2"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:text="ToggleButton" />
-
-        <ToggleButton
-            android:id="@+id/toggleButton3"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:text="ToggleButton" />
-
-        <ToggleButton
-            android:id="@+id/toggleButton4"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:text="ToggleButton" />
-
-        <ToggleButton
-            android:id="@+id/toggleButton5"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:text="ToggleButton" />
-
-        <ToggleButton
-            android:id="@+id/toggleButton6"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:text="ToggleButton" />
-
-        <ToggleButton
-            android:id="@+id/toggleButton7"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:text="ToggleButton" />
-    </LinearLayout>
-
-    <!-- End of Container for Days of the Week ToggleButtons -->
+    <ImageButton
+            android:id="@+id/add_button"
+            android:layout_width="@dimen/diameter"
+            android:layout_height="@dimen/diameter"
+            android:layout_gravity="end|bottom"
+            android:src="@android:drawable/ic_menu_add"
+            android:tint="@android:color/white"
+            android:background="@drawable/oval_ripple"
+            android:elevation="@dimen/elevation_low"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="30dp"
+            android:stateListAnimator="@anim/float_button_anim"/>
 
 </LinearLayout>

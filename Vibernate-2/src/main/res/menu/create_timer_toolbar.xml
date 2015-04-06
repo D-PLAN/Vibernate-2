@@ -6,6 +6,6 @@
     <item
             android:id="@+id/create_timer_save"
             Vibernate2:showAsAction="always"
-            android:title="save" />
+            android:title="SAVE" />
 
 </menu>
