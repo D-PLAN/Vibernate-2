@@ -7,4 +7,14 @@
 
     <solid android:color="@color/background"/>
 
+    <padding
+        android:top="1dp"
+        android:bottom="1dp"
+        android:left="1dp"
+        android:right="1dp" />
+
+    <size
+        android:width="40dp"
+        android:height="40dp" />
+
 </shape>
