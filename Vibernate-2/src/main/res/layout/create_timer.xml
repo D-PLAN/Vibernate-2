@@ -8,39 +8,13 @@
     <!-- Toolbar at the top -->
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/create_timer_toolbar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:contentInsetStart="0dp"
         android:elevation="1dp"
         android:minHeight="56dp" >
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/create_timer_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="X      New Timer"
-                android:textColor="@color/white"
-                android:textSize="18dp" />
-
-            <TextView
-                android:id="@+id/create_timer_save"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="25dp"
-                android:text="Save"
-                android:textColor="@color/white"
-                android:textSize="12dp" />
-        </RelativeLayout>
     </android.support.v7.widget.Toolbar>
     <!-- End of Toolbar code -->
 
@@ -50,7 +24,7 @@
     <EditText
         android:id="@+id/editText"
         android:layout_width="fill_parent"
-        android:layout_height="55dp"
+        android:layout_height="70dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
@@ -59,31 +33,47 @@
         android:background="@color/white"
         android:height="50dp"
         android:hint="Please enter a name"
-        android:textSize="14dp" />
+        android:lines="1"
+        android:maxLines="1"
+        android:textSize="14dp"
+        android:paddingLeft="10dp"/>
 
-    <GridLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:columnCount="2" >
+        android:layout_height="70dp"
+        android:padding="0dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        android:layout_margin="0dp"
+        android:background="@color/white">
 
         <ToggleButton
-            android:id="@+id/ToggleButton01"
-            android:layout_width="185dp"
-            android:layout_height="55dp"
-            android:layout_column="1"
-            android:layout_gravity="right|top"
-            android:layout_row="1"
-            android:text="ToggleButton" />
+            android:id="@+id/create_timer_type_vibrate"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background"
+            android:textOn="Vibrate"
+            android:textOff="Vibrate"
+            android:textColor="@color/toggle_color"
+            android:textColorHighlight="@color/colorAccent"
+            android:layout_weight="1"/>
 
         <ToggleButton
-            android:id="@+id/toggleButton02"
-            android:layout_width="185dp"
-            android:layout_height="55dp"
-            android:layout_column="1"
-            android:layout_gravity="left|top"
-            android:layout_row="1"
-            android:text="ToggleButton" />
-    </GridLayout>
+            android:id="@+id/create_timer_type_silent"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background"
+            android:layout_weight="1"
+            android:textColor="@color/toggle_color"
+            android:textOn="Silent"
+            android:textOff="Silent"
+            android:textColorHighlight="@color/colorAccent"/>
+
+    </LinearLayout>
 
     <!-- End of Timer Name + Vibrate/Silent ToggleButtons -->
 
@@ -92,8 +82,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:layout_height="223dp"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -122,17 +112,13 @@
                 android:id="@+id/timePicker1"
                 android:layout_width="130dp"
                 android:layout_height="250dp"
-                android:layout_weight="0.05" 
-                android:scaleY="0.90"
-                android:scaleX="0.90"/>
+                />
 
             <TimePicker
                 android:id="@+id/timePicker2"
                 android:layout_width="130dp"
                 android:layout_height="250dp"
-                android:layout_weight="0.05" 
-                android:scaleY="0.90"
-                android:scaleX="0.90"/>
+                />
         </LinearLayout>
     </LinearLayout>
 

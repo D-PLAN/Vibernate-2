@@ -36,7 +36,7 @@ public class MainActivity extends ActionBarActivity {
                 Intent a = new Intent();
                 a.setClass(MainActivity.this, CreateTimerActivity.class);
                 startActivity(a);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+//                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
         });
 
