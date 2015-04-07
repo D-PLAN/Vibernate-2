@@ -1,5 +1,7 @@
 package com.napontaratan.vibernate.model;
 
+import com.napontaratan.vibernate.R;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -23,6 +25,7 @@ public final class TimerSession implements Serializable, Comparable<TimerSession
 	private final boolean[] days;
 	private TimerSessionType type;
 	private int color; // rgb value of color
+	private int iconResourceId;
 
 	public enum TimerSessionType {
 		VIBRATE, SILENT
@@ -33,6 +36,12 @@ public final class TimerSession implements Serializable, Comparable<TimerSession
 		this.color = color;
 		this.name = name;
 		this.type = type;
+		if(this.type == TimerSessionType.SILENT) {
+			iconResourceId = R.drawable.ic_action_volume_muted;
+		} else {
+			// TODO change this to vibrate icon when we have one
+			iconResourceId = R.drawable.ic_action_alarms;
+		}
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.days = days;
@@ -92,6 +101,14 @@ public final class TimerSession implements Serializable, Comparable<TimerSession
 	public TimerSessionType getType()
 	{
 		return this.type;
+	}
+
+	/**
+	 * @author daniel
+	 * @return resource id for this timer's icon
+	 */
+	public int getIconResourceId() {
+		return this.iconResourceId;
 	}
 
     /**

@@ -3,7 +3,10 @@ package com.napontaratan.vibernate.view;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.graphics.*;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -123,9 +126,6 @@ public class TimerWeekView extends View {
     }
 
     private void init(AttributeSet attrs, int defStyle) {
-        // Load attributes
-//        final TypedArray a = getContext().obtainStyledAttributes(
-//                attrs, R.styleable.TimerWeekView, defStyle, 0);
         containerPaint.setStyle(Paint.Style.FILL);
         containerPaint.setColor(getResources().getColor(R.color.background));
 
@@ -133,6 +133,8 @@ public class TimerWeekView extends View {
         dividerPaint.setColor(getResources().getColor(R.color.dividers));
 
         timerPaint.setStyle(Paint.Style.FILL);
+
+
     }
 
     @Override
@@ -204,6 +206,7 @@ public class TimerWeekView extends View {
                     timerYStart = scaled(timer.getStartTimeInHours()) * timerLength;
                 }
                 timerYEnd = scaled(timer.getEndTimeInHours()) * timerLength;
+                // draw the actual timers itself as rectangle blocks
                 RectF timerRect = new RectF(timerXLeft, timerYStart, timerXRight, timerYEnd);
                 System.out.println("ADDING THIS TIMER    =====   "   + timer.getId());
                 System.out.println("drawing starts at   " + timerYStart + ", ends at      " + timerYEnd);
@@ -214,6 +217,12 @@ public class TimerWeekView extends View {
                 timerRects.put(timer.getId(), currTimers);
                 timerPaint.setColor(timer.getColor());
                 canvas.drawRoundRect(timerRect, 15, 15, timerPaint);
+                // draw timer icon
+                Drawable d = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getContext().getResources(),
+                        timer.getIconResourceId()));
+                int iconYEnd = (int)timerYStart + d.getMinimumHeight();
+                d.setBounds(timerXLeft, (int) timerYStart, timerXRight, iconYEnd);
+                d.draw(canvas);
             }
         }
 
@@ -239,7 +248,7 @@ public class TimerWeekView extends View {
         TimerSession selectedTimer = getSelectedTimer(x, y);
         if(selectedTimer != null && (prevTimer != selectedTimer.getId())) {
             // if selectedtimer is the same as last, do not need to update
-            System.out.println("update timer info");
+            System.out.println("update timer " + selectedTimer.getId()  + "'s info");
             displayTimerInfo(selectedTimer);
             prevTimer = selectedTimer.getId();
         }
@@ -264,16 +273,9 @@ public class TimerWeekView extends View {
         timerName.setTextColor(selectedTimer.getColor());
 
         ImageView timerTypeIcon = (ImageView) root.findViewById(R.id.timer_type_icon);
-        if(selectedTimer.getType() == TimerSession.TimerSessionType.SILENT) {
-            Bitmap icon = BitmapFactory.decodeResource(getContext().getResources(),
-                    R.drawable.ic_action_volume_muted);
-            timerTypeIcon.setImageBitmap(icon);
-        } else {
-            //TODO replace with vibrate icon when we have one
-            Bitmap icon = BitmapFactory.decodeResource(getContext().getResources(),
-                    R.drawable.ic_action_alarms);
-            timerTypeIcon.setImageBitmap(icon);
-        }
+        Bitmap icon = BitmapFactory.decodeResource(getContext().getResources(),
+                selectedTimer.getIconResourceId());
+        timerTypeIcon.setImageBitmap(icon);
 
         ImageView timerDeleteIcon = (ImageView) root.findViewById(R.id.timer_delete_icon);
         timerDeleteIcon.setOnClickListener(new OnClickListener() {
