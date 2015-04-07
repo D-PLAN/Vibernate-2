@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextClock;
 import android.widget.TextView;
 
@@ -22,6 +23,12 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
     public vAdapter(Context context, List<vInfo> data) {
         inflater = LayoutInflater.from(context);
         this.data = data;
+    }
+
+    // remove a row at 'position'
+    public void delete(int position) {
+        data.remove(position);
+        notifyItemRemoved(position);
     }
 
 
@@ -46,10 +53,11 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
     }
 
 
-    class vViewHolder extends RecyclerView.ViewHolder {
+    class vViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView description;
         TextClock startTime;
         TextClock endTime;
+        Button remove;
 
 
         public vViewHolder(View itemView) {
@@ -57,6 +65,15 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             description = (TextView) itemView.findViewById(R.id.v_description);
             startTime = (TextClock) itemView.findViewById(R.id.v_startTime);
             endTime = (TextClock) itemView.findViewById(R.id.v_endTime);
+            remove = (Button) itemView.findViewById(R.id.remove_b);
+            remove.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if ( v == remove) {
+                delete(getPosition());
+            }
         }
     }
 }

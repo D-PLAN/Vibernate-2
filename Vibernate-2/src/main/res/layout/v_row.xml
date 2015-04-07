@@ -2,24 +2,38 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent" android:weightSum="1">
+              android:layout_height="48dp" android:weightSum="1">
 
 
+    <!-- One Row -->
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:id="@+id/each_row"
-            android:layout_height="wrap_content" android:layout_weight="0.20">
+            android:background="@color/background"
+            android:layout_height="match_parent" android:layout_weight="0.20">
 
-        <TextView
-                android:id="@+id/v_description"
-                android:padding="8dp"
+        <!-- Description Part -->
+        <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Large Text"
-                android:textColor="#F00"/>
+                android:layout_height="match_parent">
+            <TextView
+                    android:id="@+id/v_description"
+                    android:padding="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Large Text"
+                    android:textColor="#000"/>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+            </LinearLayout>
+        </LinearLayout>
 
+        <!--Time Part -->
         <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
@@ -28,15 +42,29 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/v_startTime"
-                    android:textColor="#F00" android:layout_weight="0.20"/>
+                    android:textColor="#000" android:layout_weight="0.20"/>
             <TextClock
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/v_endTime"
-                    android:textColor="#F00" android:layout_weight="0.20"/>
+                    android:textColor="#000" android:layout_weight="0.20"/>
         </LinearLayout>
 
-    </LinearLayout>
+        <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remove"
+                android:id="@+id/remove_b"/>
+
+    </LinearLayout> <!-- End of Row -->
+
+    <!-- Divider -->
+    <View
+            android:layout_width="fill_parent"
+            android:layout_height="8dp"
+            android:background="@android:color/darker_gray"/>
+
 
 
 </LinearLayout>
