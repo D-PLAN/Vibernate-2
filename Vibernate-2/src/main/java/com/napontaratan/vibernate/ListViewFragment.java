@@ -14,7 +14,8 @@ import java.util.List;
 public class ListViewFragment extends Fragment {
     private RecyclerView vRecyclerView;
     private vAdapter v_Adapter;
-    //private RecyclerView.LayoutManager v_LayoutManager;
+
+
 
 
     @Override
