@@ -8,7 +8,6 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -36,31 +35,7 @@ public class MainActivity extends ActionBarActivity {
                 Intent a = new Intent();
                 a.setClass(MainActivity.this, CreateTimerActivity.class);
                 startActivity(a);
-//                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
-        });
-
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-            @Override
-            public void onPageScrolled(int i, float v, int i1) {}
-
-            @Override
-            public void onPageSelected(int i) {
-                switch (i) {
-                    case 0:
-                        // highlight the correct menu item
-                        break;
-                    case 1:
-                        // highlight the correct menu item
-                        break;
-                }
-            }
-            @Override
-            public void onPageScrollStateChanged(int i) {}
         });
 
         // Set an OnMenuItemClickListener to handle menu item clicks
@@ -84,6 +59,35 @@ public class MainActivity extends ActionBarActivity {
 
         // Inflate a menu to be displayed in the toolbar
         toolbar.inflateMenu(R.menu.main);
+
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {}
+
+            @Override
+            public void onPageSelected(int i) {
+                final MenuItem calendar_btn = toolbar.getMenu().getItem(0);
+                final MenuItem list_btn     = toolbar.getMenu().getItem(1);
+                switch (i) {
+                    case 0:
+                        calendar_btn.setIcon(R.drawable.ic_action_go_to_today_selected);
+                        list_btn.setIcon(R.drawable.ic_action_view_as_list);
+                        break;
+                    case 1:
+                        calendar_btn.setIcon(R.drawable.ic_action_go_to_today);
+                        list_btn.setIcon(R.drawable.ic_action_view_as_list_selected);
+                        break;
+                }
+            }
+            @Override
+            public void onPageScrollStateChanged(int i) {}
+        });
+
+
     }
 
 //    @Override
