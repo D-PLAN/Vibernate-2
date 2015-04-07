@@ -67,6 +67,24 @@ public final class TimerSession implements Serializable, Comparable<TimerSession
         return endTime.get(Calendar.HOUR_OF_DAY);
     }
 
+	/**
+	 * @author daniel
+	 * @return name of this timer
+	 */
+	public String getName()
+	{
+		return this.name;
+	}
+
+	/**
+	 * @author daniel
+	 * @return int representation of this timer's color in rgb
+	 */
+	public int getColor()
+	{
+		return this.color;
+	}
+
     /**
      * @author daniel
      * compare current timer to other timer by start time
