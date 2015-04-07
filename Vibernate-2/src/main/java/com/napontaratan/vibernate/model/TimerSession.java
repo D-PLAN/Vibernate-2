@@ -16,13 +16,21 @@ import java.util.List;
  */
 public final class TimerSession implements Serializable, Comparable<TimerSession>{
 	private static final long serialVersionUID = 2881690379292284022L;
+	private String name;
 	private final Calendar startTime;
 	private final Calendar endTime;
 	private final int id;
 	private final boolean[] days;
+	private TimerSessionType type;
+
+	public enum TimerSessionType {
+		VIBRATE, SILENT
+	}
 
 	// Constructor
-	public TimerSession (Calendar startTime, Calendar endTime, boolean[] days, int id) {
+	public TimerSession (String name, TimerSessionType type, Calendar startTime, Calendar endTime, boolean[] days, int id) {
+		this.name = name;
+		this.type = type;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.days = days;
