@@ -77,4 +77,20 @@
         <item name="android:textColor">@color/dividers</item>
     </style>
 
+    <!-- Create timer styles -->
+    <style name="create_timer_divider">
+        <item name="android:clickable">false</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">5px</item>
+        <item name="android:background">@color/dividers</item>
+    </style>
+
+    <style name="create_timer_vdivider">
+        <item name="android:clickable">false</item>
+        <item name="android:layout_width">2px</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/dividers</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
 </resources>
