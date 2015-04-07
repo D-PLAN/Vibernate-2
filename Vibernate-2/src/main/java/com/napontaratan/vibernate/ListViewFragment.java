@@ -36,10 +36,14 @@ public class ListViewFragment extends Fragment {
     public static List<vInfo> getData() {
         List<vInfo> data = new ArrayList<vInfo>();
         String descritpions[] = {"d1", "d2", "d3", "d4", "d5"};
+        String startTimes[] = {"15:00","16:00","17:00","18:00","19:00"};
+        String endTimes[] = {"15:01","15:02","15:03","15:04","15:05"};
 
         for (int i = 0; i < descritpions.length; i++) {
             vInfo current = new vInfo();
             current.descrition = descritpions[i];
+            current.startTime = startTimes[i];
+            current.endTime = endTimes[i];
             data.add(current);
         }
         System.out.println("size of data is: " + data.size());
