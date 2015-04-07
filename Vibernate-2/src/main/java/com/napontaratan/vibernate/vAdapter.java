@@ -2,6 +2,7 @@ package com.napontaratan.vibernate;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -31,6 +32,11 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         notifyItemRemoved(position);
     }
 
+    // Add 'item' at 'position'
+    public void addItem(vInfo item, int position) {
+        data.add(item);
+        notifyItemInserted(position);
+    }
 
     @Override
     public vViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -53,7 +59,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
     }
 
 
-    class vViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class vViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
         TextView description;
         TextClock startTime;
         TextClock endTime;
@@ -66,14 +72,28 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             startTime = (TextClock) itemView.findViewById(R.id.v_startTime);
             endTime = (TextClock) itemView.findViewById(R.id.v_endTime);
             remove = (Button) itemView.findViewById(R.id.remove_b);
-            remove.setOnClickListener(this);
+            remove.setOnTouchListener(this);
+
         }
 
         @Override
         public void onClick(View v) {
-            if ( v == remove) {
-                delete(getPosition());
+
+        }
+
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    break;
+                case MotionEvent.ACTION_UP:
+                    if ( v == remove) {
+                        delete(getPosition());
+                    }
+                    break;
             }
+            return false;
         }
     }
 }
