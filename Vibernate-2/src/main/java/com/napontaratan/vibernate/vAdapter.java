@@ -2,9 +2,11 @@ package com.napontaratan.vibernate;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextClock;
 import android.widget.TextView;
 
@@ -24,6 +26,17 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         this.data = data;
     }
 
+    // remove a row at 'position'
+    public void delete(int position) {
+        data.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    // Add 'item' at 'position'
+    public void addItem(vInfo item, int position) {
+        data.add(item);
+        notifyItemInserted(position);
+    }
 
     @Override
     public vViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -46,10 +59,11 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
     }
 
 
-    class vViewHolder extends RecyclerView.ViewHolder {
+    class vViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
         TextView description;
         TextClock startTime;
         TextClock endTime;
+        Button remove;
 
 
         public vViewHolder(View itemView) {
@@ -57,6 +71,29 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             description = (TextView) itemView.findViewById(R.id.v_description);
             startTime = (TextClock) itemView.findViewById(R.id.v_startTime);
             endTime = (TextClock) itemView.findViewById(R.id.v_endTime);
+            remove = (Button) itemView.findViewById(R.id.remove_b);
+            remove.setOnTouchListener(this);
+
+        }
+
+        @Override
+        public void onClick(View v) {
+
+        }
+
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    break;
+                case MotionEvent.ACTION_UP:
+                    if ( v == remove) {
+                        delete(getPosition());
+                    }
+                    break;
+            }
+            return false;
         }
     }
 }

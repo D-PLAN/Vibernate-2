@@ -16,25 +16,22 @@ public class ListViewFragment extends Fragment {
     private vAdapter v_Adapter;
 
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment:
         View rootView = inflater.inflate(R.layout.list_fragment, container, false);
         vRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycle_view);
-        v_Adapter = new vAdapter(getActivity(), getData());
+        v_Adapter = new vAdapter(getActivity(), ListViewFragment.getData());
         vRecyclerView.setAdapter(v_Adapter);
         vRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         return rootView;
     }
 
 
-
     // Obtain data:
     public static List<vInfo> getData() {
-        List<vInfo> data = new ArrayList<vInfo>();
+        List<vInfo> data = new ArrayList<>();
         String descritpions[] = {"d1", "d2", "d3", "d4", "d5"};
         String startTimes[] = {"15:00","16:00","17:00","18:00","19:00"};
         String endTimes[] = {"15:01","15:02","15:03","15:04","15:05"};

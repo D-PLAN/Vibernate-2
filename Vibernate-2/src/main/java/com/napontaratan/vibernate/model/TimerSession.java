@@ -85,6 +85,15 @@ public final class TimerSession implements Serializable, Comparable<TimerSession
 		return this.color;
 	}
 
+	/**
+	 * @author daniel
+	 * @return the type of timer { SILENT, VIBRATE}
+	 */
+	public TimerSessionType getType()
+	{
+		return this.type;
+	}
+
     /**
      * @author daniel
      * compare current timer to other timer by start time
