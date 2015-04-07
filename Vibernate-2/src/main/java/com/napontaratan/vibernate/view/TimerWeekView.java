@@ -66,7 +66,6 @@ public class TimerWeekView extends View {
     private final String TIME_STRING_FORMAT = "HH:mm";
 
     private HashMap<Integer, List<RectF>> timerRects =  new HashMap<Integer, List<RectF>>(); // List of timer rectangles
-    //TODO figure out where to get actual Timers since constructor is called when view is infalted
     private Timers timers;
     private int prevTimer;
 
@@ -79,24 +78,25 @@ public class TimerWeekView extends View {
         super(context, attrs);
         init(attrs, 0);
         // TODO remove this mock data once we implemented get timers
+        String MOCK_TIMER_NAME = "CPSC 101";
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
-        TimerSession one = new TimerSession(start, end, new boolean[] { true, false, false, false, false, false, false}, 1);
+        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, Color.rgb(205, 64, 109), 1);
         start = createCalendar(8,0,0,0);
         end = createCalendar(9, 0, 0, 0);
-        TimerSession two = new TimerSession(start, end, new boolean[] { false, true, false, false, false, false, false}, 2);
+        TimerSession two = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, true, false, false, false, false, false}, Color.rgb(136, 67, 173), 2);
         start = createCalendar(15,0,0,0);
         end = createCalendar(17, 0, 0, 0);
-        TimerSession three = new TimerSession(start, end, new boolean[] { false, false, false, false, false, true, false}, 3);
+        TimerSession three = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { false, false, false, false, false, true, false},Color.rgb(69, 146, 134), 3);
         start = createCalendar(12,0,0,0);
         end = createCalendar(15, 0, 0, 0);
-        TimerSession four = new TimerSession(start, end, new boolean[] { false, false, true, false, false, false, false}, 4);
+        TimerSession four = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, false, true, false, false, false, false}, Color.rgb(106, 125, 137), 4);
         start = createCalendar(17,0,0,0);
         end = createCalendar(18, 0, 0, 0);
-        TimerSession five = new TimerSession(start, end, new boolean[] { true, false, false, false, false, false, false}, 5);
+        TimerSession five = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false},Color.rgb(136, 67, 173), 5);
         start = createCalendar(12,0,0,0);
         end = createCalendar(17, 0, 0, 0);
-        TimerSession six = new TimerSession(start, end, new boolean[] { true, false, false, false, false, false, false}, 6);
+        TimerSession six = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, Color.rgb(136, 67, 173), 6);
         start = createCalendar(8,0,0,0);
         try {
             timers = new Timers();
@@ -131,7 +131,6 @@ public class TimerWeekView extends View {
         dividerPaint.setStyle(Paint.Style.FILL);
         dividerPaint.setColor(getResources().getColor(R.color.dividers));
 
-        // TODO surround timers with shadow to create 3D illusion
         timerPaint.setStyle(Paint.Style.FILL);
         timerPaint.setColor(Color.BLUE);
     }
