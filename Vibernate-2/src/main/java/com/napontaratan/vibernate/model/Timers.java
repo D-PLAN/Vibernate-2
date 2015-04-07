@@ -16,6 +16,7 @@ public class Timers implements Iterable<TimerSession> {
     private int index;
 
     public Timers() {
+        // TODO grabs timers from database
         timers = new ArrayList<TimerSession>();
         timersMap = new HashMap<Integer, TimerSession>();
         index = 0;

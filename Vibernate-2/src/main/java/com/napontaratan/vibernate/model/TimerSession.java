@@ -16,13 +16,23 @@ import java.util.List;
  */
 public final class TimerSession implements Serializable, Comparable<TimerSession>{
 	private static final long serialVersionUID = 2881690379292284022L;
+	private String name;
 	private final Calendar startTime;
 	private final Calendar endTime;
 	private final int id;
 	private final boolean[] days;
+	private TimerSessionType type;
+	private int color; // rgb value of color
+
+	public enum TimerSessionType {
+		VIBRATE, SILENT
+	}
 
 	// Constructor
-	public TimerSession (Calendar startTime, Calendar endTime, boolean[] days, int id) {
+	public TimerSession (String name, TimerSessionType type, Calendar startTime, Calendar endTime, boolean[] days, int color, int id) {
+		this.color = color;
+		this.name = name;
+		this.type = type;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.days = days;
@@ -56,6 +66,24 @@ public final class TimerSession implements Serializable, Comparable<TimerSession
     public int getEndTimeInHours() {
         return endTime.get(Calendar.HOUR_OF_DAY);
     }
+
+	/**
+	 * @author daniel
+	 * @return name of this timer
+	 */
+	public String getName()
+	{
+		return this.name;
+	}
+
+	/**
+	 * @author daniel
+	 * @return int representation of this timer's color in rgb
+	 */
+	public int getColor()
+	{
+		return this.color;
+	}
 
     /**
      * @author daniel
