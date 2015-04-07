@@ -329,7 +329,7 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
     }
 
     public void testRemoveTimer() {
-        
+
     }
 
     private Calendar createCalendar(int hour, int min, int second, int millis) {

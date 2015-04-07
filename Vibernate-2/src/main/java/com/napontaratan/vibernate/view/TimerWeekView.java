@@ -1,11 +1,14 @@
 package com.napontaratan.vibernate.view;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.*;
+import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.*;
 import com.napontaratan.vibernate.R;
 import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
@@ -17,8 +20,10 @@ import java.util.*;
 /**
  * Custom Timer week view displaying timers for 7-day week that scales each timer's view
  * by the earliest and latest timers for the week
+ * // TODO remove all debugging statements
  */
 public class TimerWeekView extends View {
+    private Context ctx = this.getContext();
     // Draw variables, set to -1 as flag for variables' value not set
     private int paddingLeft = -1;
     private int paddingTop = -1;
@@ -81,26 +86,22 @@ public class TimerWeekView extends View {
         String MOCK_TIMER_NAME = "CPSC 101";
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
-        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, Color.rgb(205, 64, 109), 1);
-        start = createCalendar(8,0,0,0);
-        end = createCalendar(9, 0, 0, 0);
-        TimerSession two = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, true, false, false, false, false, false}, Color.rgb(136, 67, 173), 2);
+        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, true, true, true, true, true, true}, Color.rgb(205, 64, 109), 1);
         start = createCalendar(15,0,0,0);
         end = createCalendar(17, 0, 0, 0);
-        TimerSession three = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { false, false, false, false, false, true, false},Color.rgb(69, 146, 134), 3);
+        TimerSession two = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { false, false, false, false, false, true, false},Color.rgb(69, 146, 134), 3);
         start = createCalendar(12,0,0,0);
         end = createCalendar(15, 0, 0, 0);
-        TimerSession four = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, false, true, false, false, false, false}, Color.rgb(106, 125, 137), 4);
+        TimerSession three = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, false, true, false, true, false, false}, Color.rgb(106, 125, 137), 4);
         start = createCalendar(17,0,0,0);
         end = createCalendar(18, 0, 0, 0);
-        TimerSession five = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false},Color.rgb(136, 67, 173), 5);
+        TimerSession four = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false},Color.rgb(136, 67, 173), 5);
         start = createCalendar(12,0,0,0);
         end = createCalendar(17, 0, 0, 0);
-        TimerSession six = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, Color.rgb(136, 67, 173), 6);
-        start = createCalendar(8,0,0,0);
+        TimerSession five = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, Color.rgb(136, 67, 173), 6);
         try {
             timers = new Timers();
-            timers.addTimer(one, two, three, four, five, six);
+            timers.addTimer(one, two, three, four, five);
         } catch (TimerConflictException e) {
             e.printStackTrace();
         }
@@ -132,7 +133,6 @@ public class TimerWeekView extends View {
         dividerPaint.setColor(getResources().getColor(R.color.dividers));
 
         timerPaint.setStyle(Paint.Style.FILL);
-        timerPaint.setColor(Color.BLUE);
     }
 
     @Override
@@ -212,6 +212,7 @@ public class TimerWeekView extends View {
                         timerRects.get(timer.getId());
                 currTimers.add(timerRect);
                 timerRects.put(timer.getId(), currTimers);
+                timerPaint.setColor(timer.getColor());
                 canvas.drawRoundRect(timerRect, 15, 15, timerPaint);
             }
         }
@@ -258,6 +259,57 @@ public class TimerWeekView extends View {
         View timerInfoView = root.findViewById(R.id.timer_info_layout);
         timerInfoView.setVisibility(View.VISIBLE);
 
+        TextView timerName = (TextView) root.findViewById(R.id.timer_name);
+        timerName.setText(selectedTimer.getName());
+        timerName.setTextColor(selectedTimer.getColor());
+
+        ImageView timerTypeIcon = (ImageView) root.findViewById(R.id.timer_type_icon);
+        if(selectedTimer.getType() == TimerSession.TimerSessionType.SILENT) {
+            Bitmap icon = BitmapFactory.decodeResource(getContext().getResources(),
+                    R.drawable.ic_action_volume_muted);
+            timerTypeIcon.setImageBitmap(icon);
+        } else {
+            //TODO replace with vibrate icon when we have one
+            Bitmap icon = BitmapFactory.decodeResource(getContext().getResources(),
+                    R.drawable.ic_action_alarms);
+            timerTypeIcon.setImageBitmap(icon);
+        }
+
+        ImageView timerDeleteIcon = (ImageView) root.findViewById(R.id.timer_delete_icon);
+        timerDeleteIcon.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO handle deletion of timer
+                new AlertDialog.Builder(ctx)
+                        .setTitle("Delete timer")
+                        .setMessage("Are you sure you want to delete this timer?")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // continue with delete
+                                Toast.makeText(getContext(), "Timer deleted", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                                Toast.makeText(getContext(), "Timer kept", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
+        });
+
+        Switch timerOnOffSwitch = (Switch) root.findViewById(R.id.timer_switch);
+        timerOnOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                //TODO handle the switch action, turning the timer on and off
+                Toast.makeText(getContext(), (b==true)? "Switching timer on": "Switching timer off", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
         TextView timerStartTimeView = (TextView) root.findViewById(R.id.timer_start_time);
         String startTimeText = getStartTimeInFormat(selectedTimer, TIME_STRING_FORMAT);
         timerStartTimeView.setText(startTimeText);
@@ -283,8 +335,12 @@ public class TimerWeekView extends View {
         boolean [] days = selectedTimer.getDays();
         // determines which days the timer are active and log it as String
         for(int day = 0; day < days.length; day++){
-            if(days[day])
+            if(days[day]) {
+                if (!dayString.equals("")) {
+                    dayString += ", ";
+                }
                 dayString += daysStrings[day];
+            }
         }
         return dayString;
     }
