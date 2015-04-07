@@ -22,13 +22,15 @@ public final class TimerSession implements Serializable, Comparable<TimerSession
 	private final int id;
 	private final boolean[] days;
 	private TimerSessionType type;
+	private int color; // rgb value of color
 
 	public enum TimerSessionType {
 		VIBRATE, SILENT
 	}
 
 	// Constructor
-	public TimerSession (String name, TimerSessionType type, Calendar startTime, Calendar endTime, boolean[] days, int id) {
+	public TimerSession (String name, TimerSessionType type, Calendar startTime, Calendar endTime, boolean[] days, int color, int id) {
+		this.color = color;
 		this.name = name;
 		this.type = type;
 		this.startTime = startTime;
