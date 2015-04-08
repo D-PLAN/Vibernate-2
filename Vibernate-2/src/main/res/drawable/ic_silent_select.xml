@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:drawable="@drawable/circle_btn_selected"
+    <item android:drawable="@drawable/ic_silent_tinted"
           android:state_checked="true" />
     <!-- When not selected, use background -->
-    <item android:drawable="@drawable/circle_btn"
+    <item android:drawable="@drawable/ic_action_volume_muted"
           android:state_checked="false"/>
-
-    <item android:state_pressed="true" android:drawable="@drawable/circle_btn_pressed"/>
 
 </selector>

@@ -46,33 +46,41 @@
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:padding="0dp"
-
         android:orientation="horizontal"
-        android:layout_margin="0dp">
-
-        <ToggleButton
-            android:id="@+id/create_timer_type_vibrate"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:fontFamily="sans-serif-regular"
-            android:textSize="14sp"
-            android:textOn="Vibrate"
-            android:background="@android:color/transparent"
-            android:textOff="Vibrate"
-            android:textColor="@color/toggle_color_label"
-            android:layout_weight="1"/>
-
-        <ToggleButton
-            android:id="@+id/create_timer_type_silent"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:fontFamily="sans-serif-regular"
-            android:textSize="14sp"
-            android:textColor="@color/toggle_color_label"
-            android:textOn="Silent"
-            android:textOff="Silent"/>
+        android:layout_margin="0dp"
+        android:baselineAligned="false">
+        <FrameLayout android:layout_width="match_parent"
+                     android:layout_height="match_parent"
+                     android:layout_weight="1">
+            <ToggleButton
+                    android:id="@+id/create_timer_type_vibrate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:fontFamily="sans-serif-regular"
+                    android:textSize="14sp"
+                    android:textOn="Vibrate"
+                    android:drawableStart="@drawable/ic_vibrate_select"
+                    android:background="@android:color/transparent"
+                    android:textOff="Vibrate"
+                    android:textColor="@color/toggle_color_label"
+                    android:layout_gravity="center"/>
+        </FrameLayout>
+        <FrameLayout android:layout_width="match_parent"
+                     android:layout_height="match_parent"
+                     android:layout_weight="1">
+            <ToggleButton
+                android:id="@+id/create_timer_type_silent"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:drawableStart="@drawable/ic_silent_select"
+                android:background="@android:color/transparent"
+                android:fontFamily="sans-serif-regular"
+                android:textSize="14sp"
+                android:textColor="@color/toggle_color_label"
+                android:textOn="Silent"
+                android:textOff="Silent"
+                android:layout_gravity="center"/>
+        </FrameLayout>
 
     </LinearLayout>
 
@@ -87,18 +95,19 @@
 
     <!-- Container with Start Time to End Time Set + Display -->
 
-    <TableLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="96dp"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:background="@color/background"
-        android:stretchColumns="*"
-        android:shrinkColumns="*"
-        android:paddingTop="10dp">
+        android:gravity="center">
 
-        <TableRow android:layout_width="match_parent"
-                  android:paddingTop="10dp"
-                  android:paddingLeft="25dp">
+        <LinearLayout   android:layout_width="fill_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingLeft="25dp"
+                        android:paddingTop="12dp">
             <TextView
                     android:id="@+id/create_timer_start_label"
                     android:textSize="14sp"
@@ -107,7 +116,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Start time" />
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/create_timer_start_time_clock"
+                    android:textSize="36sp"
+                    android:text="00:00"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif-light"/>
+        </LinearLayout>
 
+            <View
+                    android:layout_width="2px"
+                    android:layout_height="fill_parent"
+                    android:background="@color/dividers"></View>
+
+        <LinearLayout   android:layout_width="fill_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:paddingLeft="25dp"
+                        android:paddingTop="12dp">
             <TextView
                     android:id="@+id/create_timer_end_label"
                     android:textSize="14sp"
@@ -116,34 +145,24 @@
                     android:textColor="@color/black"
                     android:layout_height="wrap_content"
                     android:text="End time"/>
-        </TableRow>
 
-        <TableRow android:layout_width="match_parent"
-                  android:paddingLeft="25dp">
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/create_timer_start_time_clock"
-                    android:textSize="36sp"
-                    android:textColor="@color/black"
-                    android:fontFamily="sans-serif-light"/>
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/create_timer_end_time_clock"
                     android:textSize="36sp"
+                    android:text="00:00"
                     android:textColor="@color/black"
                     android:fontFamily="sans-serif-light"/>
-        </TableRow>
+        </LinearLayout>
 
-    </TableLayout>
+    </LinearLayout>
 
     <!-- End of Container with Start Time to End Time Set + Display -->
 
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dp" >
-
         <View style="@style/create_timer_divider" />
     </LinearLayout>
 
@@ -214,7 +233,7 @@
             <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="50dp"
-                    android:layout_marginTop="10dp">
+                    android:layout_marginTop="5dp">
 
                 <ToggleButton
                         android:id="@+id/create_timer_sun"
@@ -334,7 +353,7 @@
     </LinearLayout>
 
     <ImageButton
-            android:id="@+id/add_button"
+            android:id="@+id/add_timer_button"
             android:layout_width="@dimen/diameter"
             android:layout_height="@dimen/diameter"
             android:layout_gravity="end|bottom"
@@ -342,10 +361,8 @@
             android:tint="@android:color/white"
             android:background="@drawable/oval_ripple"
             android:elevation="@dimen/elevation_low"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:layout_margin="30dp"
-            android:stateListAnimator="@anim/float_button_anim"/>
+            android:stateListAnimator="@anim/float_button_anim"
+            android:contentDescription="Add timer"/>
 
 </LinearLayout>
