@@ -95,18 +95,19 @@
 
     <!-- Container with Start Time to End Time Set + Display -->
 
-    <TableLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="96dp"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:background="@color/background"
-        android:stretchColumns="*"
-        android:shrinkColumns="*"
-        android:paddingTop="10dp">
+        android:gravity="center">
 
-        <TableRow android:layout_width="match_parent"
-                  android:paddingTop="10dp"
-                  android:paddingLeft="25dp">
+        <LinearLayout   android:layout_width="fill_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingLeft="25dp"
+                        android:paddingTop="12dp">
             <TextView
                     android:id="@+id/create_timer_start_label"
                     android:textSize="14sp"
@@ -115,7 +116,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Start time" />
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/create_timer_start_time_clock"
+                    android:textSize="36sp"
+                    android:text="00:00"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif-light"/>
+        </LinearLayout>
 
+            <View
+                    android:layout_width="2px"
+                    android:layout_height="fill_parent"
+                    android:background="@color/dividers"></View>
+
+        <LinearLayout   android:layout_width="fill_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:paddingLeft="25dp"
+                        android:paddingTop="12dp">
             <TextView
                     android:id="@+id/create_timer_end_label"
                     android:textSize="14sp"
@@ -124,34 +145,24 @@
                     android:textColor="@color/black"
                     android:layout_height="wrap_content"
                     android:text="End time"/>
-        </TableRow>
 
-        <TableRow android:layout_width="match_parent"
-                  android:paddingLeft="25dp">
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/create_timer_start_time_clock"
-                    android:textSize="36sp"
-                    android:textColor="@color/black"
-                    android:fontFamily="sans-serif-light"/>
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/create_timer_end_time_clock"
                     android:textSize="36sp"
+                    android:text="00:00"
                     android:textColor="@color/black"
                     android:fontFamily="sans-serif-light"/>
-        </TableRow>
+        </LinearLayout>
 
-    </TableLayout>
+    </LinearLayout>
 
     <!-- End of Container with Start Time to End Time Set + Display -->
 
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dp" >
-
         <View style="@style/create_timer_divider" />
     </LinearLayout>
 
