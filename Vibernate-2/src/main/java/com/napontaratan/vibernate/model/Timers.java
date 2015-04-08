@@ -12,31 +12,19 @@ import java.util.*;
 public class Timers implements Iterable<TimerSession> {
 
     private List<TimerSession> timers;
-    private HashMap<Integer, TimerSession> timersMap;
+    private HashMap<Integer, TimerSession> timersIdMap;
     private int index;
 
     public Timers() {
         // TODO grabs timers from database
         timers = new ArrayList<TimerSession>();
-        timersMap = new HashMap<Integer, TimerSession>();
+        timersIdMap = new HashMap<Integer, TimerSession>();
         index = 0;
     }
 
     @Override
     public Iterator<TimerSession> iterator() {
         return timers.iterator();
-    }
-
-    public boolean hasNext() {
-        return index < timers.size();
-    }
-
-    public TimerSession next() {
-        if(this.hasNext()) {
-            return timers.get(index);
-        } else {
-            return null;
-        }
     }
 
     public void addTimer(TimerSession ...  timerSessions) throws TimerConflictException {
@@ -46,13 +34,16 @@ public class Timers implements Iterable<TimerSession> {
                 throw new TimerConflictException();
             } else {
                 timers.add(timerSession);
-                timersMap.put(timerSession.getId(), timerSession);
+                timersIdMap.put(timerSession.getId(), timerSession);
             }
         }
     }
 
-    public void removeTimer(TimerSession timerSession) {
-        timers.remove(timerSession);
+    public boolean removeTimer(TimerSession timerSession) {
+        if(timerSession != null) {
+            timersIdMap.remove(timerSession.getId());
+        }
+        return timers.remove(timerSession);
     }
 
     private boolean isTimerConflict(TimerSession timer) {
@@ -95,7 +86,7 @@ public class Timers implements Iterable<TimerSession> {
     }
 
     public TimerSession getTimerById(int id) {
-        return timersMap.get(id);
+        return timersIdMap.get(id);
     }
 
 }
