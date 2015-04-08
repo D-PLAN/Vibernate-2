@@ -69,6 +69,16 @@ public class TimerWeekView extends View {
     private Paint dividerPaint = new Paint();
     private Paint timerPaint = new Paint();
 
+    // Rects
+    private RectF containerRect;
+    private RectF dividerRect;
+
+    // Bitmaps
+    private Bitmap vibrateBitmap;
+    private Bitmap silentBitmap;
+    private Drawable vibrateDrawable;
+    private Drawable silentDrawable;
+
     //timer info
     private int earliestTime;
     private final String TIME_STRING_FORMAT = "HH:mm";
@@ -134,6 +144,14 @@ public class TimerWeekView extends View {
 
         timerPaint.setStyle(Paint.Style.FILL);
 
+        containerRect = new RectF();
+        dividerRect = new RectF();
+
+        vibrateBitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_action_alarms);
+        silentBitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_action_volume_muted);
+
+        vibrateDrawable = new BitmapDrawable(getResources(), vibrateBitmap);
+        silentDrawable = new BitmapDrawable(getResources(), silentBitmap);
 
     }
 
@@ -188,7 +206,7 @@ public class TimerWeekView extends View {
             containerXLeft = (i * columnWidth) + (i * dividerWidth);
             containerXRight = containerXLeft + columnWidth;
             //(int left, int top, int right, int bottom)
-            RectF containerRect = new RectF(containerXLeft, 0, containerXRight, contentHeight);
+            containerRect.set(containerXLeft, 0, containerXRight, contentHeight);
             canvas.drawRoundRect(containerRect, 0, 0, containerPaint);
 
             //for each timer in this day
@@ -207,7 +225,8 @@ public class TimerWeekView extends View {
                 }
                 timerYEnd = scaled(timer.getEndTimeInHours()) * timerLength;
                 // draw the actual timers itself as rectangle blocks
-                RectF timerRect = new RectF(timerXLeft, timerYStart, timerXRight, timerYEnd);
+                RectF timerRect = new RectF();
+                timerRect.set(timerXLeft, timerYStart, timerXRight, timerYEnd);
                 System.out.println("ADDING THIS TIMER    =====   "   + timer.getId());
                 System.out.println("drawing starts at   " + timerYStart + ", ends at      " + timerYEnd);
                 // if timer id is already in map, add current timer to it's value
@@ -218,11 +237,16 @@ public class TimerWeekView extends View {
                 timerPaint.setColor(timer.getColor());
                 canvas.drawRoundRect(timerRect, 15, 15, timerPaint);
                 // draw timer icon
-                Drawable d = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getContext().getResources(),
-                        timer.getIconResourceId()));
-                int iconYEnd = (int)timerYStart + d.getMinimumHeight();
-                d.setBounds(timerXLeft, (int) timerYStart, timerXRight, iconYEnd);
-                d.draw(canvas);
+                // 50 is a good size for the icon, to prevent it being too strected in larger timer blocks
+                int iconYEnd = (int)timerYStart + 50;
+                if(timer.getType() == TimerSession.TimerSessionType.VIBRATE) {
+                    vibrateDrawable.setBounds(timerXLeft, (int) timerYStart, timerXRight, iconYEnd);
+                    vibrateDrawable.draw(canvas);
+                } else if (timer.getType() == TimerSession.TimerSessionType.SILENT) {
+                    silentDrawable.setBounds(timerXLeft, (int) timerYStart, timerXRight, iconYEnd);
+                    silentDrawable.draw(canvas);
+                }
+
             }
         }
 
@@ -231,7 +255,7 @@ public class TimerWeekView extends View {
             divXLeft = (((i+1) % (numDividers+1)) * columnWidth) + (i * dividerWidth);
             divXRight = divXLeft + dividerWidth;
             //(int left, int top, int right, int bottom)
-            RectF dividerRect = new RectF(divXLeft, 0, divXRight, contentHeight);
+            dividerRect.set(divXLeft, 0, divXRight, contentHeight);
             canvas.drawRoundRect(dividerRect, 0, 0, dividerPaint);
         }
 
@@ -273,9 +297,11 @@ public class TimerWeekView extends View {
         timerName.setTextColor(selectedTimer.getColor());
 
         ImageView timerTypeIcon = (ImageView) root.findViewById(R.id.timer_type_icon);
-        Bitmap icon = BitmapFactory.decodeResource(getContext().getResources(),
-                selectedTimer.getIconResourceId());
-        timerTypeIcon.setImageBitmap(icon);
+        if(selectedTimer.getType() == TimerSession.TimerSessionType.VIBRATE) {
+            timerTypeIcon.setImageBitmap(vibrateBitmap);
+        } else if(selectedTimer.getType() == TimerSession.TimerSessionType.SILENT) {
+            timerTypeIcon.setImageBitmap(silentBitmap);
+        }
 
         ImageView timerDeleteIcon = (ImageView) root.findViewById(R.id.timer_delete_icon);
         timerDeleteIcon.setOnClickListener(new OnClickListener() {
