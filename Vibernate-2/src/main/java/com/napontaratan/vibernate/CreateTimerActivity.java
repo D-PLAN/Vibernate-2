@@ -9,9 +9,13 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
+import com.napontaratan.vibernate.controller.VibrateTimerController;
+import com.napontaratan.vibernate.database.VibernateDB;
+import com.napontaratan.vibernate.model.TimerSession;
 import com.napontaratan.vibernate.view.CreateTimerTimePicker;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class CreateTimerActivity extends FragmentActivity {
@@ -19,6 +23,8 @@ public class CreateTimerActivity extends FragmentActivity {
     static final int TIME_DIALOG = 0;
     DialogFragment timePicker;
     List<ToggleButton> days;
+    Calendar startTime;
+    Calendar endTime;
 
     @Override
     public void onCreate(Bundle savedInstance){
@@ -38,7 +44,7 @@ public class CreateTimerActivity extends FragmentActivity {
         });
 
         /* name field */
-        EditText nameField = (EditText) findViewById(R.id.create_timer_name_field);
+        final EditText nameField = (EditText) findViewById(R.id.create_timer_name_field);
         nameField.clearFocus();
 
         /* vibrate or silent mode */
@@ -159,5 +165,49 @@ public class CreateTimerActivity extends FragmentActivity {
                 }
             }
         });
+
+        /* Click on check mark */
+        ImageButton done = (ImageButton) findViewById(R.id.add_timer_button);
+        done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TimerSession.TimerSessionType type;
+                if(typeVibrate.isChecked()) type = TimerSession.TimerSessionType.VIBRATE;
+                else type = TimerSession.TimerSessionType.SILENT;
+                String start = startTime.getText().toString().replace(":","");
+                String end   = endTime.getText().toString().replace(":","");
+                createTimerSession( nameField.getText().toString(),
+                                    type,
+                                    Integer.parseInt(start.substring(0,2)),
+                                    Integer.parseInt(start.substring((2))),
+                                    Integer.parseInt(end.substring(0,2)),
+                                    Integer.parseInt(end.substring((2))),
+                                    days,
+                                    0 //TODO: color
+                        );
+            }
+        });
     }
+
+    private void createTimerSession (String name, TimerSession.TimerSessionType type, int startHour, int startMin, int endHour, int endMin, List<ToggleButton> days, int color) {
+        Calendar start = generateCalendar(startHour, startMin);
+        Calendar end   = generateCalendar(endHour, endMin);
+//        int id = VibrateTimerController.generateNextId(CreateTimerActivity.this);
+        Log.d("CreateTimer", "creating timer with the following information: \n" +
+                                "Name: " + name + "\n" +
+                                "Type: " + type + "\n" +
+                                "StartTime" + start.get(Calendar.HOUR_OF_DAY) + ":" + start.get(Calendar.MINUTE) + "\n" +
+                                "EndTime" + end.get(Calendar.HOUR_OF_DAY) + ":" + end.get(Calendar.MINUTE) + "\n");
+    }
+
+
+    private Calendar generateCalendar(int hour, int minute) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.MINUTE, minute);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal;
+    }
+
 }

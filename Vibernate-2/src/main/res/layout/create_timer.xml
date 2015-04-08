@@ -46,33 +46,41 @@
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:padding="0dp"
-
         android:orientation="horizontal"
-        android:layout_margin="0dp">
-
-        <ToggleButton
-            android:id="@+id/create_timer_type_vibrate"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:fontFamily="sans-serif-regular"
-            android:textSize="14sp"
-            android:textOn="Vibrate"
-            android:background="@android:color/transparent"
-            android:textOff="Vibrate"
-            android:textColor="@color/toggle_color_label"
-            android:layout_weight="1"/>
-
-        <ToggleButton
-            android:id="@+id/create_timer_type_silent"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:fontFamily="sans-serif-regular"
-            android:textSize="14sp"
-            android:textColor="@color/toggle_color_label"
-            android:textOn="Silent"
-            android:textOff="Silent"/>
+        android:layout_margin="0dp"
+        android:baselineAligned="false">
+        <FrameLayout android:layout_width="match_parent"
+                     android:layout_height="match_parent"
+                     android:layout_weight="1">
+            <ToggleButton
+                    android:id="@+id/create_timer_type_vibrate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:fontFamily="sans-serif-regular"
+                    android:textSize="14sp"
+                    android:textOn="Vibrate"
+                    android:drawableStart="@drawable/ic_vibrate_select"
+                    android:background="@android:color/transparent"
+                    android:textOff="Vibrate"
+                    android:textColor="@color/toggle_color_label"
+                    android:layout_gravity="center"/>
+        </FrameLayout>
+        <FrameLayout android:layout_width="match_parent"
+                     android:layout_height="match_parent"
+                     android:layout_weight="1">
+            <ToggleButton
+                android:id="@+id/create_timer_type_silent"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:drawableStart="@drawable/ic_silent_select"
+                android:background="@android:color/transparent"
+                android:fontFamily="sans-serif-regular"
+                android:textSize="14sp"
+                android:textColor="@color/toggle_color_label"
+                android:textOn="Silent"
+                android:textOff="Silent"
+                android:layout_gravity="center"/>
+        </FrameLayout>
 
     </LinearLayout>
 
@@ -214,7 +222,7 @@
             <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="50dp"
-                    android:layout_marginTop="10dp">
+                    android:layout_marginTop="5dp">
 
                 <ToggleButton
                         android:id="@+id/create_timer_sun"
@@ -334,7 +342,7 @@
     </LinearLayout>
 
     <ImageButton
-            android:id="@+id/add_button"
+            android:id="@+id/add_timer_button"
             android:layout_width="@dimen/diameter"
             android:layout_height="@dimen/diameter"
             android:layout_gravity="end|bottom"
@@ -342,10 +350,8 @@
             android:tint="@android:color/white"
             android:background="@drawable/oval_ripple"
             android:elevation="@dimen/elevation_low"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:layout_margin="30dp"
-            android:stateListAnimator="@anim/float_button_anim"/>
+            android:stateListAnimator="@anim/float_button_anim"
+            android:contentDescription="Add timer"/>
 
 </LinearLayout>
