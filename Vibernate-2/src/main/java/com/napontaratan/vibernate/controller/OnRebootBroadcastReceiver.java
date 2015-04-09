@@ -17,7 +17,7 @@ public class OnRebootBroadcastReceiver extends BroadcastReceiver {
 		VibrateTimerController controller = new VibrateTimerController(context);
 		List<TimerSession> timers = datastore.getAllTimers();
 		for(TimerSession vt : timers) {
-			controller.setAlarm(vt,context);
+			controller.setAlarm(vt);
 		}
 	}
 }
