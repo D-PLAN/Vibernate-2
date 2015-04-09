@@ -30,15 +30,16 @@
                   android:screenOrientation="portrait"
                   android:configChanges="keyboardHidden|orientation|screenSize">>
         </activity>
-    </application>
 
-    <receiver android:name="com.napontaratan.vibratetimer.controller.SilentOnBroadcastReceiver" />
-    <receiver android:name="com.napontaratan.vibratetimer.controller.VibrateOnBroadcastReceiver" />
-    <receiver android:name="com.napontaratan.vibratetimer.controller.OffBroadcastReceiver" />
-    <receiver android:name="com.napontaratan.vibratetimer.controller.OnRebootBroadcastReceiver" >
+
+    <receiver android:name=".controller.SilentOnBroadcastReceiver" />
+    <receiver android:name=".controller.VibrateOnBroadcastReceiver" />
+    <receiver android:name=".controller.OffBroadcastReceiver" />
+    <receiver android:name=".controller.OnRebootBroadcastReceiver" >
         <intent-filter>
             <action android:name="android.intent.action.BOOT_COMPLETED" />
         </intent-filter>
     </receiver>
+    </application>
 
 </manifest>
