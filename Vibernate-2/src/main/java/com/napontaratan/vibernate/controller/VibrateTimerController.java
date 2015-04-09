@@ -32,7 +32,6 @@ public final class VibrateTimerController {
 	 * @author Napon, Sunny
 	 */
 	public void setAlarm(TimerSession vt, Context context){
-		// TODO set silent timers too
 		if(!datastore.contains(vt.getId()))
 			datastore.addToDB(vt);
 		List<Calendar> startTimes = vt.getStartAlarmCalendars();
@@ -40,7 +39,12 @@ public final class VibrateTimerController {
 		int timerId = vt.getId();
 		for (Calendar startTime : startTimes) {
 			int id = timerId + startTime.get(Calendar.DAY_OF_WEEK);
-			Intent activateVibration = new Intent(parent, VibrateOnBroadcastReceiver.class); 
+			Intent activateVibration = null;
+			if(vt.getType() == TimerSession.TimerSessionType.VIBRATE) {
+				activateVibration = new Intent(parent, VibrateOnBroadcastReceiver.class);
+			} else if(vt.getType() == TimerSession.TimerSessionType.SILENT) {
+				activateVibration = new Intent(parent, SilentOnBroadcastReceiver.class);
+			}
 			createSystemTimer(startTime.getTimeInMillis(), id, activateVibration);
 		}
 		for(Calendar endTime : endTimes){
@@ -57,7 +61,6 @@ public final class VibrateTimerController {
 	 * @author Napon, Sunny
 	 */
 	public void cancelAlarm(TimerSession vt, Context context){
-		// TODO cancel silent timers too
 		datastore.remove(vt);
 		List<Calendar> times = vt.getStartAlarmCalendars();
 		for(Calendar time : times){
