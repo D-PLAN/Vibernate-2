@@ -1,6 +1,5 @@
 package com.napontaratan.vibernate;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -9,8 +8,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
-import com.napontaratan.vibernate.controller.VibrateTimerController;
-import com.napontaratan.vibernate.database.VibernateDB;
 import com.napontaratan.vibernate.model.TimerSession;
 import com.napontaratan.vibernate.view.CreateTimerTimePicker;
 
@@ -42,6 +39,26 @@ public class CreateTimerActivity extends FragmentActivity {
                 finish();
             }
         });
+
+        //Menu
+        toolbar.inflateMenu(R.menu.color_menu);
+
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+
+                /* switch (menuItem.getItemId()){
+                    case R.id.action_share:
+                        Toast.makeText(ToolbarActivity.this,"Share",Toast.LENGTH_SHORT).show();
+                        return true;
+                } */
+
+                return false;
+            }
+        });
+
+
+
 
         /* name field */
         final EditText nameField = (EditText) findViewById(R.id.create_timer_name_field);
