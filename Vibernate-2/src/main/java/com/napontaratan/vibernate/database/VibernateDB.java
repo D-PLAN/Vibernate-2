@@ -24,7 +24,6 @@ import android.util.Log;
  */
 
 public class VibernateDB extends SQLiteOpenHelper {
-
 	// Database Version
 	private static final int DATABASE_VERSION = 2;
 	// Database Name
@@ -92,7 +91,7 @@ public class VibernateDB extends SQLiteOpenHelper {
 	 * @return List<VibrateTimer>
 	 * @author Napon, Paul, Amelia
 	 */
-	public List<TimerSession> getAllVibrateTimers() {
+	public List<TimerSession> getAllTimers() {
 
 		List<TimerSession> result = new LinkedList<TimerSession>();
 		String query = "SELECT  * FROM " + TABLE_NAME;

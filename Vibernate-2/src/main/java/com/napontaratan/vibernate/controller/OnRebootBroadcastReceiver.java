@@ -15,7 +15,7 @@ public class OnRebootBroadcastReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		VibernateDB datastore = VibernateDB.getInstance(context);
 		VibrateTimerController controller = new VibrateTimerController(context);
-		List<TimerSession> timers = datastore.getAllVibrateTimers();
+		List<TimerSession> timers = datastore.getAllTimers();
 		for(TimerSession vt : timers) {
 			controller.setAlarm(vt,context);
 		}

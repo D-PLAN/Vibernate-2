@@ -8,6 +8,9 @@
             android:minSdkVersion="17"
             android:targetSdkVersion="21" />
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
             android:allowBackup="true"
             android:icon="@drawable/ic_launcher"
@@ -28,5 +31,14 @@
                   android:configChanges="keyboardHidden|orientation|screenSize">>
         </activity>
     </application>
+
+    <receiver android:name="com.napontaratan.vibratetimer.controller.SilentOnBroadcastReceiver" />
+    <receiver android:name="com.napontaratan.vibratetimer.controller.VibrateOnBroadcastReceiver" />
+    <receiver android:name="com.napontaratan.vibratetimer.controller.OffBroadcastReceiver" />
+    <receiver android:name="com.napontaratan.vibratetimer.controller.OnRebootBroadcastReceiver" >
+        <intent-filter>
+            <action android:name="android.intent.action.BOOT_COMPLETED" />
+        </intent-filter>
+    </receiver>
 
 </manifest>
