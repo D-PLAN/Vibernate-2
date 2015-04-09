@@ -9,7 +9,7 @@ import android.media.AudioManager;
  * Put the phone to ringtone mode
  * @author Napon
  */
-public class VibrateOffBroadcastReceiver extends BroadcastReceiver {
+public class offBroadcastReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		AudioManager audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
