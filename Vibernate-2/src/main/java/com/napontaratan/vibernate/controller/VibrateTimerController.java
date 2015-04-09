@@ -32,6 +32,7 @@ public final class VibrateTimerController {
 	 * @author Napon, Sunny
 	 */
 	public void setAlarm(TimerSession vt, Context context){
+		// TODO set silent timers too
 		if(!datastore.contains(vt.getId()))
 			datastore.addToDB(vt);
 		List<Calendar> startTimes = vt.getStartAlarmCalendars();
@@ -44,9 +45,10 @@ public final class VibrateTimerController {
 		}
 		for(Calendar endTime : endTimes){
 			int id = timerId + endTime.get(Calendar.DAY_OF_WEEK) + 10;
-			Intent disableVibration = new Intent(parent, VibrateOffBroadcastReceiver.class);
+			Intent disableVibration = new Intent(parent, OffBroadcastReceiver.class);
 			createSystemTimer(endTime.getTimeInMillis(), id, disableVibration);
 		}
+
 	}
 
 	/**
@@ -55,6 +57,7 @@ public final class VibrateTimerController {
 	 * @author Napon, Sunny
 	 */
 	public void cancelAlarm(TimerSession vt, Context context){
+		// TODO cancel silent timers too
 		datastore.remove(vt);
 		List<Calendar> times = vt.getStartAlarmCalendars();
 		for(Calendar time : times){
@@ -65,7 +68,7 @@ public final class VibrateTimerController {
 			pi.cancel();
 			am.cancel(pi);
 			pi = PendingIntent.getBroadcast(parent, id+10, 
-					new Intent(parent, VibrateOffBroadcastReceiver.class), 
+					new Intent(parent, OffBroadcastReceiver.class),
 					PendingIntent.FLAG_UPDATE_CURRENT);
 			pi.cancel();
 			am.cancel(pi);

@@ -24,6 +24,7 @@ import android.util.Log;
  */
 
 public class VibernateDB extends SQLiteOpenHelper {
+	// TODO support timers switching on/off
 
 	// Database Version
 	private static final int DATABASE_VERSION = 2;

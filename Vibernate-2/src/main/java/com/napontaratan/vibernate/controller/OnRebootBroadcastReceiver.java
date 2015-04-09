@@ -13,6 +13,7 @@ public class OnRebootBroadcastReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
+		// TODO get silent timers too
 		VibernateDB datastore = VibernateDB.getInstance(context);
 		VibrateTimerController controller = new VibrateTimerController(context);
 		List<TimerSession> timers = datastore.getAllVibrateTimers();
