@@ -63,7 +63,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         TextView description;
         TextClock startTime;
         TextClock endTime;
-        Button remove;
+
 
 
         public vViewHolder(View itemView) {
@@ -71,8 +71,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             description = (TextView) itemView.findViewById(R.id.v_description);
             startTime = (TextClock) itemView.findViewById(R.id.v_startTime);
             endTime = (TextClock) itemView.findViewById(R.id.v_endTime);
-            remove = (Button) itemView.findViewById(R.id.remove_b);
-            remove.setOnTouchListener(this);
+
 
         }
 
@@ -88,9 +87,6 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
                 case MotionEvent.ACTION_DOWN:
                     break;
                 case MotionEvent.ACTION_UP:
-                    if ( v == remove) {
-                        delete(getPosition());
-                    }
                     break;
             }
             return false;

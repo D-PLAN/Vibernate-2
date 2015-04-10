@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="48dp" android:weightSum="1">
+              android:background="@color/background"
+              android:layout_height="100dp" android:weightSum="1">
 
 
     <!-- One Row -->
@@ -33,37 +34,61 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!--Time Part -->
+
+        <!--Time Box -->
         <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent">
-            <TextClock
+            <!-- Start Time box -->
+            <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/v_startTime"
-                    android:textColor="#000" android:layout_weight="0.20"/>
-            <TextClock
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/v_endTime"
-                    android:textColor="#000" android:layout_weight="0.20"/>
-        </LinearLayout>
+                    android:orientation="vertical">
 
-        <Button
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Remove"
-                android:id="@+id/remove_b"/>
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="END"
+                        android:textColor="#EBEBEB"/>
+                <TextClock
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/v_startTime"/>
+
+
+
+            </LinearLayout>
+
+            <!-- End Time Box -->
+            <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="START"
+                        android:textColor="#EBEBEB"/>
+                <TextClock
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/v_endTime"/>
+
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
 
     </LinearLayout> <!-- End of Row -->
 
     <!-- Divider -->
     <View
             android:layout_width="fill_parent"
-            android:layout_height="8dp"
-            android:background="@android:color/darker_gray"/>
+            android:layout_height="10dp"
+            android:background="@color/dividers"/>
 
 
 
