@@ -29,6 +29,7 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
         super.setUp();
         mActiivty = getActivity();
         assertNotNull("mActiivty is null", mActiivty);
+        TimerSessionHolder.getInstance().removeAll();
     }
 
 
@@ -218,7 +219,7 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
 
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
-        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, true, false, false, true, false}, MOCK_TIMER_COLOR, 1);
+        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, true, true, true, true, true, true}, MOCK_TIMER_COLOR, 1);
 
         start = createCalendar(9,0,0,0);
         end = createCalendar(11, 0, 0, 0);

@@ -53,22 +53,6 @@ public final class TimerSession implements Serializable, Comparable<TimerSession
 		return startTime;
 	}
 
-    /**
-     * @author daniel
-     * @return start time in seconds
-     */
-    public int getStartTimeInHours() {
-        return startTime.get(Calendar.HOUR_OF_DAY);
-    }
-
-    /**
-     * @author daniel
-     * @return end time in seconds
-     */
-    public int getEndTimeInHours() {
-        return endTime.get(Calendar.HOUR_OF_DAY);
-    }
-
 	/**
 	 * @author daniel
 	 * @return name of this timer

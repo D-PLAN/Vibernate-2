@@ -111,7 +111,8 @@ public class TimerWeekView extends View {
         end = createCalendar(17, 0, 0, 0);
         TimerSession five = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, Color.rgb(136, 67, 173), 6);
         try {
-            timerSessionHolder = TimerSessionHolder.getInstance();
+            timerSessionHolder = TimerSessionHolder.getInstance().setContext(getContext());
+            timerSessionHolder.removeAll();
             timerSessionHolder.addTimer(one, two, three, four, five);
         } catch (TimerConflictException e) {
             e.printStackTrace();
@@ -217,11 +218,11 @@ public class TimerWeekView extends View {
                 TimerSession timer = timersForTheDay.get(j);
                 if(j == 0) {
                     // to start the padding at top
-                    timerYStart = (scaled(timer.getStartTimeInHours()) * timerLength) + timerYPadding;
+                    timerYStart = (scaled(timer.getStartTime()) * timerLength) + timerYPadding;
                 } else {
-                    timerYStart = scaled(timer.getStartTimeInHours()) * timerLength;
+                    timerYStart = scaled(timer.getStartTime()) * timerLength;
                 }
-                timerYEnd = scaled(timer.getEndTimeInHours()) * timerLength;
+                timerYEnd = scaled(timer.getEndTime()) * timerLength;
                 // draw the actual timers itself as rectangle blocks
                 RectF timerRect = new RectF();
                 timerRect.set(timerXLeft, timerYStart, timerXRight, timerYEnd);
@@ -380,13 +381,13 @@ public class TimerWeekView extends View {
         earliestTime = 23;
         int latest = 0;
         for(TimerSession timerSession: timerSessionHolder) {
-            int start = timerSession.getStartTimeInHours();
-            int end = timerSession.getEndTimeInHours();
-            if(start < earliestTime) {
-                earliestTime = start;
+            int startHour = timerSession.getStartTime().get(Calendar.HOUR_OF_DAY);
+            int endHour = timerSession.getEndTime().get(Calendar.HOUR_OF_DAY);
+            if(startHour < earliestTime) {
+                earliestTime = startHour;
             }
-            if(end > latest) {
-                latest = end;
+            if(endHour > latest) {
+                latest = endHour;
             }
         }
         return (latest - earliestTime);
@@ -394,11 +395,14 @@ public class TimerWeekView extends View {
 
     /**
      * we scale the time so that the earliest time would be the starting point instead of 0
+     * scaling by HOUR
      * @param realTime time before it got scaled
      * @return the scaled time for onDraw
      */
-    private int scaled(int realTime) {
-        return (realTime - earliestTime);
+    private int scaled(Calendar realTime) {
+        int time = realTime.get(Calendar.HOUR_OF_DAY);
+        if(time == 0) time = 1; // round up 0 hour to 1 so that it doesn't disappear off screen
+        return (time - earliestTime);
     }
 
 

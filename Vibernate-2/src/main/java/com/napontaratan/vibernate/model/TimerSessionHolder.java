@@ -39,8 +39,8 @@ public class TimerSessionHolder implements Iterable<TimerSession> {
         return instance;
     }
 
-    private void populateHolder(List<TimerSession> timers) {
-        for(TimerSession timerSession: timers) {
+    private void populateHolder(List<TimerSession> allTimers) {
+        for(TimerSession timerSession: allTimers) {
             timers.add(timerSession);
             timersIdMap.put(timerSession.getId(), timerSession);
         }
@@ -58,11 +58,11 @@ public class TimerSessionHolder implements Iterable<TimerSession> {
      */
     public void addTimer(TimerSession ...  timerSessions) throws TimerConflictException {
         //TODO we can maybe try to coagulate 2 timers which are back to back of the same type
-        //TODO set timer
         for(TimerSession timerSession: timerSessions) {
             if(isTimerConflict(timerSession)) {
-                throw new TimerConflictException();
+                throw new TimerConflictException("Timer id " + timerSession.getId() + " 's time conflicts with existing timers");
             } else {
+                timerController.setAlarm(timerSession);
                 timers.add(timerSession);
                 timersIdMap.put(timerSession.getId(), timerSession);
             }
@@ -75,8 +75,8 @@ public class TimerSessionHolder implements Iterable<TimerSession> {
      * @return true if successfully removed, false otherwise
      */
     public boolean removeTimer(TimerSession timerSession) {
-        //TODO remove timer
         if(timerSession != null) {
+            timerController.cancelAlarm(timerSession);
             timersIdMap.remove(timerSession.getId());
         }
         return timers.remove(timerSession);
@@ -84,9 +84,11 @@ public class TimerSessionHolder implements Iterable<TimerSession> {
 
 
     public void removeAll() {
+        for(TimerSession timerSession: timers){
+            timerController.cancelAlarm(timerSession);
+        }
         timers = new ArrayList<TimerSession>();
         timersIdMap = new HashMap<Integer, TimerSession>();
-        // TODO implement in timercontroller
     }
 
     private boolean isTimerConflict(TimerSession timer) {
@@ -105,11 +107,11 @@ public class TimerSessionHolder implements Iterable<TimerSession> {
         // get all the days for which this timer is on
         // check this timer's start time for conflict with the timers on these days
         List<TimerSession> timersOnThisDay = timerOnThisDay(day);
-        int startTime = timerToAdd.getStartTimeInHours();
-        int endTime = timerToAdd.getEndTimeInHours();
+        Calendar startTime = timerToAdd.getStartTime();
+        Calendar endTime = timerToAdd.getEndTime();
         for(TimerSession timer: timersOnThisDay) {
             // if you start earlier, then you have to end earlier than the next timer's start time
-            if((startTime < timer.getEndTimeInHours()) && (endTime > timer.getStartTimeInHours())) {
+            if(startTime.compareTo(timer.getEndTime()) < 0 && endTime.compareTo(timer.getStartTime()) > 0) {
                 return true;
             }
 
