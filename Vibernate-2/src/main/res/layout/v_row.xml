@@ -6,27 +6,30 @@
               android:layout_height="100dp" android:weightSum="1">
 
 
-    <!-- One Row -->
+    <!-- Row -->
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:id="@+id/each_row"
-            android:background="@color/background"
-            android:layout_height="match_parent" android:layout_weight="0.20">
+            android:layout_height="match_parent"
+            android:id="@+id/row"
+            android:background="@color/background">
 
-        <!-- Description Part -->
+        <!-- Left Bar -->
         <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/left_bar"
+                android:layout_weight="0.1">
+
             <TextView
                     android:id="@+id/v_description"
-                    android:padding="8dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Large Text"
-                    android:textColor="#000"/>
+                    android:textColor="@color/black"
+                    android:textSize="24dp"
+                    android:text="Sleeping"/>
+
             <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
@@ -34,27 +37,32 @@
             </LinearLayout>
         </LinearLayout>
 
-
-        <!--Time Box -->
+        <!--Right Bar -->
         <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
+                android:id="@+id/right_bar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3">
             <!-- Start Time box -->
             <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
                     android:orientation="vertical">
 
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="END"
-                        android:textColor="#EBEBEB"/>
-                <TextClock
+                        android:text="START"
+                        android:textColor="@color/black"
+                        android:textSize="10sp"/>
+                <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/v_startTime"/>
+                        android:textColor="@color/black"
+                        android:id="@+id/v_startTime"
+                        android:textSize="20sp"/>
 
 
 
@@ -62,22 +70,27 @@
 
             <!-- End Time Box -->
             <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
                     android:orientation="vertical">
                 <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="START"
-                        android:textColor="#EBEBEB"/>
-                <TextClock
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/v_endTime"/>
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.5"
+                        android:text="END"
+                        android:textColor="@color/black"
+                        android:textSize="10sp"/>
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.5"
+                        android:textColor="@color/black"
+                        android:id="@+id/v_endTime"
+                        android:textSize="20sp"/>
 
 
             </LinearLayout>
-
 
 
         </LinearLayout>
@@ -89,7 +102,6 @@
             android:layout_width="fill_parent"
             android:layout_height="10dp"
             android:background="@color/dividers"/>
-
 
 
 </LinearLayout>

@@ -49,8 +49,8 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
     public void onBindViewHolder(vViewHolder holder, int position) {
         vInfo current = data.get(position);
         holder.description.setText(current.descrition);
-        holder.startTime.setFormat12Hour(current.startTime);
-        holder.endTime.setFormat12Hour(current.endTime);
+        holder.startTime.setText(current.startTime);
+        holder.endTime.setText(current.endTime);
     }
 
     @Override
@@ -61,16 +61,16 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
 
     class vViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
         TextView description;
-        TextClock startTime;
-        TextClock endTime;
+        TextView startTime;
+        TextView endTime;
 
 
 
         public vViewHolder(View itemView) {
             super(itemView);
             description = (TextView) itemView.findViewById(R.id.v_description);
-            startTime = (TextClock) itemView.findViewById(R.id.v_startTime);
-            endTime = (TextClock) itemView.findViewById(R.id.v_endTime);
+            startTime = (TextView) itemView.findViewById(R.id.v_startTime);
+            endTime = (TextView) itemView.findViewById(R.id.v_endTime);
 
 
         }
