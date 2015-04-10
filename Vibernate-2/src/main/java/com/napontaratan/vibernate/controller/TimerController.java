@@ -12,17 +12,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-public final class VibrateTimerController {
+public final class TimerController {
 
 	private static final int WEEK_MILLISECONDS = 604800000;
 	private VibernateDB datastore;
 	private AlarmManager am; 
-	private Context parent;
+	private Context context;
 
-	public VibrateTimerController(Context context){
-		am = (AlarmManager) context.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+	public TimerController(Context context) {
+		this.context = context;
+		am = (AlarmManager) this.context.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
 		datastore = VibernateDB.getInstance(context);
-		parent = context;
 	}
 
 	/**
@@ -40,16 +40,16 @@ public final class VibrateTimerController {
 		// Timer on
 		Intent activateVibration = null;
 		if(vt.getType() == TimerSession.TimerSessionType.VIBRATE) {
-			activateVibration = new Intent(parent, VibrateOnBroadcastReceiver.class);
+			activateVibration = new Intent(context, VibrateOnBroadcastReceiver.class);
 		} else if(vt.getType() == TimerSession.TimerSessionType.SILENT) {
-			activateVibration = new Intent(parent, SilentOnBroadcastReceiver.class);
+			activateVibration = new Intent(context, SilentOnBroadcastReceiver.class);
 		}
 		for (Calendar startTime : startTimes) {
 			int id = timerId + startTime.get(Calendar.DAY_OF_WEEK);
 			createSystemTimer(startTime.getTimeInMillis(), id, activateVibration);
 		}
 		// Timer off
-		Intent disableVibration = new Intent(parent, OffBroadcastReceiver.class);
+		Intent disableVibration = new Intent(context, OffBroadcastReceiver.class);
 		for(Calendar endTime : endTimes){
 			int id = timerId + endTime.get(Calendar.DAY_OF_WEEK) + 10;
 			createSystemTimer(endTime.getTimeInMillis(), id, disableVibration);
@@ -73,27 +73,26 @@ public final class VibrateTimerController {
 		List<Calendar> times = vt.getStartAlarmCalendars();
 		Intent intent = null;
 		if(vt.getType() == TimerSession.TimerSessionType.VIBRATE) {
-			intent = new Intent(parent, VibrateOnBroadcastReceiver.class);
+			intent = new Intent(context, VibrateOnBroadcastReceiver.class);
 		} else if (vt.getType() == TimerSession.TimerSessionType.SILENT) {
-			intent = new Intent(parent, SilentOnBroadcastReceiver.class);
+			intent = new Intent(context, SilentOnBroadcastReceiver.class);
 		}
 		PendingIntent pi = null;
 		for(Calendar time : times){
 			int id = vt.getId() + time.get(Calendar.DAY_OF_WEEK);
-			pi = PendingIntent.getBroadcast(parent, id,
+			pi = PendingIntent.getBroadcast(context, id,
 					intent, PendingIntent.FLAG_UPDATE_CURRENT);
 			pi.cancel();
 			am.cancel(pi);
-			pi = PendingIntent.getBroadcast(parent, id+10,
-					new Intent(parent, OffBroadcastReceiver.class),
+			pi = PendingIntent.getBroadcast(context, id+10,
+					new Intent(context, OffBroadcastReceiver.class),
 					PendingIntent.FLAG_UPDATE_CURRENT);
 			pi.cancel();
 			am.cancel(pi);
 		}
 	}
 
-	public List<TimerSession> getVibrateTimers() {
-		// TODO add this to Timers
+	public List<TimerSession> getAllTimers() {
 		return datastore.getAllTimers();
 	}
 
@@ -105,18 +104,17 @@ public final class VibrateTimerController {
 	 * @author Napon, Sunny
 	 */
 	private void createSystemTimer(long time, int id, Intent intent){
-		PendingIntent startVibrating = PendingIntent.getBroadcast(parent,
+		PendingIntent startVibrating = PendingIntent.getBroadcast(context,
 				id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 		am.setRepeating(AlarmManager.RTC, time, WEEK_MILLISECONDS, startVibrating); 
 	}
 
 	/**
 	 * Generate a unique id for each alarm.
-	 * @param context
 	 * @return a unique alarm id
 	 * @author Napon
 	 */
-	public static int generateNextId(Context context) {
+	public int generateNextId() {
 		SharedPreferences prefs = context.getSharedPreferences("idcounter", Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
 		int counter = prefs.getInt("idcounter", -1);

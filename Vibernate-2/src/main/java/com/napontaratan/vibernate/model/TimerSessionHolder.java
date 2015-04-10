@@ -1,25 +1,49 @@
 package com.napontaratan.vibernate.model;
 
+import android.content.Context;
+import com.napontaratan.vibernate.controller.TimerController;
+
 import java.util.*;
 
 /**
  * Created by daniel on 2015-02-28.
  *
- * This is the collection we use to store our timers
- * encapsulates the way we add the timers and potentially decide how to resize the length of timers
- * on CalendarFragment
+ * Singleton data holder for our timers, connects the UI to our data
+ * by taking care of timer actions done with UI and DB
  */
-public class Timers implements Iterable<TimerSession> {
+public class TimerSessionHolder implements Iterable<TimerSession> {
 
+    private TimerController timerController;
     private List<TimerSession> timers;
     private HashMap<Integer, TimerSession> timersIdMap;
-    private int index;
 
-    public Timers() {
-        // TODO grabs timers from database
+    private TimerSessionHolder() {
         timers = new ArrayList<TimerSession>();
         timersIdMap = new HashMap<Integer, TimerSession>();
-        index = 0;
+    }
+
+    private static final TimerSessionHolder instance = new TimerSessionHolder();
+
+    public static TimerSessionHolder getInstance() {
+        return instance;
+    }
+
+    /**
+     * Sets the activity context and retrieve timers from db to populate data holder
+     * @param ctx
+     * @return this data holder
+     */
+    public TimerSessionHolder setContext(Context ctx) {
+        timerController = new TimerController(ctx);
+        populateHolder(timerController.getAllTimers());
+        return instance;
+    }
+
+    private void populateHolder(List<TimerSession> timers) {
+        for(TimerSession timerSession: timers) {
+            timers.add(timerSession);
+            timersIdMap.put(timerSession.getId(), timerSession);
+        }
     }
 
     @Override
@@ -27,8 +51,14 @@ public class Timers implements Iterable<TimerSession> {
         return timers.iterator();
     }
 
+    /**
+     * Adds a new timer if it passes conflict checks to collection and db
+     * @param timerSessions
+     * @throws TimerConflictException if this timer to be added conflicts with existing timers
+     */
     public void addTimer(TimerSession ...  timerSessions) throws TimerConflictException {
-        //TODO: we can maybe try to coagulate 2 timers which are back to back of the same type
+        //TODO we can maybe try to coagulate 2 timers which are back to back of the same type
+        //TODO set timer
         for(TimerSession timerSession: timerSessions) {
             if(isTimerConflict(timerSession)) {
                 throw new TimerConflictException();
@@ -39,11 +69,24 @@ public class Timers implements Iterable<TimerSession> {
         }
     }
 
+    /**
+     * Removes an existing timer from collection and db
+     * @param timerSession
+     * @return true if successfully removed, false otherwise
+     */
     public boolean removeTimer(TimerSession timerSession) {
+        //TODO remove timer
         if(timerSession != null) {
             timersIdMap.remove(timerSession.getId());
         }
         return timers.remove(timerSession);
+    }
+
+
+    public void removeAll() {
+        timers = new ArrayList<TimerSession>();
+        timersIdMap = new HashMap<Integer, TimerSession>();
+        // TODO implement in timercontroller
     }
 
     private boolean isTimerConflict(TimerSession timer) {

@@ -1,6 +1,5 @@
 package com.napontaratan.vibernate;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -9,8 +8,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
-import com.napontaratan.vibernate.controller.VibrateTimerController;
-import com.napontaratan.vibernate.database.VibernateDB;
 import com.napontaratan.vibernate.model.TimerSession;
 import com.napontaratan.vibernate.view.CreateTimerTimePicker;
 
@@ -212,7 +209,7 @@ public class CreateTimerActivity extends FragmentActivity {
     private void createTimerSession (String name, TimerSession.TimerSessionType type, int startHour, int startMin, int endHour, int endMin, List<ToggleButton> days, int color) {
         Calendar start = generateCalendar(startHour, startMin);
         Calendar end   = generateCalendar(endHour, endMin);
-//        int id = VibrateTimerController.generateNextId(CreateTimerActivity.this);
+//        int id = TimerController.generateNextId(CreateTimerActivity.this);
         Log.d("CreateTimer", "creating timer with the following information: \n" +
                                 "Name: " + name + "\n" +
                                 "Type: " + type + "\n" +

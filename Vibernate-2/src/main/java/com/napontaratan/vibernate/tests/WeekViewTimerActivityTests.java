@@ -5,9 +5,7 @@ import android.test.ActivityInstrumentationTestCase2;
 import com.napontaratan.vibernate.MainActivity;
 import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
-import com.napontaratan.vibernate.model.Timers;
-import com.napontaratan.vibernate.view.TimerWeekView;
-import junit.framework.Assert;
+import com.napontaratan.vibernate.model.TimerSessionHolder;
 
 import java.util.*;
 
@@ -35,7 +33,7 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
 
 
     public void testAddTimers() {
-        Timers timers = new Timers();
+        TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
         TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 1);
@@ -52,14 +50,14 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
         end = createCalendar(18, 0, 0, 0);
         TimerSession five = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[]{true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 5);
         try {
-            timers.addTimer(one, two, three, four, five);
+            timerSessionHolder.addTimer(one, two, three, four, five);
         } catch (TimerConflictException e) {
             fail();
         }
     }
 
     public void testAddNonConflictTimers() {
-        Timers timers = new Timers();
+        TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
 
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
@@ -79,17 +77,17 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
         TimerSession four = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, true, false, false, false, false, false}, MOCK_TIMER_COLOR, 4);
 
         try {
-            timers.addTimer(one);
-            timers.addTimer(two);
-            timers.addTimer(three);
-            timers.addTimer(four);
+            timerSessionHolder.addTimer(one);
+            timerSessionHolder.addTimer(two);
+            timerSessionHolder.addTimer(three);
+            timerSessionHolder.addTimer(four);
         } catch (TimerConflictException e) {
             fail();
         }
     }
 
     public void testAddDuplicateTimers() {
-        Timers timers = new Timers();
+        TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
 
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
@@ -101,8 +99,8 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
         TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 2);
 
         try {
-            timers.addTimer(one);
-            timers.addTimer(timer);
+            timerSessionHolder.addTimer(one);
+            timerSessionHolder.addTimer(timer);
             fail("Should have thrown TimerConflictException");
         } catch(TimerConflictException e) {
 
@@ -111,7 +109,7 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
 
 
     public void testAddDuplicateStartTimeTimers() {
-        Timers timers = new Timers();
+        TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
 
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
@@ -123,8 +121,8 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
         TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR,2);
 
         try {
-            timers.addTimer(one);
-            timers.addTimer(timer);
+            timerSessionHolder.addTimer(one);
+            timerSessionHolder.addTimer(timer);
             fail("Should have thrown TimerConflictException");
         } catch(TimerConflictException e) {
 
@@ -132,7 +130,7 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
     }
 
     public void testAddDuplicateEndTimeTimers() {
-        Timers timers = new Timers();
+        TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
 
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
@@ -144,8 +142,8 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
         TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR,2);
 
         try {
-            timers.addTimer(one);
-            timers.addTimer(timer);
+            timerSessionHolder.addTimer(one);
+            timerSessionHolder.addTimer(timer);
             fail("Should have thrown TimerConflictException");
         } catch(TimerConflictException e) {
 
@@ -153,7 +151,7 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
     }
 
     public void testAddStartTimeOverlappedTimers() {
-        Timers timers = new Timers();
+        TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
 
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
@@ -165,8 +163,8 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
         TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR,2);
 
         try {
-            timers.addTimer(one);
-            timers.addTimer(timer);
+            timerSessionHolder.addTimer(one);
+            timerSessionHolder.addTimer(timer);
             fail("Should have thrown TimerConflictException");
         } catch(TimerConflictException e) {
 
@@ -174,7 +172,7 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
     }
 
     public void testAddEndTimeOverlappedTimers() {
-        Timers timers = new Timers();
+        TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
 
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
@@ -186,8 +184,8 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
         TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 2);
 
         try {
-            timers.addTimer(one);
-            timers.addTimer(timer);
+            timerSessionHolder.addTimer(one);
+            timerSessionHolder.addTimer(timer);
             fail("Should have thrown TimerConflictException");
         } catch(TimerConflictException e) {
 
@@ -195,7 +193,7 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
     }
 
     public void testAddOverlappedTimers() {
-        Timers timers = new Timers();
+        TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
 
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
@@ -207,8 +205,8 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
         TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 2);
 
         try {
-            timers.addTimer(one);
-            timers.addTimer(timer);
+            timerSessionHolder.addTimer(one);
+            timerSessionHolder.addTimer(timer);
             fail("Should have thrown TimerConflictException");
         } catch(TimerConflictException e) {
 
@@ -216,7 +214,7 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
     }
 
     public void testAddMultiDaysConflictTimers() {
-        Timers timers = new Timers();
+        TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
 
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
@@ -227,8 +225,8 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
         TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { false, true, true, false, false, false, true}, MOCK_TIMER_COLOR ,2);
 
         try {
-            timers.addTimer(one);
-            timers.addTimer(timer);
+            timerSessionHolder.addTimer(one);
+            timerSessionHolder.addTimer(timer);
             fail("Should have thrown TimerConflictException");
         } catch(TimerConflictException e) {
 
@@ -238,7 +236,7 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
 
     public void testGetTimersByDay() {
         // make sure we get all the correct timers for a particular day in a sorted order
-        Timers timers = new Timers();
+        TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
 
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
@@ -263,41 +261,41 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
 
         try {
             List<TimerSession> empty = new ArrayList<TimerSession>();
-            assertEquals(empty, timers.timerOnThisDay(0));
+            assertEquals(empty, timerSessionHolder.timerOnThisDay(0));
 
-            timers.addTimer(one);
+            timerSessionHolder.addTimer(one);
             List<TimerSession> result = new ArrayList<TimerSession>();
             result.add(one);
-            assertEquals(result, timers.timerOnThisDay(0));
-            assertEquals(empty, timers.timerOnThisDay(1));
+            assertEquals(result, timerSessionHolder.timerOnThisDay(0));
+            assertEquals(empty, timerSessionHolder.timerOnThisDay(1));
 
-            timers = new Timers();
-            timers.addTimer(one);
-            timers.addTimer(two);
+            timerSessionHolder.removeAll();
+            timerSessionHolder.addTimer(one);
+            timerSessionHolder.addTimer(two);
             result = new ArrayList<TimerSession>();
             result.add(one);
-            assertEquals(result, timers.timerOnThisDay(0));
+            assertEquals(result, timerSessionHolder.timerOnThisDay(0));
             result = new ArrayList<TimerSession>();
             result.add(two);
-            assertEquals(result, timers.timerOnThisDay(1));
-            assertEquals(empty, timers.timerOnThisDay(3));
+            assertEquals(result, timerSessionHolder.timerOnThisDay(1));
+            assertEquals(empty, timerSessionHolder.timerOnThisDay(3));
 
             // make sure it's sorted
-            timers = new Timers();
-            timers.addTimer(two,three,four,five);
+            timerSessionHolder.removeAll();
+            timerSessionHolder.addTimer(two,three,four,five);
             result = new ArrayList<TimerSession>();
             result.add(five);
             result.add(four);
             result.add(three);
             result.add(two);
-            assertNotSame(result, timers.timerOnThisDay(1));
+            assertNotSame(result, timerSessionHolder.timerOnThisDay(1));
             // manually add timers in correct order
             result = new ArrayList<TimerSession>();
             result.add(two);
             result.add(three);
             result.add(four);
             result.add(five);
-            assertEquals(result, timers.timerOnThisDay(1));
+            assertEquals(result, timerSessionHolder.timerOnThisDay(1));
 
         } catch (TimerConflictException e) {
            fail();
@@ -306,23 +304,23 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
     }
 
     public void testGetTimerById() {
-        Timers timers = new Timers();
+        TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
         TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 1);
 
         try {
-            timers.addTimer(one);
-            assertEquals(one, timers.getTimerById(1));
-            assertEquals(null, timers.getTimerById(2));
+            timerSessionHolder.addTimer(one);
+            assertEquals(one, timerSessionHolder.getTimerById(1));
+            assertEquals(null, timerSessionHolder.getTimerById(2));
         } catch (TimerConflictException e) {
             e.printStackTrace();
         }
     }
 
     public void testRemoveTimer() {
-        Timers timers = new Timers();
-        boolean removed = timers.removeTimer(null);
+        TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
+        boolean removed = timerSessionHolder.removeTimer(null);
         assertEquals(false, removed);
 
         Calendar start = createCalendar(8,0,0,0);
@@ -338,44 +336,44 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
         TimerSession three = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, true, false, false, false, false, false}, MOCK_TIMER_COLOR, 3);
 
         try {
-            timers.addTimer(one);
-            boolean isRemoved = timers.removeTimer(one);
+            timerSessionHolder.addTimer(one);
+            boolean isRemoved = timerSessionHolder.removeTimer(one);
             assertTrue(isRemoved);
             // check that timer has been removed from both list and map
-            removedFromAll(one, timers);
+            removedFromAll(one, timerSessionHolder);
 
             // remove the correct timer
-            timers.addTimer(one);
-            timers.addTimer(two);
-            isRemoved = timers.removeTimer(two);
+            timerSessionHolder.addTimer(one);
+            timerSessionHolder.addTimer(two);
+            isRemoved = timerSessionHolder.removeTimer(two);
             assertTrue(isRemoved);
-            removedFromAll(two, timers);
-            getFromAll(one, timers);
+            removedFromAll(two, timerSessionHolder);
+            getFromAll(one, timerSessionHolder);
 
             // doesn't remove a non existing timer which isn't null
-            timers.addTimer(two);  // two was removed previously
-            isRemoved = timers.removeTimer(three); // three wasn't added
+            timerSessionHolder.addTimer(two);  // two was removed previously
+            isRemoved = timerSessionHolder.removeTimer(three); // three wasn't added
             assertFalse(isRemoved);
-            getFromAll(one, timers);
-            getFromAll(two, timers);
+            getFromAll(one, timerSessionHolder);
+            getFromAll(two, timerSessionHolder);
         } catch (TimerConflictException e) {
             fail("Timer should be removed");
         }
 
     }
 
-    private void getFromAll(TimerSession timer, Timers timers) {
-        TimerSession retrievedTimer = timers.getTimerById(timer.getId());
+    private void getFromAll(TimerSession timer, TimerSessionHolder timerSessionHolder) {
+        TimerSession retrievedTimer = timerSessionHolder.getTimerById(timer.getId());
         assertEquals(timer, retrievedTimer);
         boolean [] days = timer.getDays();
         for(int i = 0; i < days.length; i++) {
             if(days[i]) {
-                boolean hasTimer = timers.timerOnThisDay(i).contains(timer);
+                boolean hasTimer = timerSessionHolder.timerOnThisDay(i).contains(timer);
                 assertTrue(hasTimer);
             }
         }
         TimerSession containedTimer = null;
-        for(TimerSession eachTimer: timers) {
+        for(TimerSession eachTimer: timerSessionHolder) {
             if(eachTimer.getId() == timer.getId()) {
                 containedTimer = eachTimer;
                 break;
@@ -384,17 +382,17 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
         assertEquals(timer, containedTimer);
     }
 
-    private void removedFromAll(TimerSession timer, Timers timers) {
-        TimerSession retrievedTimer = timers.getTimerById(timer.getId()); // from map
+    private void removedFromAll(TimerSession timer, TimerSessionHolder timerSessionHolder) {
+        TimerSession retrievedTimer = timerSessionHolder.getTimerById(timer.getId()); // from map
         assertNull(retrievedTimer);
         boolean [] days = timer.getDays();
         for(int i = 0; i < days.length; i++) {
             if(days[i]) {
-                boolean hasTimer = timers.timerOnThisDay(i).contains(timer);
+                boolean hasTimer = timerSessionHolder.timerOnThisDay(i).contains(timer);
                 assertFalse(hasTimer);
             }
         }
-        for(TimerSession eachTimer : timers) {
+        for(TimerSession eachTimer : timerSessionHolder) {
             assertNotSame(eachTimer.getId(), timer.getId());
         }
     }

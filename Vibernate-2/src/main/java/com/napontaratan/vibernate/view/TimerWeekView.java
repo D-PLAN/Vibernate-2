@@ -3,11 +3,9 @@ package com.napontaratan.vibernate.view;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,7 +13,7 @@ import android.widget.*;
 import com.napontaratan.vibernate.R;
 import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
-import com.napontaratan.vibernate.model.Timers;
+import com.napontaratan.vibernate.model.TimerSessionHolder;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -84,7 +82,7 @@ public class TimerWeekView extends View {
     private final String TIME_STRING_FORMAT = "HH:mm";
 
     private HashMap<Integer, List<RectF>> timerRects =  new HashMap<Integer, List<RectF>>(); // List of timer rectangles
-    private Timers timers;
+    private TimerSessionHolder timerSessionHolder;
     private int prevTimer;
 
     public TimerWeekView(Context context) {
@@ -113,8 +111,8 @@ public class TimerWeekView extends View {
         end = createCalendar(17, 0, 0, 0);
         TimerSession five = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, Color.rgb(136, 67, 173), 6);
         try {
-            timers = new Timers();
-            timers.addTimer(one, two, three, four, five);
+            timerSessionHolder = TimerSessionHolder.getInstance();
+            timerSessionHolder.addTimer(one, two, three, four, five);
         } catch (TimerConflictException e) {
             e.printStackTrace();
         }
@@ -212,7 +210,7 @@ public class TimerWeekView extends View {
             //for each timer in this day
             timerXLeft = containerXLeft + timerPaddingLeft;
             timerXRight = timerXLeft + timerWidth; // - timer padding right?
-            List<TimerSession> timersForTheDay = timers.timerOnThisDay(i);
+            List<TimerSession> timersForTheDay = timerSessionHolder.timerOnThisDay(i);
             float timerYStart = 0;
             float timerYEnd = 0;
             for(int j = 0; j < timersForTheDay.size(); j++) {
@@ -381,7 +379,7 @@ public class TimerWeekView extends View {
     private int getTimerDuration() {
         earliestTime = 23;
         int latest = 0;
-        for(TimerSession timerSession: timers) {
+        for(TimerSession timerSession: timerSessionHolder) {
             int start = timerSession.getStartTimeInHours();
             int end = timerSession.getEndTimeInHours();
             if(start < earliestTime) {
@@ -433,7 +431,7 @@ public class TimerWeekView extends View {
             for(RectF rect: listOfTimerRects)
             if(rect.contains(x, y)) {
                 int timerId = (int) pair.getKey();
-                return timers.getTimerById(timerId);
+                return timerSessionHolder.getTimerById(timerId);
             }
         }
         return null;
