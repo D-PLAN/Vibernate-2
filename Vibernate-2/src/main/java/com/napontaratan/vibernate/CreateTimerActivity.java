@@ -59,7 +59,7 @@ public class CreateTimerActivity extends FragmentActivity {
 
                 String[] color_array = getBaseContext().getResources().getStringArray(R.array.default_color_choice_values);
                 int[] cArray = new int[color_array.length];
-                for(int k = 0; k < color_array.length; k++){
+                for(int k = 0; k < color_array.length; k++){;
                     cArray[k] = Color.parseColor(color_array[k]);
                 }
 
