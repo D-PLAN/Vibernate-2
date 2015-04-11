@@ -1,6 +1,7 @@
 package com.napontaratan.vibernate;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -10,6 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import com.napontaratan.vibernate.model.TimerSession;
+import com.napontaratan.vibernate.view.ColorPickerDialog;
+import com.napontaratan.vibernate.view.ColorPickerSwatch;
 import com.napontaratan.vibernate.view.CreateTimerTimePicker;
 
 import java.util.ArrayList;
@@ -49,10 +52,33 @@ public class CreateTimerActivity extends FragmentActivity {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
 
-                ColorPaletteDialog cdd = new ColorPaletteDialog(a);
-                cdd.show();
 
-                Toast.makeText(getBaseContext(), "Choose a Color", Toast.LENGTH_SHORT).show();
+                String[] color_array = getBaseContext().getResources().getStringArray(R.array.default_color_choice_values);
+                int[] cArray = new int[color_array.length];
+                for(int k = 0; k < color_array.length; k++){
+                    cArray[k] = Color.parseColor(color_array[k]);
+                }
+
+                ColorPickerDialog colorCalendar = ColorPickerDialog.newInstance(
+                        R.string.color_picker_default_title,
+                        cArray,
+                        R.color.blue,
+                        5,
+                        ColorPickerDialog.SIZE_SMALL);
+
+                //Implement listener to get selected color value
+                colorCalendar.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener(){
+
+                    @Override
+                    public void onColorSelected(int color) {
+                        Toast.makeText(getBaseContext(), "Color is " + color, Toast.LENGTH_SHORT).show();
+                    }
+
+                });
+
+                colorCalendar.show(getFragmentManager(),"cal");
+
+
                 return false;
             }
         });
