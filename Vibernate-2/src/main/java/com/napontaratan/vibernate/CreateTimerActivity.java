@@ -2,6 +2,7 @@ package com.napontaratan.vibernate;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -27,9 +28,7 @@ public class CreateTimerActivity extends FragmentActivity {
     static final int TIME_DIALOG = 0;
     DialogFragment timePicker;
     List<ToggleButton> days;
-    Calendar startTime;
-    Calendar endTime;
-    Activity a = this;
+    int colorPicked;
     boolean[] bDays = new boolean[7];
 
     @Override
@@ -59,7 +58,7 @@ public class CreateTimerActivity extends FragmentActivity {
 
                 String[] color_array = getBaseContext().getResources().getStringArray(R.array.default_color_choice_values);
                 int[] cArray = new int[color_array.length];
-                for(int k = 0; k < color_array.length; k++){
+                for(int k = 0; k < color_array.length; k++){;
                     cArray[k] = Color.parseColor(color_array[k]);
                 }
 
@@ -71,11 +70,13 @@ public class CreateTimerActivity extends FragmentActivity {
                         ColorPickerDialog.SIZE_SMALL);
 
                 //Implement listener to get selected color value
-                colorCalendar.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener(){
+                colorCalendar.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
 
                     @Override
                     public void onColorSelected(int color) {
                         Toast.makeText(getBaseContext(), "Color is " + color, Toast.LENGTH_SHORT).show();
+                        colorPicked = color;
+                        System.out.println("colorPicked is " + colorPicked);
                     }
 
                 });
@@ -149,44 +150,46 @@ public class CreateTimerActivity extends FragmentActivity {
         days.add((ToggleButton) findViewById(R.id.create_timer_fri));
         days.add((ToggleButton) findViewById(R.id.create_timer_sat));
 
+        // if sunday is clicked
         days.get(0).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (days.get(0).isChecked() && days.get(6).isChecked()) {
-                    weekends_btn.setChecked(true);
+                if(days.get(0).isChecked()) {
                     bDays[0] = true;
-                }
-                else {
-                    weekends_btn.setChecked(false);
+                    if (days.get(6).isChecked()) weekends_btn.setChecked(true);
+                    else weekends_btn.setChecked(false);
+                } else {
                     bDays[0] = false;
                 }
             }
         });
+
+        // if saturday is clicked
         days.get(6).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (days.get(0).isChecked() && days.get(6).isChecked()) {
-                    weekends_btn.setChecked(true);
+                if(days.get(6).isChecked()) {
                     bDays[6] = true;
-                }
-                else {
-                    weekends_btn.setChecked(false);
+                    if (days.get(0).isChecked()) weekends_btn.setChecked(true);
+                    else weekends_btn.setChecked(false);
+                } else {
                     bDays[6] = false;
                 }
             }
         });
 
+        // if one of the days from mon-fri is clicked
         for(int i = 1; i < 6; i++){
             final int finalI = i;
             days.get(i).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if(days.get(finalI).isChecked()) {
+                        bDays[finalI] = true;
                         for(int j = 1; j < 6; j++){
                             if(!days.get(j).isChecked()) return;
                         }
                         weekdays_btn.setChecked(true);
-                        bDays[finalI] = true;
                     } else {
                         weekdays_btn.setChecked(false);
                         bDays[finalI] = false;
@@ -200,11 +203,15 @@ public class CreateTimerActivity extends FragmentActivity {
             public void onClick(View v) {
                 if(weekdays_btn.isChecked()) {
                     for(int i = 0; i < 7; i++){
-                        if(i != 0 && i != 6) days.get(i).setChecked(true);
+                        if(i != 0 && i != 6) {
+                            days.get(i).setChecked(true);
+                            bDays[i] = true;
+                        }
                     }
                 } else {
                     for(int i = 0; i < 7; i++){
                         if(i != 0 && i != 6) days.get(i).setChecked(false);
+                        bDays[i] = false;
                     }
                 }
             }
@@ -215,11 +222,17 @@ public class CreateTimerActivity extends FragmentActivity {
             public void onClick(View v) {
                 if(weekends_btn.isChecked()) {
                     for(int i = 0; i < 7; i++){
-                        if(i == 0 || i == 6) days.get(i).setChecked(true);
+                        if(i == 0 || i == 6) {
+                            days.get(i).setChecked(true);
+                            bDays[i] = true;
+                        }
                     }
                 } else {
                     for(int i = 0; i < 7; i++){
-                        if(i == 0 || i == 6) days.get(i).setChecked(false);
+                        if(i == 0 || i == 6) {
+                            days.get(i).setChecked(false);
+                            bDays[i] = false;
+                        }
                     }
                 }
             }
@@ -231,24 +244,44 @@ public class CreateTimerActivity extends FragmentActivity {
             @Override
             public void onClick(View view) {
                 TimerSession.TimerSessionType type;
+
                 if(typeVibrate.isChecked()) type = TimerSession.TimerSessionType.VIBRATE;
                 else type = TimerSession.TimerSessionType.SILENT;
+
                 String start = startTime.getText().toString().replace(":","");
                 String end   = endTime.getText().toString().replace(":","");
-                createTimerSession( nameField.getText().toString(),
-                                    type,
-                                    Integer.parseInt(start.substring(0,2)),
-                                    Integer.parseInt(start.substring((2))),
-                                    Integer.parseInt(end.substring(0,2)),
-                                    Integer.parseInt(end.substring((2))),
-                                    days,
-                                    0 //TODO: color
-                        );
+
+                createTimerSession(nameField.getText().toString(),
+                        type,
+                        Integer.parseInt(start.substring(0, 2)),
+                        Integer.parseInt(start.substring((2))),
+                        Integer.parseInt(end.substring(0, 2)),
+                        Integer.parseInt(end.substring((2))),
+                        days,
+                        R.color.colorAccent); //TODO: color
             }
         });
     }
 
     private void createTimerSession (String name, TimerSession.TimerSessionType type, int startHour, int startMin, int endHour, int endMin, List<ToggleButton> days, int color) {
+        if(name == null || name.equals("")) {
+            createDialog("Insufficient info", "Please specify a timer name.");
+            return;
+        }
+
+        boolean daySelected = false;
+        for(int i = 0; i < 7; i++) {
+            if(bDays[i]){
+                daySelected = true;
+                break;
+            }
+        }
+
+        if(!daySelected) {
+            createDialog("Insufficient info", "Please specify a day.");
+            return;
+        }
+
         Calendar start = generateCalendar(startHour, startMin);
         Calendar end   = generateCalendar(endHour, endMin);
         TimerSession newTimer = new TimerSession(name, type, start, end, bDays,color);
@@ -256,11 +289,8 @@ public class CreateTimerActivity extends FragmentActivity {
         try {
             TimerSessionHolder.getInstance().addTimer(newTimer);
         } catch (TimerConflictException e) {
-            new AlertDialog.Builder(this)
-                    .setTitle("Timer Conflict")
-                    .setMessage("The time specified is in conflict with another timer. Please try again.")
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
+            createDialog("Timer Conflict", "The time specified is in conflict with another timer. Please try again.");
+            return;
         }
 
         Log.d("CreateTimer", "creating timer with the following information: \n" +
@@ -268,6 +298,8 @@ public class CreateTimerActivity extends FragmentActivity {
                                 "Type: " + type + "\n" +
                                 "StartTime" + start.get(Calendar.HOUR_OF_DAY) + ":" + start.get(Calendar.MINUTE) + "\n" +
                                 "EndTime" + end.get(Calendar.HOUR_OF_DAY) + ":" + end.get(Calendar.MINUTE) + "\n");
+
+        finish();
     }
 
 
@@ -280,4 +312,16 @@ public class CreateTimerActivity extends FragmentActivity {
         return cal;
     }
 
+    public void createDialog(String title, String msg) {
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(msg)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                }).show();
+    }
 }
