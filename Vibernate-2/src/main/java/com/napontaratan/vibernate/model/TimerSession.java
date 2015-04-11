@@ -21,7 +21,7 @@ public final class TimerSession implements Serializable, Comparable<TimerSession
 	private String name;
 	private final Calendar startTime;
 	private final Calendar endTime;
-	private final int id;
+	private int id;
 	private final boolean[] days;
 	private TimerSessionType type;
 	private int color; // rgb value of color
@@ -31,14 +31,30 @@ public final class TimerSession implements Serializable, Comparable<TimerSession
 	}
 
 	// Constructor
-	public TimerSession (String name, TimerSessionType type, Calendar startTime, Calendar endTime, boolean[] days, int color, int id) {
+	public TimerSession (String name, TimerSessionType type, Calendar startTime, Calendar endTime, boolean[] days, int color) {
 		this.color = color;
 		this.name = name;
 		this.type = type;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.days = days;
-		this.id = id;
+		this.id = -1;
+	}
+
+	/**
+	 * Sets the unique id for this timer object, if hasn't been set (which will be -1) and use this as key in DB
+	 * This value should only be set once and not changed during it's lifetime
+	 * Throws a runtime error if attempted to re-set id
+	 * @param id
+	 */
+	public void setId(int id) {
+		// http://stackoverflow.com/questions/14146182/how-to-create-a-variable-that-can-be-set-only-once-but-isnt-final-in-java?lq=1
+		// this field is not made final since we only generate the id after it's creation
+		if(this.id == -1) {
+			this.id = id;
+		} else {
+			throw new RuntimeException("Timer for this Id has already been set");
+		}
 	}
 
 	public int getId(){

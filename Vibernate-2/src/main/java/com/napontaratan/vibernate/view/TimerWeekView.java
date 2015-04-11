@@ -97,19 +97,19 @@ public class TimerWeekView extends View {
         String MOCK_TIMER_NAME = "CPSC 101";
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
-        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, true, true, true, true, true, true}, Color.rgb(205, 64, 109), 1);
+        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, true, true, true, true, true, true}, Color.rgb(205, 64, 109));
         start = createCalendar(15,0,0,0);
         end = createCalendar(17, 0, 0, 0);
-        TimerSession two = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { false, false, false, false, false, true, false},Color.rgb(69, 146, 134), 3);
+        TimerSession two = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { false, false, false, false, false, true, false},Color.rgb(69, 146, 134));
         start = createCalendar(12,0,0,0);
         end = createCalendar(15, 0, 0, 0);
-        TimerSession three = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, false, true, false, true, false, false}, Color.rgb(106, 125, 137), 4);
+        TimerSession three = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, false, true, false, true, false, false}, Color.rgb(106, 125, 137));
         start = createCalendar(17,0,0,0);
         end = createCalendar(18, 0, 0, 0);
-        TimerSession four = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false},Color.rgb(136, 67, 173), 5);
+        TimerSession four = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false},Color.rgb(136, 67, 173));
         start = createCalendar(12,0,0,0);
         end = createCalendar(17, 0, 0, 0);
-        TimerSession five = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, Color.rgb(136, 67, 173), 6);
+        TimerSession five = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, Color.rgb(136, 67, 173));
         try {
             timerSessionHolder = TimerSessionHolder.getInstance().setContext(getContext());
             timerSessionHolder.removeAll();
