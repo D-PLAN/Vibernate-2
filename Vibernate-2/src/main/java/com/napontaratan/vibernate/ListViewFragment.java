@@ -1,14 +1,17 @@
 package com.napontaratan.vibernate;
 
 import android.app.Fragment;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.napontaratan.vibernate.model.TimerSession;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class ListViewFragment extends Fragment {
@@ -23,7 +26,6 @@ public class ListViewFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.list_fragment, container, false);
         vRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycle_view);
         v_Adapter = new vAdapter(getActivity(), ListViewFragment.getData());
-        v_Adapter.addItem(new vInfo());
         vRecyclerView.setAdapter(v_Adapter);
         vRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         return rootView;
@@ -31,20 +33,46 @@ public class ListViewFragment extends Fragment {
 
 
     // Obtain data:
-    public static List<vInfo> getData() {
-        List<vInfo> data = new ArrayList<>();
-        String descritpions[] = {"d1", "d2", "d3", "d4", "d5", "d6", "d7"};
-        String startTimes[] = {"15:00","16:00","17:00","18:00","19:00", "20:00", "21:00"};
-        String endTimes[] = {"15:01","15:02","15:03","15:04","15:05", "15:06", "15:07"};
+    public static List<TimerSession> getData() {
+        List<TimerSession> data = new ArrayList<>();
+        String MOCK_TIMER_NAME = "CPSC 101";
+        Calendar start = createCalendar(8,0,0,0);
+        Calendar end = createCalendar(12, 0, 0, 0);
+        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, true, true, true, true, true, true}, Color.rgb(205, 64, 109));
+        start = createCalendar(15,0,0,0);
+        end = createCalendar(17, 0, 0, 0);
+        TimerSession two = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { false, false, false, false, false, true, false},Color.rgb(69, 146, 134));
+        start = createCalendar(12,0,0,0);
+        end = createCalendar(15, 0, 0, 0);
+        TimerSession three = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, false, true, false, true, false, false}, Color.rgb(106, 125, 137));
+        start = createCalendar(17,0,0,0);
+        end = createCalendar(18, 0, 0, 0);
+        TimerSession four = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false},Color.rgb(136, 67, 173));
+        start = createCalendar(12,0,0,0);
+        end = createCalendar(17, 0, 0, 0);
+        TimerSession five = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, Color.rgb(136, 67, 173));
 
-        for (int i = 0; i < descritpions.length; i++) {
-            vInfo current = new vInfo();
-            current.descrition = descritpions[i];
-            current.startTime = startTimes[i];
-            current.endTime = endTimes[i];
-            data.add(current);
-        }
+        data.add(one);
+        data.add(two);
+        data.add(three);
+        data.add(four);
+        data.add(five);
+        data.add(one);
+        data.add(two);
+        data.add(three);
+
         System.out.println("size of data is: " + data.size());
         return data;
+    }
+
+    //TODO get rid of this, for testing purposes
+    private static Calendar createCalendar(int hour, int min, int second, int millis) {
+        Calendar cal = Calendar.getInstance();
+
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.MINUTE, min);
+        cal.set(Calendar.SECOND, second);
+        cal.set(Calendar.MILLISECOND, millis);
+        return cal;
     }
 }

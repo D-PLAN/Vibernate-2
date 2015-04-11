@@ -7,6 +7,9 @@ public class vInfo {
     String descrition;
     String startTime;
     String endTime;
+    String weekdays;
+    String name;
+    String type; // silent or vibrate
 
     public vInfo() {
         this.descrition = "hi im v";
