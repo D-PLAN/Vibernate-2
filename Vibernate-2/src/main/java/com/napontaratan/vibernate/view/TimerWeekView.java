@@ -320,7 +320,7 @@ public class TimerWeekView extends View {
         timerInfoView.setVisibility(View.VISIBLE);
 
         timerName.setText(selectedTimer.getName());
-        timerName.setTextColor(selectedTimer.getColor());
+        timerName.setTextColor(getResources().getColor(selectedTimer.getColor()));
 
         if(selectedTimer.getType() == TimerSession.TimerSessionType.VIBRATE) {
             timerTypeIcon.setImageBitmap(vibrateBitmap);
@@ -331,7 +331,6 @@ public class TimerWeekView extends View {
         timerDeleteIcon.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO handle deletion of timer
                 new AlertDialog.Builder(ctx)
                         .setTitle("Delete timer")
                         .setMessage("Are you sure you want to delete this timer?")
@@ -356,7 +355,6 @@ public class TimerWeekView extends View {
         timerOnOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                //TODO handle the switch action, turning the timer on and off
                 if (b) {
                     selectedTimer.setTimerSnooze(true);
                     timerSessionHolder.snoozeTimer(selectedTimer);
