@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:background="@color/background"
-              android:layout_height="100dp" android:weightSum="1">
 
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:background="@color/background"
+             android:layout_width="match_parent"
+             android:layout_height="100dp" android:weightSum="1">
 
+<LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleX="0.9" android:scaleY="0.9"
+        android:background="@color/white"
+        android:layout_gravity="center"
+        android:elevation="@dimen/cardview_default_elevation"
+        android:orientation="vertical">
     <!-- Row -->
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/row"
-            android:background="@color/background">
+            android:baselineAligned="false">
 
         <!-- Left Bar -->
         <LinearLayout
@@ -20,27 +27,42 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/left_bar"
+                android:baselineAligned="false"
                 android:layout_weight="0.1">
 
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.1">
             <TextView
                     android:id="@+id/v_description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
-                    android:textSize="24dp"
+                    android:textSize="24sp"
                     android:text="Sleeping"/>
+            </LinearLayout>
 
             <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5">
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textColor="@color/black"
+                        android:text="WEEKDAYS"/>
+
             </LinearLayout>
+
         </LinearLayout>
 
         <!--Right Bar -->
         <LinearLayout
                 android:orientation="vertical"
                 android:id="@+id/right_bar"
+                android:baselineAligned="false"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.3">
@@ -55,7 +77,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="START"
-                        android:textColor="@color/black"
+                        android:textColor="@color/background"
                         android:textSize="10sp"/>
                 <TextView
                         android:layout_width="wrap_content"
@@ -79,7 +101,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="0.5"
                         android:text="END"
-                        android:textColor="@color/black"
+                        android:textColor="@color/background"
                         android:textSize="10sp"/>
                 <TextView
                         android:layout_width="match_parent"
@@ -96,12 +118,6 @@
         </LinearLayout>
 
     </LinearLayout> <!-- End of Row -->
-
-    <!-- Divider -->
-    <View
-            android:layout_width="fill_parent"
-            android:layout_height="10dp"
-            android:background="@color/dividers"/>
-
-
 </LinearLayout>
+
+</FrameLayout>
