@@ -66,7 +66,7 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
     public static ColorPickerDialog newInstance(int titleResId, int[] colors, int selectedColor,
                                                 int columns, int size) {
         ColorPickerDialog ret = new ColorPickerDialog();
-        ret.initialize(titleResId, colors, selectedColor, columns, size);
+        ret.initialize(titleResId, colors, selectedColor, 3, size);
         return ret;
     }
 
