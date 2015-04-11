@@ -99,6 +99,10 @@ public class TimerSessionHolder implements Iterable<TimerSession> {
         }
     }
 
+    public boolean isEmpty() {
+        return timers.isEmpty() && timersIdMap.isEmpty();
+    }
+
     public void removeAll() {
         timerController.removeAllAlarm(timers);
         timers = new ArrayList<TimerSession>();
