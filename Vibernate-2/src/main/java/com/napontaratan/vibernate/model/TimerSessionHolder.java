@@ -83,6 +83,22 @@ public class TimerSessionHolder implements Iterable<TimerSession> {
         return timers.remove(timerSession);
     }
 
+    /**
+     * Snooze an existing timer
+     */
+    public void snoozeTimer(TimerSession timerSession) {
+        timerController.cancelAlarm(timerSession);
+    }
+
+    /**
+     * wake an existing snoozed timer
+     */
+    public void wakeTimer(TimerSession timerSession) {
+        if(timerSession.getTimerSnooze()) {
+            timerController.setAlarm(timerSession);
+        }
+    }
+
     public void removeAll() {
         timerController.removeAllAlarm(timers);
         timers = new ArrayList<TimerSession>();

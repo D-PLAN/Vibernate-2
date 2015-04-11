@@ -6,9 +6,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextClock;
-import android.widget.TextView;
+import android.widget.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,10 +17,11 @@ import java.util.List;
 public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
     private LayoutInflater inflater;
     List<vInfo> data = Collections.emptyList(); // this is so that we won't be getting nullpointer exception
-
+    private Context context;
 
     public vAdapter(Context context, List<vInfo> data) {
         inflater = LayoutInflater.from(context);
+        this.context = context;
         this.data = data;
     }
 
@@ -63,7 +62,8 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         TextView description;
         TextView startTime;
         TextView endTime;
-
+        TextView activeDays;
+        ImageView muteIcon;
 
 
         public vViewHolder(View itemView) {
@@ -71,12 +71,17 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             description = (TextView) itemView.findViewById(R.id.v_description);
             startTime = (TextView) itemView.findViewById(R.id.v_startTime);
             endTime = (TextView) itemView.findViewById(R.id.v_endTime);
-
-
+            muteIcon = (ImageView) itemView.findViewById(R.id.v_mute_icon);
+            activeDays = (TextView) itemView.findViewById(R.id.v_show_activeDays);
+            muteIcon.setOnClickListener(this);
+            
         }
 
         @Override
         public void onClick(View v) {
+            if (v == muteIcon) {
+                Toast.makeText(context, "Timer" + getPosition() + "is muted", Toast.LENGTH_SHORT).show();
+            }
 
         }
 
