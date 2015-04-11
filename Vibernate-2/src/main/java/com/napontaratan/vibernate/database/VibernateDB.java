@@ -70,14 +70,14 @@ public class VibernateDB extends SQLiteOpenHelper {
 	 * Add a VibrateTimer to the database based on the ID
 	 * @author Napon, Paul, Amelia
 	 */
-	public void addToDB(TimerSession vt) {
+	public void addToDB(TimerSession timerSession) {
 		System.out.println("add to db");
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues values = new ContentValues();
 
 		try {
-			values.put(KEY_ID, vt.getId());
-			values.put(KEY_ALARM, TimerSession.serialize(vt));
+			values.put(KEY_ID, timerSession.getId());
+			values.put(KEY_ALARM, TimerSession.serialize(timerSession));
 		} catch (Exception e) {
 			System.out.println("IOException caught in addToDB()");
 		}
@@ -97,26 +97,26 @@ public class VibernateDB extends SQLiteOpenHelper {
 		String query = "SELECT  * FROM " + TABLE_NAME;
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(query, null);
-		TimerSession vt = null;
+		TimerSession timerSession = null;
 
 		if (cursor.moveToFirst()) {
 			do {
 				try {
-					vt = (TimerSession) TimerSession.deserialize(cursor.getBlob(1));
+					timerSession = (TimerSession) TimerSession.deserialize(cursor.getBlob(1));
 				} catch (ClassNotFoundException e) {
 					Log.d("Exception", "ClassNotFoundException caught in getAllAlarmsFromDB()");
 				} catch (IOException e) {
 					Log.d("Exception", "IOException caught in getAllAlarmsFromDB()");
 				}
 
-				result.add(vt);
+				result.add(timerSession);
 			} while (cursor.moveToNext());
 		}
 		return result;
 	}
 
 	/**
-	 * Clears the database
+	 * Clears the database by dropping table and re-creating
 	 * @author Napon, Paul, Amelia
 	 */
 	public void deleteAllFromDB(){
@@ -127,12 +127,12 @@ public class VibernateDB extends SQLiteOpenHelper {
 
 	/**
 	 * Remove a VibrateTimer entry from the database that matches the given id
-	 * @param TimerSession vt
+	 * @param TimerSession timerSession
 	 * @author Napon, Paul, Amelia
 	 */
-	public void remove(TimerSession vt) {
+	public void remove(TimerSession timerSession) {
 		SQLiteDatabase db = this.getWritableDatabase();
-		db.delete(TABLE_NAME, KEY_ID+" =?", new String[] { String.valueOf(vt.getId()) });
+		db.delete(TABLE_NAME, KEY_ID+" =?", new String[] { String.valueOf(timerSession.getId()) });
 		db.close();
 	}
 
@@ -151,4 +151,5 @@ public class VibernateDB extends SQLiteOpenHelper {
 		}
 		return true;
 	}
+
 }

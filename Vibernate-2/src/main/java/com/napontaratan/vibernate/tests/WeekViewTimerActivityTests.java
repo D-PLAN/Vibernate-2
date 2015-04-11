@@ -23,7 +23,6 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
         super(MainActivity.class);
     }
 
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -32,24 +31,29 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
         TimerSessionHolder.getInstance().removeAll();
     }
 
-
     public void testAddTimers() {
         TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
+
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
-        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 1);
+        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR);
+
         start = createCalendar(8,0,0,0);
         end = createCalendar(9, 0, 0, 0);
-        TimerSession two = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, true, false, false, false, false, false}, MOCK_TIMER_COLOR, 2);
+        TimerSession two = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, true, false, false, false, false, false}, MOCK_TIMER_COLOR);
+
         start = createCalendar(15,0,0,0);
         end = createCalendar(17, 0, 0, 0);
-        TimerSession three = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { false, false, false, false, false, true, false}, MOCK_TIMER_COLOR, 3);
+        TimerSession three = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { false, false, false, false, false, true, false}, MOCK_TIMER_COLOR);
+
         start = createCalendar(12,0,0,0);
         end = createCalendar(15, 0, 0, 0);
-        TimerSession four = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, false, true, false, false, false, false}, MOCK_TIMER_COLOR, 4);
+        TimerSession four = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, false, true, false, false, false, false}, MOCK_TIMER_COLOR);
+
         start = createCalendar(17,0,0,0);
         end = createCalendar(18, 0, 0, 0);
-        TimerSession five = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[]{true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 5);
+        TimerSession five = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[]{true, false, false, false, false, false, false}, MOCK_TIMER_COLOR);
+
         try {
             timerSessionHolder.addTimer(one, two, three, four, five);
         } catch (TimerConflictException e) {
@@ -62,20 +66,20 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
 
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
-        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 1);
+        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         start = createCalendar(12 ,0,0,0);
         end = createCalendar(17, 0, 0, 0);
-        TimerSession two = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 2);
+        TimerSession two = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         start = createCalendar(17 ,0,0,0);
         end = createCalendar(18, 0, 0, 0);
-        TimerSession three = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 3);
+        TimerSession three = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         // irrelevant timers on different day
         start = createCalendar(8 ,0,0,0);
         end = createCalendar(12, 0, 0, 0);
-        TimerSession four = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, true, false, false, false, false, false}, MOCK_TIMER_COLOR, 4);
+        TimerSession four = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, true, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         try {
             timerSessionHolder.addTimer(one);
@@ -92,12 +96,12 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
 
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
-        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 1);
+        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         // same time
         start = createCalendar(8,0,0,0);
         end = createCalendar(12, 0, 0, 0);
-        TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 2);
+        TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         try {
             timerSessionHolder.addTimer(one);
@@ -114,12 +118,12 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
 
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
-        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 1);
+        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         // same start time
         start = createCalendar(8,0,0,0);
         end = createCalendar(9, 0, 0, 0);
-        TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR,2);
+        TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         try {
             timerSessionHolder.addTimer(one);
@@ -135,12 +139,12 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
 
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
-        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 1);
+        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         // same end time
         start = createCalendar(11,0,0,0);
         end = createCalendar(12, 0, 0, 0);
-        TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR,2);
+        TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         try {
             timerSessionHolder.addTimer(one);
@@ -156,12 +160,12 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
 
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
-        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 1);
+        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         // start time overlapped
         start = createCalendar(7,0,0,0);
         end = createCalendar(9, 0, 0, 0);
-        TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR,2);
+        TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         try {
             timerSessionHolder.addTimer(one);
@@ -177,12 +181,12 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
 
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
-        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 1);
+        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         // end time overlapped
         start = createCalendar(11,0,0,0);
         end = createCalendar(13, 0, 0, 0);
-        TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 2);
+        TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         try {
             timerSessionHolder.addTimer(one);
@@ -198,12 +202,12 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
 
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
-        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 1);
+        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         // longer duration but time overlapped
         start = createCalendar(7,0,0,0);
         end = createCalendar(13, 0, 0, 0);
-        TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 2);
+        TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         try {
             timerSessionHolder.addTimer(one);
@@ -219,11 +223,11 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
 
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
-        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, true, true, true, true, true, true}, MOCK_TIMER_COLOR, 1);
+        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, true, true, true, true, true, true}, MOCK_TIMER_COLOR);
 
         start = createCalendar(9,0,0,0);
         end = createCalendar(11, 0, 0, 0);
-        TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { false, true, true, false, false, false, true}, MOCK_TIMER_COLOR ,2);
+        TimerSession timer = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { false, true, true, false, false, false, true}, MOCK_TIMER_COLOR);
 
         try {
             timerSessionHolder.addTimer(one);
@@ -241,24 +245,23 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
 
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
-        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR,  1);
+        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         start = createCalendar(8,0,0,0);
         end = createCalendar(9, 0, 0, 0);
-        TimerSession two = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { false, true, false, false, false, false, false}, MOCK_TIMER_COLOR,  2);
+        TimerSession two = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { false, true, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         start = createCalendar(9,0,0,0);
         end = createCalendar(10, 0, 0, 0);
-        TimerSession three = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, true, false, false, false, false, false}, MOCK_TIMER_COLOR, 3);
+        TimerSession three = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, true, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         start = createCalendar(11,0,0,0);
         end = createCalendar(12, 0, 0, 0);
-        TimerSession four = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, true, false, false, false, false, false}, MOCK_TIMER_COLOR, 4);
+        TimerSession four = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, true, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         start = createCalendar(13,0,0,0);
         end = createCalendar(14, 0, 0, 0);
-        TimerSession five = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { false, true, false, false, false, false, false}, MOCK_TIMER_COLOR, 5);
-
+        TimerSession five = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { false, true, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         try {
             List<TimerSession> empty = new ArrayList<TimerSession>();
@@ -270,9 +273,7 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
             assertEquals(result, timerSessionHolder.timerOnThisDay(0));
             assertEquals(empty, timerSessionHolder.timerOnThisDay(1));
 
-            timerSessionHolder.removeAll();
-            timerSessionHolder.addTimer(one);
-            timerSessionHolder.addTimer(two);
+            timerSessionHolder.addTimer(two); // list: one, two
             result = new ArrayList<TimerSession>();
             result.add(one);
             assertEquals(result, timerSessionHolder.timerOnThisDay(0));
@@ -282,8 +283,7 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
             assertEquals(empty, timerSessionHolder.timerOnThisDay(3));
 
             // make sure it's sorted
-            timerSessionHolder.removeAll();
-            timerSessionHolder.addTimer(two,three,four,five);
+            timerSessionHolder.addTimer(three,four,five); // list: one, two, three, four five
             result = new ArrayList<TimerSession>();
             result.add(five);
             result.add(four);
@@ -308,12 +308,12 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
         TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
-        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 1);
+        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         try {
             timerSessionHolder.addTimer(one);
-            assertEquals(one, timerSessionHolder.getTimerById(1));
-            assertEquals(null, timerSessionHolder.getTimerById(2));
+            assertEquals(one, timerSessionHolder.getTimerById(one.getId()));
+            assertEquals(null, timerSessionHolder.getTimerById(-1));
         } catch (TimerConflictException e) {
             e.printStackTrace();
         }
@@ -326,15 +326,20 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
 
         Calendar start = createCalendar(8,0,0,0);
         Calendar end = createCalendar(12, 0, 0, 0);
-        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR, 1);
+        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         start = createCalendar(8,0,0,0);
         end = createCalendar(9, 0, 0, 0);
-        TimerSession two = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { false, true, false, false, false, false, false}, MOCK_TIMER_COLOR,  2);
+        TimerSession two = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { false, true, false, false, false, false, false}, MOCK_TIMER_COLOR);
 
         start = createCalendar(9,0,0,0);
         end = createCalendar(10, 0, 0, 0);
-        TimerSession three = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, true, false, false, false, false, false}, MOCK_TIMER_COLOR, 3);
+        TimerSession three = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, true, false, false, false, false, false}, MOCK_TIMER_COLOR);
+
+        start = createCalendar(11,0,0,0);
+        end = createCalendar(13, 0, 0, 0);
+        TimerSession four = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, true, true, false, true, false, true}, MOCK_TIMER_COLOR);
+
 
         try {
             timerSessionHolder.addTimer(one);
@@ -344,19 +349,16 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
             removedFromAll(one, timerSessionHolder);
 
             // remove the correct timer
-            timerSessionHolder.addTimer(one);
-            timerSessionHolder.addTimer(two);
+            timerSessionHolder.addTimer(two, three);
             isRemoved = timerSessionHolder.removeTimer(two);
             assertTrue(isRemoved);
             removedFromAll(two, timerSessionHolder);
-            getFromAll(one, timerSessionHolder);
+            getFromAll(three, timerSessionHolder);
 
             // doesn't remove a non existing timer which isn't null
-            timerSessionHolder.addTimer(two);  // two was removed previously
-            isRemoved = timerSessionHolder.removeTimer(three); // three wasn't added
+            isRemoved = timerSessionHolder.removeTimer(four); // three wasn't added
             assertFalse(isRemoved);
-            getFromAll(one, timerSessionHolder);
-            getFromAll(two, timerSessionHolder);
+            getFromAll(three, timerSessionHolder);
         } catch (TimerConflictException e) {
             fail("Timer should be removed");
         }

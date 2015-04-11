@@ -28,20 +28,20 @@ public final class TimerController {
 	/**
 	 * Start a repeating vibrate service at the start time and
 	 * a repeating ringtone service at the end time 
-	 * @param vt is the vibrateAlarm object to create a timer for
+	 * @param timerSession is the vibrateAlarm object to create a timer for
 	 * @author Napon, Sunny
 	 */
-	public void setAlarm(TimerSession vt){
-		int timerId = vt.getId();
+	public void setAlarm(TimerSession timerSession){
+		int timerId = timerSession.getId();
 		if(!datastore.contains(timerId))
-			datastore.addToDB(vt);
-		List<Calendar> startTimes = vt.getStartAlarmCalendars();
-		List<Calendar> endTimes = vt.getEndAlarmCalendars();
+			datastore.addToDB(timerSession);
+		List<Calendar> startTimes = timerSession.getStartAlarmCalendars();
+		List<Calendar> endTimes = timerSession.getEndAlarmCalendars();
 		// Timer on
 		Intent activateVibration = null;
-		if(vt.getType() == TimerSession.TimerSessionType.VIBRATE) {
+		if(timerSession.getType() == TimerSession.TimerSessionType.VIBRATE) {
 			activateVibration = new Intent(context, VibrateOnBroadcastReceiver.class);
-		} else if(vt.getType() == TimerSession.TimerSessionType.SILENT) {
+		} else if(timerSession.getType() == TimerSession.TimerSessionType.SILENT) {
 			activateVibration = new Intent(context, SilentOnBroadcastReceiver.class);
 		}
 		for (Calendar startTime : startTimes) {
@@ -57,29 +57,39 @@ public final class TimerController {
 	}
 
 	/**
-	 * Remove the VibrateTimer object from db and cancel the services
-	 * @param vt VibrateTimer object to cancel
+	 * Remove the TimerSession object from db and cancel the services
+	 * @param timerSession VibrateTimer object to cancel
 	 * @author Napon, Sunny
 	 */
-	public void removeAlarm(TimerSession vt){
-		datastore.remove(vt);
-		cancelAlarm(vt);
+	public void removeAlarm(TimerSession timerSession){
+		datastore.remove(timerSession);
+		cancelAlarm(timerSession);
+	}
+
+	/**
+	 * Remove all TimerSession objects form the db and cancels the services
+	 */
+	public void removeAllAlarm(List<TimerSession> timers) {
+		for(TimerSession timer: timers) {
+			cancelAlarm(timer);
+		}
+		datastore.deleteAllFromDB();
 	}
 
 	/**
 	 * Cancel the services corresponding to the VibrateTimer object
 	 */
-	public void cancelAlarm(TimerSession vt) {
-		List<Calendar> times = vt.getStartAlarmCalendars();
+	public void cancelAlarm(TimerSession timerSession) {
+		List<Calendar> times = timerSession.getStartAlarmCalendars();
 		Intent intent = null;
-		if(vt.getType() == TimerSession.TimerSessionType.VIBRATE) {
+		if(timerSession.getType() == TimerSession.TimerSessionType.VIBRATE) {
 			intent = new Intent(context, VibrateOnBroadcastReceiver.class);
-		} else if (vt.getType() == TimerSession.TimerSessionType.SILENT) {
+		} else if (timerSession.getType() == TimerSession.TimerSessionType.SILENT) {
 			intent = new Intent(context, SilentOnBroadcastReceiver.class);
 		}
 		PendingIntent pi = null;
 		for(Calendar time : times){
-			int id = vt.getId() + time.get(Calendar.DAY_OF_WEEK);
+			int id = timerSession.getId() + time.get(Calendar.DAY_OF_WEEK);
 			pi = PendingIntent.getBroadcast(context, id,
 					intent, PendingIntent.FLAG_UPDATE_CURRENT);
 			pi.cancel();

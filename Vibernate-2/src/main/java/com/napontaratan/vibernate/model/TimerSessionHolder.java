@@ -60,8 +60,9 @@ public class TimerSessionHolder implements Iterable<TimerSession> {
         //TODO we can maybe try to coagulate 2 timers which are back to back of the same type
         for(TimerSession timerSession: timerSessions) {
             if(isTimerConflict(timerSession)) {
-                throw new TimerConflictException("Timer id " + timerSession.getId() + " 's time conflicts with existing timers");
+                throw new TimerConflictException("Timer " + timerSession + " conflicts with existing timers");
             } else {
+                timerSession.setId(timerController.generateNextId());
                 timerController.setAlarm(timerSession);
                 timers.add(timerSession);
                 timersIdMap.put(timerSession.getId(), timerSession);
@@ -82,11 +83,8 @@ public class TimerSessionHolder implements Iterable<TimerSession> {
         return timers.remove(timerSession);
     }
 
-
     public void removeAll() {
-        for(TimerSession timerSession: timers){
-            timerController.cancelAlarm(timerSession);
-        }
+        timerController.removeAllAlarm(timers);
         timers = new ArrayList<TimerSession>();
         timersIdMap = new HashMap<Integer, TimerSession>();
     }
