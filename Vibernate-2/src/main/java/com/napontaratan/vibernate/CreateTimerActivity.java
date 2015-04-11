@@ -29,7 +29,7 @@ public class CreateTimerActivity extends FragmentActivity {
     List<ToggleButton> days;
     Calendar startTime;
     Calendar endTime;
-    Activity a = this;
+    int colorPicked;
     boolean[] bDays = new boolean[7];
 
     @Override
@@ -71,11 +71,13 @@ public class CreateTimerActivity extends FragmentActivity {
                         ColorPickerDialog.SIZE_SMALL);
 
                 //Implement listener to get selected color value
-                colorCalendar.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener(){
+                colorCalendar.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
 
                     @Override
                     public void onColorSelected(int color) {
                         Toast.makeText(getBaseContext(), "Color is " + color, Toast.LENGTH_SHORT).show();
+                        colorPicked = color;
+                        System.out.println("colorPicked is " + colorPicked);
                     }
 
                 });
