@@ -1,5 +1,6 @@
 package com.napontaratan.vibernate;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -22,6 +23,7 @@ public class CreateTimerActivity extends FragmentActivity {
     List<ToggleButton> days;
     Calendar startTime;
     Calendar endTime;
+    Activity a = this;
 
     @Override
     public void onCreate(Bundle savedInstance){
@@ -47,17 +49,13 @@ public class CreateTimerActivity extends FragmentActivity {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
 
-                /* switch (menuItem.getItemId()){
-                    case R.id.action_share:
-                        Toast.makeText(ToolbarActivity.this,"Share",Toast.LENGTH_SHORT).show();
-                        return true;
-                } */
+                ColorPaletteDialog cdd = new ColorPaletteDialog(a);
+                cdd.show();
 
+                Toast.makeText(getBaseContext(), "Choose a Color", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
-
-
 
 
         /* name field */

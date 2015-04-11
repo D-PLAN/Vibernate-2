@@ -32,7 +32,9 @@
         </activity>
 
 
-    <receiver android:name=".controller.SilentOnBroadcastReceiver" />
+
+
+        <receiver android:name=".controller.SilentOnBroadcastReceiver" />
     <receiver android:name=".controller.VibrateOnBroadcastReceiver" />
     <receiver android:name=".controller.OffBroadcastReceiver" />
     <receiver android:name=".controller.OnRebootBroadcastReceiver" >
