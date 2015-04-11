@@ -67,7 +67,7 @@ public final class TimerSession implements Serializable, Comparable<TimerSession
 		this.snoozed = snoozed;
 	}
 
-	public boolean getTimerSnooze(boolean snoozed) {
+	public boolean getTimerSnooze() {
 		return this.snoozed;
 	}
 
