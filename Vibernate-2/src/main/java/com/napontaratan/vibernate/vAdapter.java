@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextClock;
 import android.widget.TextView;
 
@@ -63,7 +64,8 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         TextView description;
         TextView startTime;
         TextView endTime;
-
+        TextView activeDays;
+        ImageView muteIcon;
 
 
         public vViewHolder(View itemView) {
@@ -71,8 +73,8 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             description = (TextView) itemView.findViewById(R.id.v_description);
             startTime = (TextView) itemView.findViewById(R.id.v_startTime);
             endTime = (TextView) itemView.findViewById(R.id.v_endTime);
-
-
+            muteIcon = (ImageView) itemView.findViewById(R.id.v_mute_icon);
+            activeDays = (TextView) itemView.findViewById(R.id.v_show_activeDays);
         }
 
         @Override

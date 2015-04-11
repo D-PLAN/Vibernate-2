@@ -4,21 +4,14 @@
              android:background="@color/background"
              android:layout_width="match_parent"
              android:layout_height="100dp" android:weightSum="1">
-
-<LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleX="0.9" android:scaleY="0.9"
-        android:background="@color/white"
-        android:layout_gravity="center"
-        android:elevation="3dp"
-        android:orientation="vertical">
     <!-- Row -->
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/row"
+            android:scaleX="0.9" android:scaleY="0.9"
+            android:elevation="3dp" android:layout_gravity="center"
+            android:id="@+id/row" android:background="@color/white"
             android:baselineAligned="false">
 
         <!-- Left Bar -->
@@ -54,19 +47,19 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.5">
                 <TextView
+                        android:id="@+id/v_show_activeDays"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="0.9"
                         android:textColor="@color/black"
                         android:text="WEEKDAYS" android:layout_marginLeft="10dp"/>
 
-                <ImageView android:id="@+id/timer_delete_icon"
+                <ImageView android:id="@+id/v_mute_icon"
                            android:layout_height="40dp"
                            android:layout_width="wrap_content"
                            android:layout_weight="0.3"
                            android:scaleType="centerInside"
                            android:src="@drawable/ic_action_volume_muted" android:layout_gravity="center_vertical"/>
-
             </LinearLayout>
 
         </LinearLayout>
@@ -131,8 +124,5 @@
                         android:layout_marginLeft="10dp"/>
             </LinearLayout>
         </LinearLayout>
-
     </LinearLayout> <!-- End of Row -->
-</LinearLayout>
-
 </FrameLayout>
