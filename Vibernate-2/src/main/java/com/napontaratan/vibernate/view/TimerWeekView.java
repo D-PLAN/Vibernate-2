@@ -88,6 +88,7 @@ public class TimerWeekView extends View {
     private Bitmap silentBitmap;
     private Drawable vibrateDrawable;
     private Drawable silentDrawable;
+    private final static int TIMER_ICON_HEIGHT = 50;
 
     //timer info
     private int earliestTime;
@@ -250,10 +251,10 @@ public class TimerWeekView extends View {
                 timerRects.put(timer.getId(), currTimers);
                 timerPaint.setColor(getResources().getColor(timer.getColor()));
                 canvas.drawRoundRect(timerRect, 15, 15, timerPaint);
-                if((timerYEnd - timerYStart) > timerLength) {
+                if((timerYEnd - timerYStart) > TIMER_ICON_HEIGHT) {
                     // draw timer icon
                     // 50 is a good size for the icon, to prevent it being too strected in larger timer blocks
-                    int iconYEnd = (int)timerYStart + 50;
+                    int iconYEnd = (int)timerYStart + TIMER_ICON_HEIGHT;
                     if(timer.getType() == TimerSession.TimerSessionType.VIBRATE) {
                         vibrateDrawable.setBounds(timerXLeft, (int) timerYStart, timerXRight, iconYEnd);
                         vibrateDrawable.draw(canvas);
