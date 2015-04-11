@@ -32,9 +32,9 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
     }
 
     // Add 'item' at 'position'
-    public void addItem(vInfo item, int position) {
+    public void addItem(vInfo item) {
         data.add(item);
-        notifyItemInserted(position);
+        notifyItemInserted(data.size());
     }
 
     @Override
@@ -74,7 +74,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             muteIcon = (ImageView) itemView.findViewById(R.id.v_mute_icon);
             activeDays = (TextView) itemView.findViewById(R.id.v_show_activeDays);
             muteIcon.setOnClickListener(this);
-            
+
         }
 
         @Override

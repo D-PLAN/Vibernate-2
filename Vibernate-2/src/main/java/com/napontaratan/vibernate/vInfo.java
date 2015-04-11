@@ -9,7 +9,7 @@ public class vInfo {
     String endTime;
 
     public vInfo() {
-        this.descrition = "hi this is me";
+        this.descrition = "hi im v";
         this.startTime = "00:00";
         this.endTime = "15:00";
     }
