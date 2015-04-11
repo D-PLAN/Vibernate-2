@@ -200,11 +200,15 @@ public class CreateTimerActivity extends FragmentActivity {
             public void onClick(View v) {
                 if(weekdays_btn.isChecked()) {
                     for(int i = 0; i < 7; i++){
-                        if(i != 0 && i != 6) days.get(i).setChecked(true);
+                        if(i != 0 && i != 6) {
+                            days.get(i).setChecked(true);
+                            bDays[i] = true;
+                        }
                     }
                 } else {
                     for(int i = 0; i < 7; i++){
                         if(i != 0 && i != 6) days.get(i).setChecked(false);
+                        bDays[i] = false;
                     }
                 }
             }
@@ -215,11 +219,17 @@ public class CreateTimerActivity extends FragmentActivity {
             public void onClick(View v) {
                 if(weekends_btn.isChecked()) {
                     for(int i = 0; i < 7; i++){
-                        if(i == 0 || i == 6) days.get(i).setChecked(true);
+                        if(i == 0 || i == 6) {
+                            days.get(i).setChecked(true);
+                            bDays[i] = true;
+                        }
                     }
                 } else {
                     for(int i = 0; i < 7; i++){
-                        if(i == 0 || i == 6) days.get(i).setChecked(false);
+                        if(i == 0 || i == 6) {
+                            days.get(i).setChecked(false);
+                            bDays[i] = false;
+                        }
                     }
                 }
             }
