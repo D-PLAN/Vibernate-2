@@ -1,6 +1,7 @@
 package com.napontaratan.vibernate;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -10,7 +11,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
+import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
+import com.napontaratan.vibernate.model.TimerSessionHolder;
 import com.napontaratan.vibernate.view.ColorPickerDialog;
 import com.napontaratan.vibernate.view.ColorPickerSwatch;
 import com.napontaratan.vibernate.view.CreateTimerTimePicker;
@@ -27,6 +30,7 @@ public class CreateTimerActivity extends FragmentActivity {
     Calendar startTime;
     Calendar endTime;
     Activity a = this;
+    boolean[] bDays = new boolean[7];
 
     @Override
     public void onCreate(Bundle savedInstance){
@@ -148,15 +152,27 @@ public class CreateTimerActivity extends FragmentActivity {
         days.get(0).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (days.get(0).isChecked() && days.get(6).isChecked()) weekends_btn.setChecked(true);
-                else weekends_btn.setChecked(false);
+                if (days.get(0).isChecked() && days.get(6).isChecked()) {
+                    weekends_btn.setChecked(true);
+                    bDays[0] = true;
+                }
+                else {
+                    weekends_btn.setChecked(false);
+                    bDays[0] = false;
+                }
             }
         });
         days.get(6).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (days.get(0).isChecked() && days.get(6).isChecked()) weekends_btn.setChecked(true);
-                else weekends_btn.setChecked(false);
+                if (days.get(0).isChecked() && days.get(6).isChecked()) {
+                    weekends_btn.setChecked(true);
+                    bDays[6] = true;
+                }
+                else {
+                    weekends_btn.setChecked(false);
+                    bDays[6] = false;
+                }
             }
         });
 
@@ -170,8 +186,10 @@ public class CreateTimerActivity extends FragmentActivity {
                             if(!days.get(j).isChecked()) return;
                         }
                         weekdays_btn.setChecked(true);
+                        bDays[finalI] = true;
                     } else {
                         weekdays_btn.setChecked(false);
+                        bDays[finalI] = false;
                     }
                 }
             });
@@ -233,7 +251,18 @@ public class CreateTimerActivity extends FragmentActivity {
     private void createTimerSession (String name, TimerSession.TimerSessionType type, int startHour, int startMin, int endHour, int endMin, List<ToggleButton> days, int color) {
         Calendar start = generateCalendar(startHour, startMin);
         Calendar end   = generateCalendar(endHour, endMin);
-//        int id = TimerController.generateNextId(CreateTimerActivity.this);
+        TimerSession newTimer = new TimerSession(name, type, start, end, bDays,color);
+
+        try {
+            TimerSessionHolder.getInstance().addTimer(newTimer);
+        } catch (TimerConflictException e) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Timer Conflict")
+                    .setMessage("The time specified is in conflict with another timer. Please try again.")
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
+
         Log.d("CreateTimer", "creating timer with the following information: \n" +
                                 "Name: " + name + "\n" +
                                 "Type: " + type + "\n" +
