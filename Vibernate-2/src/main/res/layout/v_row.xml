@@ -18,7 +18,7 @@
         <View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/colorPrimary" android:layout_weight="0.35"/>
+                android:background="@color/colorPrimary" android:layout_weight="0.37"/>
 
         <!-- Left Bar -->
         <LinearLayout
