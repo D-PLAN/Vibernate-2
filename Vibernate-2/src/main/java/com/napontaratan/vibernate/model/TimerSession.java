@@ -25,6 +25,7 @@ public final class TimerSession implements Serializable, Comparable<TimerSession
 	private final boolean[] days;
 	private TimerSessionType type;
 	private int color; // rgb value of color
+	private boolean snoozed;
 
 	public enum TimerSessionType {
 		VIBRATE, SILENT
@@ -39,6 +40,7 @@ public final class TimerSession implements Serializable, Comparable<TimerSession
 		this.endTime = endTime;
 		this.days = days;
 		this.id = -1;
+		this.snoozed = false;
 	}
 
 	/**
@@ -59,6 +61,14 @@ public final class TimerSession implements Serializable, Comparable<TimerSession
 
 	public int getId(){
 		return id;
+	}
+
+	public void setTimerSnooze(boolean snoozed) {
+		this.snoozed = snoozed;
+	}
+
+	public boolean getTimerSnooze(boolean snoozed) {
+		return this.snoozed;
 	}
 
 	public Calendar getEndTime() {
