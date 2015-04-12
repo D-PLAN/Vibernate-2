@@ -3,13 +3,16 @@ package com.napontaratan.vibernate.view;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.*;
+import com.napontaratan.vibernate.CreateTimerActivity;
 import com.napontaratan.vibernate.R;
 import com.napontaratan.vibernate.model.TimerSession;
 import com.napontaratan.vibernate.model.TimerSessionHolder;
@@ -23,7 +26,6 @@ import java.util.*;
  * // TODO remove all debugging statements
  */
 public class TimerWeekView extends View {
-    private Context ctx = this.getContext();
     // View
     private View root;
     private View timerPlaceholder;
@@ -284,6 +286,17 @@ public class TimerWeekView extends View {
         timerPlaceholder.setVisibility(View.GONE);
         timerInfoView.setVisibility(View.VISIBLE);
 
+        timerInfoView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent mIntent = new Intent(view.getContext(), CreateTimerActivity.class);
+                Bundle mBundle = new Bundle();
+                mBundle.putSerializable("Timer", selectedTimer);
+                mIntent.putExtras(mBundle);
+                view.getContext().startActivity(mIntent);
+            }
+        });
+
         timerName.setText(selectedTimer.getName());
         timerName.setTextColor(selectedTimer.getColor());
 
@@ -296,7 +309,7 @@ public class TimerWeekView extends View {
         timerDeleteIcon.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                new AlertDialog.Builder(ctx)
+                new AlertDialog.Builder(view.getContext())
                         .setTitle("Delete timer")
                         .setMessage("Are you sure you want to delete this timer?")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
