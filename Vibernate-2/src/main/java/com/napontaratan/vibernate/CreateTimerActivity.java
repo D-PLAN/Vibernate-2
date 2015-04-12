@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -31,7 +35,7 @@ public class CreateTimerActivity extends FragmentActivity {
 
     CreateTimerTimePicker timePicker;
     List<ToggleButton> days;
-    int colorPicked;
+    int colorPicked = -13388315;
     int colorPickedDarker;
     boolean[] bDays = new boolean[7];
 
@@ -40,6 +44,9 @@ public class CreateTimerActivity extends FragmentActivity {
         super.onCreate(savedInstance);
         setContentView(R.layout.create_timer);
         timePicker = new CreateTimerTimePicker();
+
+        //CheckMark Button made up here so that we can dynamically change color
+        final ImageButton done = (ImageButton) findViewById(R.id.add_timer_button);
 
         /* toolbar */
         final Toolbar toolbar = (Toolbar) findViewById(R.id.create_timer_toolbar);
@@ -90,14 +97,28 @@ public class CreateTimerActivity extends FragmentActivity {
                         hsv[2] *= 0.8f; // value component
                         colorPickedDarker = Color.HSVToColor(hsv);
                         System.out.println("colorPickedDarker is " + colorPickedDarker);
+
+                        //Changing toolbar color
                         toolbar.setBackgroundColor(color);
 
+                        //Changing Checkbox color
+                        Drawable button = (Drawable) done.getBackground();
+                        button.setColorFilter(colorPicked, PorterDuff.Mode.SRC_ATOP);
+                        
+                        /*
+                        RippleDrawable button = (RippleDrawable) done.getBackground();
+                        button.setColor(colorPicked);*/
 
-                       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+                       //Changing Status Bar color
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                            Window window = getWindow();
                             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                             window.setStatusBarColor(colorPickedDarker);
-                       }
+                        }
+
+
+
                     }
                 });
 
@@ -272,7 +293,7 @@ public class CreateTimerActivity extends FragmentActivity {
         });
 
         /* Click on check mark */
-        ImageButton done = (ImageButton) findViewById(R.id.add_timer_button);
+        //ImageButton done = (ImageButton) findViewById(R.id.add_timer_button);
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
