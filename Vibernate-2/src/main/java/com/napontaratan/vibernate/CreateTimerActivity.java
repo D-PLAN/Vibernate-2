@@ -29,8 +29,7 @@ import java.util.List;
 
 public class CreateTimerActivity extends FragmentActivity {
 
-    static final int TIME_DIALOG = 0;
-    DialogFragment timePicker;
+    CreateTimerTimePicker timePicker;
     List<ToggleButton> days;
     int colorPicked;
     int colorPickedDarker;
@@ -43,9 +42,9 @@ public class CreateTimerActivity extends FragmentActivity {
         timePicker = new CreateTimerTimePicker();
 
         /* toolbar */
-        Toolbar toolbar = (Toolbar) findViewById(R.id.create_timer_toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.create_timer_toolbar);
         toolbar.setTitle("New Timer");
-        toolbar.setNavigationIcon(R.drawable.abc_ic_clear_mtrl_alpha);
+        toolbar.setNavigationIcon(R.drawable.ic_action_remove);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,6 +90,8 @@ public class CreateTimerActivity extends FragmentActivity {
                         hsv[2] *= 0.8f; // value component
                         colorPickedDarker = Color.HSVToColor(hsv);
                         System.out.println("colorPickedDarker is " + colorPickedDarker);
+                        toolbar.setBackgroundColor(color);
+
 
                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                            Window window = getWindow();
@@ -98,11 +99,6 @@ public class CreateTimerActivity extends FragmentActivity {
                             window.setStatusBarColor(colorPicked);
 
                        }
-
-
-
-
-
                     }
 
                 });
@@ -146,12 +142,23 @@ public class CreateTimerActivity extends FragmentActivity {
         final TextView startTime = (TextView) findViewById(R.id.create_timer_start_time_clock);
         final TextView endTime = (TextView) findViewById(R.id.create_timer_end_time_clock);
 
-        startTime.setText("15:00"); // TODO
-        endTime.setText("21:00");   // TODO
+        Calendar c = Calendar.getInstance();
+        int currentHour = c.get(Calendar.HOUR_OF_DAY);
+        int currentMin = c.get(Calendar.MINUTE);
+        int nextHour = currentHour + 1;
+
+        String minString = (currentMin < 10)?  "0" + currentMin: Integer.toString(currentMin);
+        String currentString = currentHour + ":" + minString;
+        String nextString = nextHour + ":" + minString;
+
+        startTime.setText(currentString);
+        endTime.setText(nextString);
 
         startTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String[] start = startTime.getText().toString().split(":");
+                timePicker.setTime(Integer.parseInt(start[0]), Integer.parseInt(start[1]));
                 timePicker.show(getSupportFragmentManager(), "startTimePicker");
             }
         });
@@ -159,6 +166,8 @@ public class CreateTimerActivity extends FragmentActivity {
         endTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String[] end = endTime.getText().toString().split(":");
+                timePicker.setTime(Integer.parseInt(end[0]), Integer.parseInt(end[1]));
                 timePicker.show(getSupportFragmentManager(), "endTimePicker");
             }
         });
@@ -352,7 +361,6 @@ public class CreateTimerActivity extends FragmentActivity {
         new AlertDialog.Builder(this)
                 .setTitle(title)
                 .setMessage(msg)
-                .setIcon(android.R.drawable.ic_dialog_alert)
                 .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

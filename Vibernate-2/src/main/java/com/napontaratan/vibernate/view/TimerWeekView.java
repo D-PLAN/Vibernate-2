@@ -107,40 +107,6 @@ public class TimerWeekView extends View {
         super(context, attrs);
         init(attrs, 0);
         timerSessionHolder = TimerSessionHolder.getInstance().setContext(getContext());
-        // TODO remove this mock data once we implemented get timers
-//        String MOCK_TIMER_NAME = "CPSC 101";
-//        Calendar start = createCalendar(8,0,0,0);
-//        Calendar end = createCalendar(12, 0, 0, 0);
-//        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, true, true, true, true, true, true}, Color.rgb(205, 64, 109));
-//        start = createCalendar(15,0,0,0);
-//        end = createCalendar(17, 0, 0, 0);
-//        TimerSession two = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { false, false, false, false, false, true, false},Color.rgb(69, 146, 134));
-//        start = createCalendar(12,0,0,0);
-//        end = createCalendar(15, 0, 0, 0);
-//        TimerSession three = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, false, true, false, true, false, false}, Color.rgb(106, 125, 137));
-//        start = createCalendar(17,0,0,0);
-//        end = createCalendar(18, 0, 0, 0);
-//        TimerSession four = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false},Color.rgb(136, 67, 173));
-//        start = createCalendar(12,0,0,0);
-//        end = createCalendar(17, 0, 0, 0);
-//        TimerSession five = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, Color.rgb(136, 67, 173));
-//        try {
-//            timerSessionHolder = TimerSessionHolder.getInstance().setContext(getContext());
-//            timerSessionHolder.removeAll();
-//            timerSessionHolder.addTimer(one, two, three, four, five);
-//        } catch (TimerConflictException e) {
-//            e.printStackTrace();
-//        }
-    }
-    //TODO get rid of this, for testing purposes
-    private Calendar createCalendar(int hour, int min, int second, int millis) {
-        Calendar cal = Calendar.getInstance();
-
-        cal.set(Calendar.HOUR_OF_DAY, hour);
-        cal.set(Calendar.MINUTE, min);
-        cal.set(Calendar.SECOND, second);
-        cal.set(Calendar.MILLISECOND, millis);
-        return cal;
     }
 
     public TimerWeekView(Context context, AttributeSet attrs, int defStyle) {
@@ -413,11 +379,11 @@ public class TimerWeekView extends View {
      * @return drawing height for each second(s) for a timer
      */
     private int getTimerDuration() {
-        earliestTime = 23;
+        earliestTime = 86400;
         int latest = 0;
         for(TimerSession timerSession: timerSessionHolder) {
-            int startHour = timerSession.getStartTime().get(Calendar.HOUR_OF_DAY);
-            int endHour = timerSession.getEndTime().get(Calendar.HOUR_OF_DAY);
+            int startHour = timerSession.getStartTime().get(Calendar.MINUTE) + (60* timerSession.getStartTime().get(Calendar.HOUR_OF_DAY));
+            int endHour = timerSession.getEndTime().get(Calendar.MINUTE) + (60* timerSession.getEndTime().get(Calendar.HOUR_OF_DAY));
             if(startHour < earliestTime) {
                 earliestTime = startHour;
             }
@@ -435,8 +401,7 @@ public class TimerWeekView extends View {
      * @return the scaled time for onDraw
      */
     private int scaled(Calendar realTime) {
-        int time = realTime.get(Calendar.HOUR_OF_DAY);
-        if(time == 0) time = 1; // round up 0 hour to 1 so that it doesn't disappear off screen
+        int time = realTime.get(Calendar.MINUTE) + (60 * realTime.get(Calendar.HOUR_OF_DAY));
         return (time - earliestTime);
     }
 
