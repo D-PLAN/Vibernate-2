@@ -104,11 +104,6 @@ public class CreateTimerActivity extends FragmentActivity {
                         //Changing Checkbox color
                         Drawable button = (Drawable) done.getBackground();
                         button.setColorFilter(colorPicked, PorterDuff.Mode.SRC_ATOP);
-                        
-                        /*
-                        RippleDrawable button = (RippleDrawable) done.getBackground();
-                        button.setColor(colorPicked);*/
-
 
                        //Changing Status Bar color
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -116,9 +111,6 @@ public class CreateTimerActivity extends FragmentActivity {
                             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                             window.setStatusBarColor(colorPickedDarker);
                         }
-
-
-
                     }
                 });
 
