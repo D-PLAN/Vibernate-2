@@ -317,16 +317,16 @@ public class TimerWeekView extends View {
             }
         });
 
-        timerOnOffSwitch.setChecked(selectedTimer.getTimerSnooze());
+        timerOnOffSwitch.setChecked(!selectedTimer.getTimerSnooze());
         timerOnOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    selectedTimer.setTimerSnooze(true);
-                    timerSessionHolder.snoozeTimer(selectedTimer);
-                } else {
                     selectedTimer.setTimerSnooze(false);
                     timerSessionHolder.wakeTimer(selectedTimer);
+                } else {
+                    selectedTimer.setTimerSnooze(true);
+                    timerSessionHolder.snoozeTimer(selectedTimer);
                 }
                 Toast.makeText(getContext(), (b == true) ? "Switching timer on" : "Switching timer off", Toast.LENGTH_SHORT).show();
 
