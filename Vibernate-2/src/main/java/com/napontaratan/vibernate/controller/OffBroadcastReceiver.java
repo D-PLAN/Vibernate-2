@@ -12,6 +12,7 @@ import android.media.AudioManager;
 public class OffBroadcastReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
+		System.out.println("Off receiver triggered");
 		AudioManager audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 		audio.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
 	}
