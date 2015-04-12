@@ -285,17 +285,7 @@ public class CreateTimerActivity extends FragmentActivity {
                         Integer.parseInt(end.substring(0, 2)),
                         Integer.parseInt(end.substring((2))),
                         days,
-
-                       R.color.colorAccent); //TODO: color
-                //mToolbarView.setBackgroundColor(colorPicked);
-
-
-
-
-
-
-
-
+                        colorPicked);
             }
         });
     }
