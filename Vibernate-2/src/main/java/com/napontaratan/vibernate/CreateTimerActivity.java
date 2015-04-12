@@ -25,8 +25,7 @@ import java.util.List;
 
 public class CreateTimerActivity extends FragmentActivity {
 
-    static final int TIME_DIALOG = 0;
-    DialogFragment timePicker;
+    CreateTimerTimePicker timePicker;
     List<ToggleButton> days;
     int colorPicked;
     boolean[] bDays = new boolean[7];
@@ -40,7 +39,7 @@ public class CreateTimerActivity extends FragmentActivity {
         /* toolbar */
         Toolbar toolbar = (Toolbar) findViewById(R.id.create_timer_toolbar);
         toolbar.setTitle("New Timer");
-        toolbar.setNavigationIcon(R.drawable.abc_ic_clear_mtrl_alpha);
+        toolbar.setNavigationIcon(R.drawable.ic_action_remove);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,6 +125,8 @@ public class CreateTimerActivity extends FragmentActivity {
         startTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String[] start = startTime.getText().toString().split(":");
+                timePicker.setTime(Integer.parseInt(start[0]), Integer.parseInt(start[1]));
                 timePicker.show(getSupportFragmentManager(), "startTimePicker");
             }
         });
@@ -133,6 +134,8 @@ public class CreateTimerActivity extends FragmentActivity {
         endTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String[] end = endTime.getText().toString().split(":");
+                timePicker.setTime(Integer.parseInt(end[0]), Integer.parseInt(end[1]));
                 timePicker.show(getSupportFragmentManager(), "endTimePicker");
             }
         });
@@ -316,7 +319,6 @@ public class CreateTimerActivity extends FragmentActivity {
         new AlertDialog.Builder(this)
                 .setTitle(title)
                 .setMessage(msg)
-                .setIcon(android.R.drawable.ic_dialog_alert)
                 .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

@@ -8,6 +8,7 @@
              android:layout_height="wrap_content"
              android:minHeight="55dp"
              android:background="@color/colorPrimary"
+             android:theme="@style/WhiteTitleLightTheme"
              android:contentInsetStart="0dp"
              android:elevation="1dp">
     </android.support.v7.widget.Toolbar>
