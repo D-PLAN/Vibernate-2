@@ -215,7 +215,7 @@ public class TimerWeekView extends View {
                         timerRects.get(timer.getId());
                 currTimers.add(timerRect);
                 timerRects.put(timer.getId(), currTimers);
-                timerPaint.setColor(getResources().getColor(timer.getColor()));
+                timerPaint.setColor(timer.getColor());
                 canvas.drawRoundRect(timerRect, 15, 15, timerPaint);
                 if((timerYEnd - timerYStart) > TIMER_ICON_HEIGHT) {
                     // draw timer icon
@@ -286,7 +286,7 @@ public class TimerWeekView extends View {
         timerInfoView.setVisibility(View.VISIBLE);
 
         timerName.setText(selectedTimer.getName());
-        timerName.setTextColor(getResources().getColor(selectedTimer.getColor()));
+        timerName.setTextColor(selectedTimer.getColor());
 
         if(selectedTimer.getType() == TimerSession.TimerSessionType.VIBRATE) {
             timerTypeIcon.setImageBitmap(vibrateBitmap);
