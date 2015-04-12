@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -11,6 +12,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.*;
 import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
@@ -25,8 +29,7 @@ import java.util.List;
 
 public class CreateTimerActivity extends FragmentActivity {
 
-    static final int TIME_DIALOG = 0;
-    DialogFragment timePicker;
+    CreateTimerTimePicker timePicker;
     List<ToggleButton> days;
     int colorPicked;
     boolean[] bDays = new boolean[7];
@@ -40,7 +43,7 @@ public class CreateTimerActivity extends FragmentActivity {
         /* toolbar */
         Toolbar toolbar = (Toolbar) findViewById(R.id.create_timer_toolbar);
         toolbar.setTitle("New Timer");
-        toolbar.setNavigationIcon(R.drawable.abc_ic_clear_mtrl_alpha);
+        toolbar.setNavigationIcon(R.drawable.ic_action_remove);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,7 +51,7 @@ public class CreateTimerActivity extends FragmentActivity {
             }
         });
 
-        //Menu
+        /* ColorPicker Menu */
         toolbar.inflateMenu(R.menu.color_menu);
 
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -58,7 +61,8 @@ public class CreateTimerActivity extends FragmentActivity {
 
                 String[] color_array = getBaseContext().getResources().getStringArray(R.array.default_color_choice_values);
                 int[] cArray = new int[color_array.length];
-                for(int k = 0; k < color_array.length; k++){;
+                for (int k = 0; k < color_array.length; k++) {
+                    ;
                     cArray[k] = Color.parseColor(color_array[k]);
                 }
 
@@ -77,11 +81,20 @@ public class CreateTimerActivity extends FragmentActivity {
                         Toast.makeText(getBaseContext(), "Color is " + color, Toast.LENGTH_SHORT).show();
                         colorPicked = color;
                         System.out.println("colorPicked is " + colorPicked);
+
+
+                       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            Window window = getWindow();
+                            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                            window.setStatusBarColor(colorPicked);
+                        }
+
+                        
                     }
 
                 });
 
-                colorCalendar.show(getFragmentManager(),"cal");
+                colorCalendar.show(getFragmentManager(), "cal");
 
 
                 return false;
@@ -135,6 +148,8 @@ public class CreateTimerActivity extends FragmentActivity {
         startTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String[] start = startTime.getText().toString().split(":");
+                timePicker.setTime(Integer.parseInt(start[0]), Integer.parseInt(start[1]));
                 timePicker.show(getSupportFragmentManager(), "startTimePicker");
             }
         });
@@ -142,6 +157,8 @@ public class CreateTimerActivity extends FragmentActivity {
         endTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String[] end = endTime.getText().toString().split(":");
+                timePicker.setTime(Integer.parseInt(end[0]), Integer.parseInt(end[1]));
                 timePicker.show(getSupportFragmentManager(), "endTimePicker");
             }
         });
@@ -267,7 +284,17 @@ public class CreateTimerActivity extends FragmentActivity {
                         Integer.parseInt(end.substring(0, 2)),
                         Integer.parseInt(end.substring((2))),
                         days,
-                        R.color.colorAccent); //TODO: color
+
+                       R.color.colorAccent); //TODO: color
+                //mToolbarView.setBackgroundColor(colorPicked);
+
+
+
+
+
+
+
+
             }
         });
     }
@@ -325,7 +352,6 @@ public class CreateTimerActivity extends FragmentActivity {
         new AlertDialog.Builder(this)
                 .setTitle(title)
                 .setMessage(msg)
-                .setIcon(android.R.drawable.ic_dialog_alert)
                 .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
