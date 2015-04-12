@@ -11,7 +11,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.*;
 import com.napontaratan.vibernate.R;
-import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
 import com.napontaratan.vibernate.model.TimerSessionHolder;
 
@@ -94,7 +93,7 @@ public class TimerWeekView extends View {
     private int earliestTime;
     private final String TIME_STRING_FORMAT = "HH:mm";
 
-    private HashMap<Integer, List<RectF>> timerRects =  new HashMap<Integer, List<RectF>>(); // List of timer rectangles
+    private HashMap<Integer, List<RectF>> timerRectsMaps =  new HashMap<Integer, List<RectF>>(); // List of timer rectangles
     private TimerSessionHolder timerSessionHolder;
     private int prevTimer = -1;
 
@@ -211,10 +210,10 @@ public class TimerWeekView extends View {
                 System.out.println("ADDING THIS TIMER    =====   "   + timer.getId());
                 System.out.println("drawing starts at   " + timerYStart + ", ends at      " + timerYEnd);
                 // if timer id is already in map, add current timer to it's value
-                List<RectF> currTimers = (timerRects.get(timer.getId()) == null)? new ArrayList<RectF>() :
-                        timerRects.get(timer.getId());
+                List<RectF> currTimers = (timerRectsMaps.get(timer.getId()) == null)? new ArrayList<RectF>() :
+                        timerRectsMaps.get(timer.getId());
                 currTimers.add(timerRect);
-                timerRects.put(timer.getId(), currTimers);
+                timerRectsMaps.put(timer.getId(), currTimers);
                 timerPaint.setColor(timer.getColor());
                 canvas.drawRoundRect(timerRect, 15, 15, timerPaint);
                 if((timerYEnd - timerYStart) > TIMER_ICON_HEIGHT) {
@@ -304,7 +303,7 @@ public class TimerWeekView extends View {
                             public void onClick(DialogInterface dialog, int which) {
                                 timerSessionHolder.removeTimer(selectedTimer);
                                 Toast.makeText(getContext(), "Timer " + prevTimer + " deleted", Toast.LENGTH_SHORT).show();
-                                updateDeleteTimerView();
+                                updateDeleteTimerView(selectedTimer);
                             }
                         })
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -348,10 +347,12 @@ public class TimerWeekView extends View {
     /**
      * Invalidate view to show removed time and update the card view so that it doesn't show the deleted timer
      */
-    private void updateDeleteTimerView() {
+    private void updateDeleteTimerView(TimerSession timerSession) {
         this.invalidate();
+        timerRectsMaps.remove(timerSession.getId());
         timerPlaceholder.setVisibility(View.VISIBLE);
         timerInfoView.setVisibility(View.GONE);
+        prevTimer = -1;
     }
 
     /**
@@ -430,7 +431,7 @@ public class TimerWeekView extends View {
      * @return the timersession object corresponding to the selected timer on the screen
      */
     private TimerSession getSelectedTimer(float x, float y) {
-        Iterator it = timerRects.entrySet().iterator();
+        Iterator it = timerRectsMaps.entrySet().iterator();
         while(it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
             List<RectF> listOfTimerRects = (List<RectF>) pair.getValue();

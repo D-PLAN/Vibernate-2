@@ -77,7 +77,7 @@ public class TimerSessionHolder implements Iterable<TimerSession> {
      */
     public boolean removeTimer(TimerSession timerSession) {
         if(timerSession != null) {
-            timerController.cancelAlarm(timerSession);
+            timerController.removeAlarm(timerSession);
             timersIdMap.remove(timerSession.getId());
         }
         return timers.remove(timerSession);
