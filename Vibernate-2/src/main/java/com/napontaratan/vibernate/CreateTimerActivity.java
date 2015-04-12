@@ -120,8 +120,17 @@ public class CreateTimerActivity extends FragmentActivity {
         final TextView startTime = (TextView) findViewById(R.id.create_timer_start_time_clock);
         final TextView endTime = (TextView) findViewById(R.id.create_timer_end_time_clock);
 
-        startTime.setText("15:00"); // TODO
-        endTime.setText("21:00");   // TODO
+        Calendar c = Calendar.getInstance();
+        int currentHour = c.get(Calendar.HOUR_OF_DAY);
+        int currentMin = c.get(Calendar.MINUTE);
+        int nextHour = currentHour + 1;
+
+        String minString = (currentMin < 10)?  "0" + currentMin: Integer.toString(currentMin);
+        String currentString = currentHour + ":" + minString;
+        String nextString = nextHour + ":" + minString;
+
+        startTime.setText(currentString);
+        endTime.setText(nextString);
 
         startTime.setOnClickListener(new View.OnClickListener() {
             @Override
