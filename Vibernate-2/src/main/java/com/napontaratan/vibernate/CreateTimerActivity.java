@@ -32,6 +32,7 @@ public class CreateTimerActivity extends FragmentActivity {
     CreateTimerTimePicker timePicker;
     List<ToggleButton> days;
     int colorPicked;
+    int colorPickedDarker;
     boolean[] bDays = new boolean[7];
 
     @Override
@@ -82,17 +83,22 @@ public class CreateTimerActivity extends FragmentActivity {
                         colorPicked = color;
                         System.out.println("colorPicked is " + colorPicked);
 
+                        //To darken the colorPicked
+                        float[] hsv = new float[3];
+                        int colorPickedDarker = colorPicked;
+                        Color.colorToHSV(color, hsv);
+                        hsv[2] *= 0.8f; // value component
+                        colorPickedDarker = Color.HSVToColor(hsv);
+                        System.out.println("colorPickedDarker is " + colorPickedDarker);
                         toolbar.setBackgroundColor(color);
 
+
                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            Window window = getWindow();
+                           Window window = getWindow();
                             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                            window.setStatusBarColor(colorPicked);
-                        }
-
-                        
+                            window.setStatusBarColor(colorPickedDarker);
+                       }
                     }
-
                 });
 
                 colorCalendar.show(getFragmentManager(), "cal");
