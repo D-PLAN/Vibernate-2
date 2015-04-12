@@ -41,7 +41,7 @@ public class CreateTimerActivity extends FragmentActivity {
         timePicker = new CreateTimerTimePicker();
 
         /* toolbar */
-        Toolbar toolbar = (Toolbar) findViewById(R.id.create_timer_toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.create_timer_toolbar);
         toolbar.setTitle("New Timer");
         toolbar.setNavigationIcon(R.drawable.ic_action_remove);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -82,6 +82,7 @@ public class CreateTimerActivity extends FragmentActivity {
                         colorPicked = color;
                         System.out.println("colorPicked is " + colorPicked);
 
+                        toolbar.setBackgroundColor(color);
 
                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             Window window = getWindow();
