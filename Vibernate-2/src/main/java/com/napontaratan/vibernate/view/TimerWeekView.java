@@ -88,6 +88,7 @@ public class TimerWeekView extends View {
     private Bitmap silentBitmap;
     private Drawable vibrateDrawable;
     private Drawable silentDrawable;
+    private final static int TIMER_ICON_HEIGHT = 50;
 
     //timer info
     private int earliestTime;
@@ -250,10 +251,10 @@ public class TimerWeekView extends View {
                 timerRects.put(timer.getId(), currTimers);
                 timerPaint.setColor(getResources().getColor(timer.getColor()));
                 canvas.drawRoundRect(timerRect, 15, 15, timerPaint);
-                if((timerYEnd - timerYStart) > timerLength) {
+                if((timerYEnd - timerYStart) > TIMER_ICON_HEIGHT) {
                     // draw timer icon
                     // 50 is a good size for the icon, to prevent it being too strected in larger timer blocks
-                    int iconYEnd = (int)timerYStart + 50;
+                    int iconYEnd = (int)timerYStart + TIMER_ICON_HEIGHT;
                     if(timer.getType() == TimerSession.TimerSessionType.VIBRATE) {
                         vibrateDrawable.setBounds(timerXLeft, (int) timerYStart, timerXRight, iconYEnd);
                         vibrateDrawable.draw(canvas);
@@ -319,7 +320,7 @@ public class TimerWeekView extends View {
         timerInfoView.setVisibility(View.VISIBLE);
 
         timerName.setText(selectedTimer.getName());
-        timerName.setTextColor(selectedTimer.getColor());
+        timerName.setTextColor(getResources().getColor(selectedTimer.getColor()));
 
         if(selectedTimer.getType() == TimerSession.TimerSessionType.VIBRATE) {
             timerTypeIcon.setImageBitmap(vibrateBitmap);
@@ -330,7 +331,6 @@ public class TimerWeekView extends View {
         timerDeleteIcon.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO handle deletion of timer
                 new AlertDialog.Builder(ctx)
                         .setTitle("Delete timer")
                         .setMessage("Are you sure you want to delete this timer?")
@@ -355,7 +355,6 @@ public class TimerWeekView extends View {
         timerOnOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                //TODO handle the switch action, turning the timer on and off
                 if (b) {
                     selectedTimer.setTimerSnooze(true);
                     timerSessionHolder.snoozeTimer(selectedTimer);

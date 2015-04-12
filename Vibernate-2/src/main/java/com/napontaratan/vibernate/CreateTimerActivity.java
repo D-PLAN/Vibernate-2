@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -11,6 +12,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.*;
 import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
@@ -47,7 +51,7 @@ public class CreateTimerActivity extends FragmentActivity {
             }
         });
 
-        //Menu
+        /* ColorPicker Menu */
         toolbar.inflateMenu(R.menu.color_menu);
 
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -57,7 +61,8 @@ public class CreateTimerActivity extends FragmentActivity {
 
                 String[] color_array = getBaseContext().getResources().getStringArray(R.array.default_color_choice_values);
                 int[] cArray = new int[color_array.length];
-                for(int k = 0; k < color_array.length; k++){;
+                for (int k = 0; k < color_array.length; k++) {
+                    ;
                     cArray[k] = Color.parseColor(color_array[k]);
                 }
 
@@ -76,11 +81,20 @@ public class CreateTimerActivity extends FragmentActivity {
                         Toast.makeText(getBaseContext(), "Color is " + color, Toast.LENGTH_SHORT).show();
                         colorPicked = color;
                         System.out.println("colorPicked is " + colorPicked);
+
+
+                       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            Window window = getWindow();
+                            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                            window.setStatusBarColor(colorPicked);
+                        }
+
+                        
                     }
 
                 });
 
-                colorCalendar.show(getFragmentManager(),"cal");
+                colorCalendar.show(getFragmentManager(), "cal");
 
 
                 return false;
@@ -261,7 +275,17 @@ public class CreateTimerActivity extends FragmentActivity {
                         Integer.parseInt(end.substring(0, 2)),
                         Integer.parseInt(end.substring((2))),
                         days,
-                        R.color.colorAccent); //TODO: color
+
+                       R.color.colorAccent); //TODO: color
+                //mToolbarView.setBackgroundColor(colorPicked);
+
+
+
+
+
+
+
+
             }
         });
     }
