@@ -1,16 +1,15 @@
 package com.napontaratan.vibernate;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -38,6 +37,7 @@ public class CreateTimerActivity extends FragmentActivity {
     int colorPicked = -13388315;
     int colorPickedDarker;
     boolean[] bDays = new boolean[7];
+    TimerSession ts;
 
     @Override
     public void onCreate(Bundle savedInstance){
@@ -105,7 +105,7 @@ public class CreateTimerActivity extends FragmentActivity {
                         Drawable button = (Drawable) done.getBackground();
                         button.setColorFilter(colorPicked, PorterDuff.Mode.SRC_ATOP);
 
-                       //Changing Status Bar color
+                        //Changing Status Bar color
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                            Window window = getWindow();
                             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -115,7 +115,6 @@ public class CreateTimerActivity extends FragmentActivity {
                 });
 
                 colorCalendar.show(getFragmentManager(), "cal");
-
 
                 return false;
             }
@@ -136,6 +135,9 @@ public class CreateTimerActivity extends FragmentActivity {
                 if(typeSilent.isChecked()) {
                     typeSilent.setChecked(false);
                 }
+
+                if(!typeVibrate.isChecked())
+                    typeVibrate.setChecked(true);
             }
         });
 
@@ -145,6 +147,9 @@ public class CreateTimerActivity extends FragmentActivity {
                 if(typeVibrate.isChecked()) {
                     typeVibrate.setChecked(false);
                 }
+
+                if(!typeSilent.isChecked())
+                    typeSilent.setChecked(true);
             }
         });
 
@@ -294,22 +299,19 @@ public class CreateTimerActivity extends FragmentActivity {
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String name = nameField.getText().toString();
                 TimerSession.TimerSessionType type;
-
-                if(typeVibrate.isChecked()) type = TimerSession.TimerSessionType.VIBRATE;
+                if (typeVibrate.isChecked()) type = TimerSession.TimerSessionType.VIBRATE;
                 else type = TimerSession.TimerSessionType.SILENT;
+                String start = startTime.getText().toString().replace(":", "");
+                String end = endTime.getText().toString().replace(":", "");
+                int start_hour = Integer.parseInt(start.substring(0, 2));
+                int start_min  = Integer.parseInt(start.substring(2));
+                int end_hour   = Integer.parseInt(end.substring(0,2));
+                int end_min    = Integer.parseInt(end.substring(2));
 
-                String start = startTime.getText().toString().replace(":","");
-                String end   = endTime.getText().toString().replace(":","");
-
-                createTimerSession(nameField.getText().toString(),
-                        type,
-                        Integer.parseInt(start.substring(0, 2)),
-                        Integer.parseInt(start.substring((2))),
-                        Integer.parseInt(end.substring(0, 2)),
-                        Integer.parseInt(end.substring((2))),
-                        days,
-                        colorPicked);
+                // if this is a timer modify, check if anything is changed
+                createTimerSession(name, type, start_hour, start_min, end_hour, end_min, days, colorPicked);
             }
         });
     }
@@ -337,18 +339,22 @@ public class CreateTimerActivity extends FragmentActivity {
         Calendar end   = generateCalendar(endHour, endMin);
         TimerSession newTimer = new TimerSession(name, type, start, end, bDays,color);
 
+
         try {
-            TimerSessionHolder.getInstance().addTimer(newTimer);
+            if(ts == null || isModified(newTimer)) {
+                TimerSessionHolder.getInstance().addTimer(newTimer);
+                Log.d("CreateTimer", "creating timer with the following information: \n" +
+                        "Name: " + name + "\n" +
+                        "Type: " + type + "\n" +
+                        "StartTime" + start.get(Calendar.HOUR_OF_DAY) + ":" + start.get(Calendar.MINUTE) + "\n" +
+                        "EndTime" + end.get(Calendar.HOUR_OF_DAY) + ":" + end.get(Calendar.MINUTE) + "\n");
+            } else {
+                Log.d("CreateTimer", "Bundle not null and Timer not modified");
+            }
         } catch (TimerConflictException e) {
             createDialog("Timer Conflict", "The time specified is in conflict with another timer. Please try again.");
             return;
         }
-
-        Log.d("CreateTimer", "creating timer with the following information: \n" +
-                                "Name: " + name + "\n" +
-                                "Type: " + type + "\n" +
-                                "StartTime" + start.get(Calendar.HOUR_OF_DAY) + ":" + start.get(Calendar.MINUTE) + "\n" +
-                                "EndTime" + end.get(Calendar.HOUR_OF_DAY) + ":" + end.get(Calendar.MINUTE) + "\n");
 
         finish();
     }
@@ -373,5 +379,11 @@ public class CreateTimerActivity extends FragmentActivity {
                         dialogInterface.dismiss();
                     }
                 }).show();
+    }
+
+    private boolean isModified(TimerSession newTimer) {
+        return !newTimer.getStartTime().equals(ts.getStartTime()) || !newTimer.getEndTime().equals(ts.getEndTime()) ||
+                newTimer.getColor() != ts.getColor() || newTimer.getDays() != ts.getDays() ||
+                newTimer.getName() != ts.getName();
     }
 }
