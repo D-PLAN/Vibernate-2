@@ -341,7 +341,8 @@ public class CreateTimerActivity extends FragmentActivity {
 
 
         try {
-            if(ts == null || isModified(newTimer)) {
+            int check = isModified(newTimer);
+            if(ts == null || check == 1) {
                 TimerSessionHolder.getInstance().addTimer(newTimer);
                 Log.d("CreateTimer", "creating timer with the following information: \n" +
                         "Name: " + name + "\n" +
@@ -349,7 +350,15 @@ public class CreateTimerActivity extends FragmentActivity {
                         "StartTime" + start.get(Calendar.HOUR_OF_DAY) + ":" + start.get(Calendar.MINUTE) + "\n" +
                         "EndTime" + end.get(Calendar.HOUR_OF_DAY) + ":" + end.get(Calendar.MINUTE) + "\n");
             } else {
-                Log.d("CreateTimer", "Bundle not null and Timer not modified");
+                if(check == -1) {
+                    Log.d("CreateTimer", "Bundle not null and Timer not modified");
+                } else {
+                    TimerSessionHolder boss = TimerSessionHolder.getInstance();
+                    TimerSession victim = boss.getTimerById(ts.getId());
+                    victim.setName(name);
+                    victim.setColor(color);
+                    Log.d("CreateTimer", "Bundle not null and only name or color changed");
+                }
             }
         } catch (TimerConflictException e) {
             createDialog("Timer Conflict", "The time specified is in conflict with another timer. Please try again.");
@@ -381,9 +390,17 @@ public class CreateTimerActivity extends FragmentActivity {
                 }).show();
     }
 
-    private boolean isModified(TimerSession newTimer) {
-        return !newTimer.getStartTime().equals(ts.getStartTime()) || !newTimer.getEndTime().equals(ts.getEndTime()) ||
-                newTimer.getColor() != ts.getColor() || newTimer.getDays() != ts.getDays() ||
-                newTimer.getName() != ts.getName();
+    // return 1 if modified
+    // return 0 if only color or name are modified
+    // return -1 if nothing is modified
+    private int isModified(TimerSession newTimer) {
+        if (newTimer.getStartTime().equals(ts.getStartTime()) || !newTimer.getEndTime().equals(ts.getEndTime()) ||
+                newTimer.getDays() != ts.getDays()){
+            return 1;
+        } else if (newTimer.getColor() != ts.getColor() || newTimer.getName() != ts.getName()) {
+            return 0;
+        } else {
+            return -1;
+        }
     }
 }
