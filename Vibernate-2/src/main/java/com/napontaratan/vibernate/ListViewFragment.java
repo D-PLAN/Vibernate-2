@@ -15,7 +15,6 @@ public class ListViewFragment extends Fragment {
     private vAdapter v_Adapter;
     private TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
