@@ -162,6 +162,7 @@ public class CreateTimerActivity extends FragmentActivity {
         int currentHour = c.get(Calendar.HOUR_OF_DAY);
         int currentMin = c.get(Calendar.MINUTE);
         int nextHour = currentHour + 1;
+        int currentDay = c.get(Calendar.DAY_OF_WEEK) - 1;
 
         String minString = (currentMin < 10)?  "0" + currentMin: Integer.toString(currentMin);
         String currentString = currentHour + ":" + minString;
@@ -200,6 +201,10 @@ public class CreateTimerActivity extends FragmentActivity {
         days.add((ToggleButton) findViewById(R.id.create_timer_thu));
         days.add((ToggleButton) findViewById(R.id.create_timer_fri));
         days.add((ToggleButton) findViewById(R.id.create_timer_sat));
+
+        //setting current day to be highlighted
+        days.get(currentDay).setChecked(true);
+        bDays[currentDay] = true;
 
         // if sunday is clicked
         days.get(0).setOnClickListener(new View.OnClickListener() {
