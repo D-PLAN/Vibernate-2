@@ -1,7 +1,6 @@
 package com.napontaratan.vibernate;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,18 +11,15 @@ import com.napontaratan.vibernate.model.TimerSession;
 import com.napontaratan.vibernate.model.TimerSessionHolder;
 import com.napontaratan.vibernate.view.TimerWeekView;
 
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by Aor-Nawattranakul on 15-04-06.
  */
 public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
     private LayoutInflater inflater;
-    //List<TimerSession> data = Collections.emptyList(); // this is so that we won't be getting nullpointer exception
     private TimerSessionHolder timerSessionHolder;
     private Context context;
-
+  
     public vAdapter(Context context, TimerSessionHolder timerSessionHolder) {
         inflater = LayoutInflater.from(context);
         this.context = context;
