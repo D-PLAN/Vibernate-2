@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.napontaratan.vibernate.model.TimerSession;
+import com.napontaratan.vibernate.model.TimerSessionHolder;
 import com.napontaratan.vibernate.view.TimerWeekView;
 
 import java.util.Collections;
@@ -19,18 +20,18 @@ import java.util.List;
  */
 public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
     private LayoutInflater inflater;
-    List<TimerSession> data = Collections.emptyList(); // this is so that we won't be getting nullpointer exception
+    //List<TimerSession> data = Collections.emptyList(); // this is so that we won't be getting nullpointer exception
+    private TimerSessionHolder timerSessionHolder;
     private Context context;
 
-    public vAdapter(Context context, List<TimerSession> data) {
+    public vAdapter(Context context, TimerSessionHolder timerSessionHolder) {
         inflater = LayoutInflater.from(context);
         this.context = context;
-        this.data = data;
+        this.timerSessionHolder = timerSessionHolder;
     }
 
     // remove a row at 'position'
     public void delete(int position) {
-        data.remove(position);
         notifyItemRemoved(position);
     }
 
@@ -62,7 +63,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return timerSessionHolder;
     }
 
 
@@ -72,6 +73,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         TextView endTime;
         TextView activeDays;
         ImageView typeIcon;
+        View colorTab;
 
 
         public vViewHolder(View itemView) {
@@ -81,6 +83,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             endTime = (TextView) itemView.findViewById(R.id.v_endTime);
             typeIcon = (ImageView) itemView.findViewById(R.id.v_mute_icon);
             activeDays = (TextView) itemView.findViewById(R.id.v_show_activeDays);
+            colorTab = itemView.findViewById(R.id.TSisActive);
             typeIcon.setOnClickListener(this);
 
         }
