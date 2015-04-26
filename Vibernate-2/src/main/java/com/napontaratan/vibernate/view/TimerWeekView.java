@@ -464,7 +464,7 @@ public class TimerWeekView extends View {
      * @return String - startTime after applying sDateFormat
      * @author Paul, Amelia
      */
-    public String getStartTimeInFormat (TimerSession vt , String sDateFormat) {
+    public static String getStartTimeInFormat (TimerSession vt , String sDateFormat) {
         String startTest = null;
         SimpleDateFormat sDateTest = new SimpleDateFormat(sDateFormat, Locale.getDefault());
         if (vt.getStartTime() != null) {
@@ -480,7 +480,7 @@ public class TimerWeekView extends View {
      * @return String
      * @author Paul, Amelia
      */
-    public String getEndTimeInFormat (TimerSession vt , String eDateFormat) {
+    public static String getEndTimeInFormat (TimerSession vt , String eDateFormat) {
         String endTest = null;
         //SimpleDateFormat sDateTest = new SimpleDateFormat(eDateFormat, Locale.getDefault());
         SimpleDateFormat sDateTest = new SimpleDateFormat(eDateFormat, Locale.getDefault());

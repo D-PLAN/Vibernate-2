@@ -14,10 +14,11 @@
             android:id="@+id/row" android:background="@color/white"
             android:baselineAligned="false">
 
-        <!-- Colo Tab -->
+        <!-- Color Tab -->
         <View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:id="@+id/TSisActive"
                 android:background="@color/colorPrimary" android:layout_weight="0.37"/>
 
         <!-- Left Bar -->
