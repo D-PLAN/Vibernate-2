@@ -84,6 +84,23 @@ public class TimerSessionHolder implements Iterable<TimerSession> {
     }
 
     /**
+     * Removes an existing timer from collection and db
+     * @param pos
+     * @return true if successfully removed, false otherwise
+     */
+    public boolean removeTimer(int pos) {
+        TimerSession timerSession = timers.get(pos);
+        if(timerSession != null) {
+            timers.remove(pos);
+            timersIdMap.remove(timerSession.getId());
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /**
      * Snooze an existing timer
      */
     public void snoozeTimer(TimerSession timerSession) {
@@ -150,6 +167,13 @@ public class TimerSessionHolder implements Iterable<TimerSession> {
 
     public TimerSession getTimerById(int id) {
         return timersIdMap.get(id);
+    }
+    public TimerSession getTimer(int pos) {
+        return timers.get(pos);
+    }
+
+    public int getSize() {
+        return timers.size();
     }
 
 }
