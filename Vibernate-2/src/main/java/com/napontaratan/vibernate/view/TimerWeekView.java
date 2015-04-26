@@ -3,15 +3,17 @@ package com.napontaratan.vibernate.view;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.*;
+import com.napontaratan.vibernate.CreateTimerActivity;
 import com.napontaratan.vibernate.R;
-import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
 import com.napontaratan.vibernate.model.TimerSessionHolder;
 
@@ -24,7 +26,18 @@ import java.util.*;
  * // TODO remove all debugging statements
  */
 public class TimerWeekView extends View {
-    private Context ctx = this.getContext();
+    // View
+    private View root;
+    private View timerPlaceholder;
+    private View timerInfoView;
+    private TextView timerName;
+    private ImageView timerTypeIcon;
+    private ImageView timerDeleteIcon;
+    private Switch timerOnOffSwitch;
+    private TextView timerStartTimeView;
+    private TextView timerEndTimeView;
+    private TextView timerDaysView;
+
     // Draw variables, set to -1 as flag for variables' value not set
     private int paddingLeft = -1;
     private int paddingTop = -1;
@@ -76,14 +89,15 @@ public class TimerWeekView extends View {
     private Bitmap silentBitmap;
     private Drawable vibrateDrawable;
     private Drawable silentDrawable;
+    private final static int TIMER_ICON_HEIGHT = 50;
 
     //timer info
     private int earliestTime;
     private final String TIME_STRING_FORMAT = "HH:mm";
 
-    private HashMap<Integer, List<RectF>> timerRects =  new HashMap<Integer, List<RectF>>(); // List of timer rectangles
+    private HashMap<Integer, List<RectF>> timerRectsMaps =  new HashMap<Integer, List<RectF>>(); // List of timer rectangles
     private TimerSessionHolder timerSessionHolder;
-    private int prevTimer;
+    private int prevTimer = -1;
 
     public TimerWeekView(Context context) {
         super(context);
@@ -93,40 +107,7 @@ public class TimerWeekView extends View {
     public TimerWeekView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(attrs, 0);
-        // TODO remove this mock data once we implemented get timers
-        String MOCK_TIMER_NAME = "CPSC 101";
-        Calendar start = createCalendar(8,0,0,0);
-        Calendar end = createCalendar(12, 0, 0, 0);
-        TimerSession one = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, true, true, true, true, true, true}, Color.rgb(205, 64, 109));
-        start = createCalendar(15,0,0,0);
-        end = createCalendar(17, 0, 0, 0);
-        TimerSession two = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { false, false, false, false, false, true, false},Color.rgb(69, 146, 134));
-        start = createCalendar(12,0,0,0);
-        end = createCalendar(15, 0, 0, 0);
-        TimerSession three = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { false, false, true, false, true, false, false}, Color.rgb(106, 125, 137));
-        start = createCalendar(17,0,0,0);
-        end = createCalendar(18, 0, 0, 0);
-        TimerSession four = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.VIBRATE, start, end, new boolean[] { true, false, false, false, false, false, false},Color.rgb(136, 67, 173));
-        start = createCalendar(12,0,0,0);
-        end = createCalendar(17, 0, 0, 0);
-        TimerSession five = new TimerSession(MOCK_TIMER_NAME, TimerSession.TimerSessionType.SILENT, start, end, new boolean[] { true, false, false, false, false, false, false}, Color.rgb(136, 67, 173));
-        try {
-            timerSessionHolder = TimerSessionHolder.getInstance().setContext(getContext());
-            timerSessionHolder.removeAll();
-            timerSessionHolder.addTimer(one, two, three, four, five);
-        } catch (TimerConflictException e) {
-            e.printStackTrace();
-        }
-    }
-    //TODO get rid of this, for testing purposes
-    private Calendar createCalendar(int hour, int min, int second, int millis) {
-        Calendar cal = Calendar.getInstance();
-
-        cal.set(Calendar.HOUR_OF_DAY, hour);
-        cal.set(Calendar.MINUTE, min);
-        cal.set(Calendar.SECOND, second);
-        cal.set(Calendar.MILLISECOND, millis);
-        return cal;
+        timerSessionHolder = TimerSessionHolder.getInstance().setContext(getContext());
     }
 
     public TimerWeekView(Context context, AttributeSet attrs, int defStyle) {
@@ -184,11 +165,6 @@ public class TimerWeekView extends View {
 
             timerYPadding = (int) (contentHeight * 0.025);
 
-            // timers, account for padding bottom, will account for padding top when drawing later
-            timerLength = (float) (contentHeight - timerYPadding) / (float) getTimerDuration();
-
-            System.out.println("timer total length   "  + (contentHeight- timerYPadding) + ", timer each length  " + timerLength);
-
             timerWidth = (int) (columnWidth * 0.5);
             timerPaddingLeft = (int) (columnWidth * 0.25);
 
@@ -200,6 +176,13 @@ public class TimerWeekView extends View {
             divXRight = 0;
         }
 
+        // timers, account for padding bottom, will account for padding top when drawing later
+        if(timerSessionHolder.isEmpty()) {
+            timerLength = 0;
+        } else {
+            timerLength = (float) (contentHeight - timerYPadding) / (float) getTimerDuration();
+        }
+        System.out.println("timer total length   " + (contentHeight - timerYPadding) + ", timer each length  " + timerLength);
 
         for(int i = 0; i < numColumns; i++) {
             containerXLeft = (i * columnWidth) + (i * dividerWidth);
@@ -229,21 +212,23 @@ public class TimerWeekView extends View {
                 System.out.println("ADDING THIS TIMER    =====   "   + timer.getId());
                 System.out.println("drawing starts at   " + timerYStart + ", ends at      " + timerYEnd);
                 // if timer id is already in map, add current timer to it's value
-                List<RectF> currTimers = (timerRects.get(timer.getId()) == null)? new ArrayList<RectF>() :
-                        timerRects.get(timer.getId());
+                List<RectF> currTimers = (timerRectsMaps.get(timer.getId()) == null)? new ArrayList<RectF>() :
+                        timerRectsMaps.get(timer.getId());
                 currTimers.add(timerRect);
-                timerRects.put(timer.getId(), currTimers);
+                timerRectsMaps.put(timer.getId(), currTimers);
                 timerPaint.setColor(timer.getColor());
                 canvas.drawRoundRect(timerRect, 15, 15, timerPaint);
-                // draw timer icon
-                // 50 is a good size for the icon, to prevent it being too strected in larger timer blocks
-                int iconYEnd = (int)timerYStart + 50;
-                if(timer.getType() == TimerSession.TimerSessionType.VIBRATE) {
-                    vibrateDrawable.setBounds(timerXLeft, (int) timerYStart, timerXRight, iconYEnd);
-                    vibrateDrawable.draw(canvas);
-                } else if (timer.getType() == TimerSession.TimerSessionType.SILENT) {
-                    silentDrawable.setBounds(timerXLeft, (int) timerYStart, timerXRight, iconYEnd);
-                    silentDrawable.draw(canvas);
+                if((timerYEnd - timerYStart) > TIMER_ICON_HEIGHT) {
+                    // draw timer icon
+                    // 50 is a good size for the icon, to prevent it being too strected in larger timer blocks
+                    int iconYEnd = (int)timerYStart + TIMER_ICON_HEIGHT;
+                    if(timer.getType() == TimerSession.TimerSessionType.VIBRATE) {
+                        vibrateDrawable.setBounds(timerXLeft, (int) timerYStart, timerXRight, iconYEnd);
+                        vibrateDrawable.draw(canvas);
+                    } else if (timer.getType() == TimerSession.TimerSessionType.SILENT) {
+                        silentDrawable.setBounds(timerXLeft, (int) timerYStart, timerXRight, iconYEnd);
+                        silentDrawable.draw(canvas);
+                    }
                 }
 
             }
@@ -282,43 +267,60 @@ public class TimerWeekView extends View {
      * Display this timer's name, time, days
      * @param selectedTimer
      */
-    private void displayTimerInfo(TimerSession selectedTimer) {
-        View root = getRootView();
+    private void displayTimerInfo(final TimerSession selectedTimer) {
+        if(root == null) {
+            root = getRootView();
 
-        View timerPlaceholder = root.findViewById(R.id.timer_placeholder);
+            timerPlaceholder = root.findViewById(R.id.timer_placeholder);
+            timerInfoView = root.findViewById(R.id.timer_info_layout);
+            timerName = (TextView) root.findViewById(R.id.timer_name);
+            timerTypeIcon = (ImageView) root.findViewById(R.id.timer_type_icon);
+            timerDeleteIcon = (ImageView) root.findViewById(R.id.timer_delete_icon);
+            timerOnOffSwitch = (Switch) root.findViewById(R.id.timer_switch);
+            timerStartTimeView = (TextView) root.findViewById(R.id.timer_start_time);
+            timerEndTimeView = (TextView) root.findViewById(R.id.timer_end_time);
+            timerDaysView = (TextView) root.findViewById(R.id.timer_days);
+
+        }
+
         timerPlaceholder.setVisibility(View.GONE);
-
-        View timerInfoView = root.findViewById(R.id.timer_info_layout);
         timerInfoView.setVisibility(View.VISIBLE);
 
-        TextView timerName = (TextView) root.findViewById(R.id.timer_name);
+        timerInfoView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent mIntent = new Intent(view.getContext(), CreateTimerActivity.class);
+                Bundle mBundle = new Bundle();
+                mBundle.putSerializable("Timer", selectedTimer);
+                mIntent.putExtras(mBundle);
+                view.getContext().startActivity(mIntent);
+            }
+        });
+
         timerName.setText(selectedTimer.getName());
         timerName.setTextColor(selectedTimer.getColor());
 
-        ImageView timerTypeIcon = (ImageView) root.findViewById(R.id.timer_type_icon);
         if(selectedTimer.getType() == TimerSession.TimerSessionType.VIBRATE) {
             timerTypeIcon.setImageBitmap(vibrateBitmap);
         } else if(selectedTimer.getType() == TimerSession.TimerSessionType.SILENT) {
             timerTypeIcon.setImageBitmap(silentBitmap);
         }
 
-        ImageView timerDeleteIcon = (ImageView) root.findViewById(R.id.timer_delete_icon);
         timerDeleteIcon.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO handle deletion of timer
-                new AlertDialog.Builder(ctx)
+                new AlertDialog.Builder(view.getContext())
                         .setTitle("Delete timer")
                         .setMessage("Are you sure you want to delete this timer?")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                // continue with delete
-                                Toast.makeText(getContext(), "Timer deleted", Toast.LENGTH_SHORT).show();
+                                timerSessionHolder.removeTimer(selectedTimer);
+                                Toast.makeText(getContext(), "Timer " + prevTimer + " deleted", Toast.LENGTH_SHORT).show();
+                                updateDeleteTimerView(selectedTimer);
                             }
                         })
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                // do nothing
                                 Toast.makeText(getContext(), "Timer kept", Toast.LENGTH_SHORT).show();
                             }
                         })
@@ -327,28 +329,43 @@ public class TimerWeekView extends View {
             }
         });
 
-        Switch timerOnOffSwitch = (Switch) root.findViewById(R.id.timer_switch);
+        timerOnOffSwitch.setChecked(!selectedTimer.getTimerSnooze());
+        timerOnOffSwitch.getTrackDrawable().setColorFilter(selectedTimer.getColor(), PorterDuff.Mode.MULTIPLY);
+        timerOnOffSwitch.getThumbDrawable().setColorFilter(selectedTimer.getColor(), PorterDuff.Mode.MULTIPLY);
         timerOnOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                //TODO handle the switch action, turning the timer on and off
-                Toast.makeText(getContext(), (b==true)? "Switching timer on": "Switching timer off", Toast.LENGTH_SHORT).show();
+                if (b) {
+                    selectedTimer.setTimerSnooze(false);
+                    timerSessionHolder.wakeTimer(selectedTimer);
+                } else {
+                    selectedTimer.setTimerSnooze(true);
+                    timerSessionHolder.snoozeTimer(selectedTimer);
+                }
+                Toast.makeText(getContext(), (b == true) ? "Switching timer on" : "Switching timer off", Toast.LENGTH_SHORT).show();
 
             }
         });
 
-        TextView timerStartTimeView = (TextView) root.findViewById(R.id.timer_start_time);
         String startTimeText = getStartTimeInFormat(selectedTimer, TIME_STRING_FORMAT);
         timerStartTimeView.setText(startTimeText);
 
-        TextView timerEndTimeView = (TextView) root.findViewById(R.id.timer_end_time);
         String endTimeText = getEndTimeInFormat(selectedTimer, TIME_STRING_FORMAT);
         timerEndTimeView.setText(endTimeText);
 
-        TextView timerDaysView = (TextView) root.findViewById(R.id.timer_days);
         String dayText = getDaysInFormat(selectedTimer);
         timerDaysView.setText(dayText);
+    }
 
+    /**
+     * Invalidate view to show removed time and update the card view so that it doesn't show the deleted timer
+     */
+    private void updateDeleteTimerView(TimerSession timerSession) {
+        this.invalidate();
+        timerRectsMaps.remove(timerSession.getId());
+        timerPlaceholder.setVisibility(View.VISIBLE);
+        timerInfoView.setVisibility(View.GONE);
+        prevTimer = -1;
     }
 
     /**
@@ -378,11 +395,11 @@ public class TimerWeekView extends View {
      * @return drawing height for each second(s) for a timer
      */
     private int getTimerDuration() {
-        earliestTime = 23;
+        earliestTime = 86400;
         int latest = 0;
         for(TimerSession timerSession: timerSessionHolder) {
-            int startHour = timerSession.getStartTime().get(Calendar.HOUR_OF_DAY);
-            int endHour = timerSession.getEndTime().get(Calendar.HOUR_OF_DAY);
+            int startHour = timerSession.getStartTime().get(Calendar.MINUTE) + (60* timerSession.getStartTime().get(Calendar.HOUR_OF_DAY));
+            int endHour = timerSession.getEndTime().get(Calendar.MINUTE) + (60* timerSession.getEndTime().get(Calendar.HOUR_OF_DAY));
             if(startHour < earliestTime) {
                 earliestTime = startHour;
             }
@@ -400,8 +417,7 @@ public class TimerWeekView extends View {
      * @return the scaled time for onDraw
      */
     private int scaled(Calendar realTime) {
-        int time = realTime.get(Calendar.HOUR_OF_DAY);
-        if(time == 0) time = 1; // round up 0 hour to 1 so that it doesn't disappear off screen
+        int time = realTime.get(Calendar.MINUTE) + (60 * realTime.get(Calendar.HOUR_OF_DAY));
         return (time - earliestTime);
     }
 
@@ -428,7 +444,7 @@ public class TimerWeekView extends View {
      * @return the timersession object corresponding to the selected timer on the screen
      */
     private TimerSession getSelectedTimer(float x, float y) {
-        Iterator it = timerRects.entrySet().iterator();
+        Iterator it = timerRectsMaps.entrySet().iterator();
         while(it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
             List<RectF> listOfTimerRects = (List<RectF>) pair.getValue();

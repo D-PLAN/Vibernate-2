@@ -18,12 +18,11 @@ import java.util.Calendar;
  */
 public class CreateTimerTimePicker extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
 
+    private int hour = 9;
+    private int minute = 0;
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        // Use the current time as the default values for the picker
-        final Calendar c = Calendar.getInstance();
-        int hour = c.get(Calendar.HOUR_OF_DAY);
-        int minute = c.get(Calendar.MINUTE);
 
         // Create a new instance of TimePickerDialog and return it
         return new TimePickerDialog(getActivity(), this, hour, minute,
@@ -44,4 +43,10 @@ public class CreateTimerTimePicker extends DialogFragment implements TimePickerD
         time.append(minute);
         textToUpdate.setText(time.toString());
     }
+
+    public void setTime(int h, int m) {
+        hour = h;
+        minute = m;
+    }
+
 }
