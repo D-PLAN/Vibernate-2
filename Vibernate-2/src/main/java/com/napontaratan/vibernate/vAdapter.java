@@ -30,17 +30,6 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         this.timerSessionHolder = timerSessionHolder;
     }
 
-    // remove a row at 'position'
-    public void delete(int position) {
-        notifyItemRemoved(position);
-    }
-
-    // Add 'item' at 'position'
-    public void addItem(TimerSession item) {
-        data.add(item);
-        notifyItemInserted(data.size());
-    }
-
     @Override
     public vViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.v_row, parent, false); // inflat xml into a view
@@ -50,7 +39,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
 
     @Override
     public void onBindViewHolder(vViewHolder holder, int position) {
-        TimerSession current = data.get(position);
+        TimerSession current = timerSessionHolder.getTimer(position);
         holder.description.setText(current.getName());
         holder.startTime.setText(TimerWeekView.getStartTimeInFormat(current, "HH:MM"));
         holder.endTime.setText(TimerWeekView.getEndTimeInFormat(current, "HH:MM"));
@@ -63,7 +52,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
 
     @Override
     public int getItemCount() {
-        return timerSessionHolder;
+        return timerSessionHolder.getSize();
     }
 
 

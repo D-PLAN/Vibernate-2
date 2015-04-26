@@ -18,8 +18,8 @@ import java.util.List;
 public class ListViewFragment extends Fragment {
     private RecyclerView vRecyclerView;
     private vAdapter v_Adapter;
-    private TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance().setContext(getActivity().getApplicationContext()); // call function and parse in a context and if i don't pares
-
+    private TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance(); // call function and parse in a context and if i don't pares
+    // setContext:
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -27,10 +27,14 @@ public class ListViewFragment extends Fragment {
         // Inflate the layout for this fragment:
         View rootView = inflater.inflate(R.layout.list_fragment, container, false);
         vRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycle_view);
+        //timerSessionHolder.setContext(getActivity().getApplicationContext());
+
         v_Adapter = new vAdapter(getActivity(), timerSessionHolder);
         vRecyclerView.setAdapter(v_Adapter);
         vRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         return rootView;
     }
+
+
 
 }
