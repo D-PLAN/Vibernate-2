@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.*;
 import com.napontaratan.vibernate.model.TimerSession;
 import com.napontaratan.vibernate.model.TimerSessionHolder;
+import com.napontaratan.vibernate.model.TimerUtils;
 import com.napontaratan.vibernate.view.TimerWeekView;
 
 
@@ -38,11 +39,11 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
 
     @Override
     public void onBindViewHolder(vViewHolder holder, int position) {
-        TimerSession current = timerSessionHolder.getTimer(position);
+        TimerSession current = timerSessionHolder.get(position);
         holder.description.setText(current.getName());
-        holder.startTime.setText(TimerWeekView.getStartTimeInFormat(current, "HH:MM"));
-        holder.endTime.setText(TimerWeekView.getEndTimeInFormat(current, "HH:MM"));
-        holder.activeDays.setText(TimerWeekView.getDaysInFormat(current));
+        holder.startTime.setText(TimerUtils.getStartTimeInFormat(current, "HH:MM"));
+        holder.endTime.setText(TimerUtils.getEndTimeInFormat(current, "HH:MM"));
+        holder.activeDays.setText(TimerUtils.getDaysInFormat(current));
         if (current.getType() == TimerSession.TimerSessionType.SILENT) {
             holder.typeIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_volume_muted));
         } else {
@@ -94,7 +95,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             } else if (v == box) {
                 Intent mIntent = new Intent(v.getContext(), CreateTimerActivity.class);
                 Bundle mBundle = new Bundle();
-                mBundle.putSerializable("Timer", TimerSessionHolder.getInstance().getTimer(getPosition()));
+                mBundle.putSerializable("Timer", TimerSessionHolder.getInstance().get(getPosition()));
                 mIntent.putExtras(mBundle);
                 v.getContext().startActivity(mIntent);
             } else if (v == colorTab) {
