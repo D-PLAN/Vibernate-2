@@ -12,7 +12,7 @@ import java.util.*;
  * Singleton data holder for our timers, connects the UI to our data
  * by taking care of timer actions done with UI and DB
  */
-public class TimerSessionHolder implements Iterable<TimerSession> {
+public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
 
     private TimerController timerController;
     private List<TimerSession> timers;
@@ -86,9 +86,11 @@ public class TimerSessionHolder implements Iterable<TimerSession> {
         if(timerSession != null) {
             timerController.removeAlarm(timerSession);
             timersIdMap.remove(timerSession.getId());
+            timers.remove(timerSession);
             notifyListViewChanged();
+            return true;
         }
-        return timers.remove(timerSession);
+        return false;
     }
 
     /**
