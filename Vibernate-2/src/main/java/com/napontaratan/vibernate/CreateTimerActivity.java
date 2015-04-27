@@ -45,6 +45,9 @@ public class CreateTimerActivity extends FragmentActivity {
         setContentView(R.layout.create_timer);
         timePicker = new CreateTimerTimePicker();
 
+        Bundle extras = getIntent().getBundleExtra("Timer");
+        ts = (TimerSession) getIntent().getSerializableExtra("Timer");
+
         //CheckMark Button made up here so that we can dynamically change color
         final ImageButton done = (ImageButton) findViewById(R.id.add_timer_button);
 
@@ -83,13 +86,11 @@ public class CreateTimerActivity extends FragmentActivity {
 
                 //Implement listener to get selected color value
                 colorCalendar.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
-
                     @Override
                     public void onColorSelected(int color) {
                         Toast.makeText(getBaseContext(), "Color is " + color, Toast.LENGTH_SHORT).show();
                         colorPicked = color;
                         System.out.println("colorPicked is " + colorPicked);
-
                         //To darken the colorPicked
                         float[] hsv = new float[3];
                         int colorPickedDarker = colorPicked;
@@ -314,6 +315,71 @@ public class CreateTimerActivity extends FragmentActivity {
                 createTimerSession(name, type, start_hour, start_min, end_hour, end_min, days, colorPicked);
             }
         });
+
+        //grabbing information from bundle
+        if (ts != null) {
+
+            //Change color
+                    //To darken the colorPicked
+                    float[] hsv = new float[3];
+                    int colorPickedDarker = ts.getColor();
+                    Color.colorToHSV(ts.getColor(), hsv);
+                    hsv[2] *= 0.8f; // value component
+                    colorPickedDarker = Color.HSVToColor(hsv);
+                    System.out.println("colorPickedDarker is " + colorPickedDarker);
+
+                    //Changing toolbar color
+                    toolbar.setBackgroundColor(ts.getColor());
+
+                    //Changing Checkbox color
+                    Drawable button = (Drawable) done.getBackground();
+                    button.setColorFilter(ts.getColor(), PorterDuff.Mode.SRC_ATOP);
+
+                    //Changing Status Bar color
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        Window window = getWindow();
+                        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                        window.setStatusBarColor(colorPickedDarker);
+                    }
+            //Change name
+            nameField.setText(ts.getName(), TextView.BufferType.EDITABLE);
+            nameField.clearFocus();
+
+            //Vibrate/Silent
+            if (ts.getType() == TimerSession.TimerSessionType.VIBRATE) {
+                typeVibrate.setChecked(true);
+                typeSilent.setChecked(false);
+            } else {
+                typeSilent.setChecked(true);
+                typeVibrate.setChecked(false);
+            }
+
+            //Saved StartTime and EndTime
+            Calendar editedCalendar = ts.getStartTime();
+            int savedStartHour = editedCalendar.get(Calendar.HOUR_OF_DAY);
+            int savedStartMin = editedCalendar.get(Calendar.MINUTE);
+            editedCalendar = ts.getEndTime();
+            int savedEndHour = editedCalendar.get(Calendar.HOUR_OF_DAY);
+            int savedEndMin = editedCalendar.get(Calendar.MINUTE);
+
+            String savedStartHourString = (savedStartHour < 10)?  "0" + savedStartHour: Integer.toString(savedStartHour);
+            String savedStartMinString = (savedStartMin < 10)?  "0" + savedStartMin: Integer.toString(savedStartMin);
+            String savedEndHourString = (savedEndHour < 10)?  "0" + savedEndHour: Integer.toString(savedEndHour);
+            String savedEndMinString = (savedEndMin < 10)?  "0" + savedEndMin: Integer.toString(savedEndMin);
+
+            String start = savedStartHourString + ":" + savedStartMinString;
+            String end = savedEndHourString + ":" + savedEndMinString;
+
+            startTime.setText(start);
+            endTime.setText(end);
+
+            //Days
+            days.get(currentDay).setChecked(false);
+            bDays = ts.getDays();
+            for (int i=0; i<bDays.length;i++) {
+                if (bDays[i] == true) days.get(i).setChecked(true);
+            }
+        }
     }
 
     private void createTimerSession (String name, TimerSession.TimerSessionType type, int startHour, int startMin, int endHour, int endMin, List<ToggleButton> days, int color) {
@@ -341,7 +407,8 @@ public class CreateTimerActivity extends FragmentActivity {
 
 
         try {
-            if(ts == null || isModified(newTimer)) {
+            int check = isModified(newTimer);
+            if(ts == null || check == 1) {
                 TimerSessionHolder.getInstance().addTimer(newTimer);
                 Log.d("CreateTimer", "creating timer with the following information: \n" +
                         "Name: " + name + "\n" +
@@ -349,7 +416,15 @@ public class CreateTimerActivity extends FragmentActivity {
                         "StartTime" + start.get(Calendar.HOUR_OF_DAY) + ":" + start.get(Calendar.MINUTE) + "\n" +
                         "EndTime" + end.get(Calendar.HOUR_OF_DAY) + ":" + end.get(Calendar.MINUTE) + "\n");
             } else {
-                Log.d("CreateTimer", "Bundle not null and Timer not modified");
+                if(check == -1) {
+                    Log.d("CreateTimer", "Bundle not null and Timer not modified");
+                } else {
+                    TimerSessionHolder boss = TimerSessionHolder.getInstance();
+                    TimerSession victim = boss.getTimerById(ts.getId());
+                    victim.setName(name);
+                    victim.setColor(color);
+                    Log.d("CreateTimer", "Bundle not null and only name or color changed");
+                }
             }
         } catch (TimerConflictException e) {
             createDialog("Timer Conflict", "The time specified is in conflict with another timer. Please try again.");
@@ -358,7 +433,6 @@ public class CreateTimerActivity extends FragmentActivity {
 
         finish();
     }
-
 
     private Calendar generateCalendar(int hour, int minute) {
         Calendar cal = Calendar.getInstance();
@@ -381,9 +455,17 @@ public class CreateTimerActivity extends FragmentActivity {
                 }).show();
     }
 
-    private boolean isModified(TimerSession newTimer) {
-        return !newTimer.getStartTime().equals(ts.getStartTime()) || !newTimer.getEndTime().equals(ts.getEndTime()) ||
-                newTimer.getColor() != ts.getColor() || newTimer.getDays() != ts.getDays() ||
-                newTimer.getName() != ts.getName();
+    // return 1 if modified
+    // return 0 if only color or name are modified
+    // return -1 if nothing is modified
+    private int isModified(TimerSession newTimer) {
+        if (!newTimer.getStartTime().equals(ts.getStartTime()) || !newTimer.getEndTime().equals(ts.getEndTime()) ||
+                newTimer.getDays() != ts.getDays()){
+            return 1;
+        } else if (newTimer.getColor() != ts.getColor() || newTimer.getName() != ts.getName()) {
+            return 0;
+        } else {
+            return -1;
+        }
     }
 }
