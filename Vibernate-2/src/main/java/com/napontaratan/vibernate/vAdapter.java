@@ -41,8 +41,8 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
     public void onBindViewHolder(vViewHolder holder, int position) {
         TimerSession current = timerSessionHolder.get(position);
         holder.description.setText(current.getName());
-        holder.startTime.setText(TimerUtils.getStartTimeInFormat(current, "HH:MM"));
-        holder.endTime.setText(TimerUtils.getEndTimeInFormat(current, "HH:MM"));
+        holder.startTime.setText(TimerUtils.getStartTimeInFormat(current, "HH:mm"));
+        holder.endTime.setText(TimerUtils.getEndTimeInFormat(current, "HH:mm"));
         holder.activeDays.setText(TimerUtils.getDaysInFormat(current));
         if (current.getType() == TimerSession.TimerSessionType.SILENT) {
             holder.typeIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_volume_muted));
