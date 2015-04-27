@@ -8,10 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Observable;
+import java.util.*;
 
 /**
  * VibrateTimer model
@@ -223,5 +220,39 @@ public final class TimerSession extends Observable implements Serializable, Comp
 		ByteArrayInputStream in = new ByteArrayInputStream(data);
 		ObjectInputStream is = new ObjectInputStream(in);
 		return is.readObject();
+	}
+
+	@Override
+	// IntelliJ Default Generated
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		TimerSession that = (TimerSession) o;
+
+		if (getId() != that.getId()) return false;
+		if (getColor() != that.getColor()) return false;
+		if (snoozed != that.snoozed) return false;
+		if (getName() != null ? !getName().equals(that.getName()) : that.getName() != null) return false;
+		if (getStartTime() != null ? !getStartTime().equals(that.getStartTime()) : that.getStartTime() != null)
+			return false;
+		if (getEndTime() != null ? !getEndTime().equals(that.getEndTime()) : that.getEndTime() != null) return false;
+		if (!Arrays.equals(getDays(), that.getDays())) return false;
+		return getType() == that.getType();
+
+	}
+
+	@Override
+	// IntelliJ Default Generated
+	public int hashCode() {
+		int result = getName() != null ? getName().hashCode() : 0;
+		result = 31 * result + (getStartTime() != null ? getStartTime().hashCode() : 0);
+		result = 31 * result + (getEndTime() != null ? getEndTime().hashCode() : 0);
+		result = 31 * result + getId();
+		result = 31 * result + (getDays() != null ? Arrays.hashCode(getDays()) : 0);
+		result = 31 * result + (getType() != null ? getType().hashCode() : 0);
+		result = 31 * result + getColor();
+		result = 31 * result + (snoozed ? 1 : 0);
+		return result;
 	}
 }

@@ -48,8 +48,12 @@ public class CreateTimerActivity extends FragmentActivity {
         setContentView(R.layout.create_timer);
         timePicker = new CreateTimerTimePicker();
 
-        Bundle extras = getIntent().getBundleExtra("Timer");
-        ts = (TimerSession) getIntent().getSerializableExtra("Timer");
+        Bundle extras = getIntent().getExtras();
+        if(extras != null) {
+            ts = (TimerSession)extras.getSerializable("Timer");
+        } else {
+            ts = null;
+        }
 
         //CheckMark Button made up here so that we can dynamically change color
         final ImageButton done = (ImageButton) findViewById(R.id.add_timer_button);
