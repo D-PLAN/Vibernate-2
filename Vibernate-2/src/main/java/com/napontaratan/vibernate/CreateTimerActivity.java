@@ -407,7 +407,10 @@ public class CreateTimerActivity extends FragmentActivity {
 
 
         try {
-            if(ts == null || ( ts!= null && isModified(newTimer) == 1)) {
+            if(ts == null || (ts!= null && isModified(newTimer) == 1)) {
+                if(ts!= null && isModified(newTimer) == 1) {
+                    TimerSessionHolder.getInstance().removeTimer(ts);
+                }
                 TimerSessionHolder.getInstance().addTimer(newTimer);
                 Log.d("CreateTimer", "creating timer with the following information: \n" +
                         "Name: " + name + "\n" +
