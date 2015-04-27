@@ -26,8 +26,11 @@ import com.napontaratan.vibernate.view.ColorPickerDialog;
 import com.napontaratan.vibernate.view.ColorPickerSwatch;
 import com.napontaratan.vibernate.view.CreateTimerTimePicker;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class CreateTimerActivity extends FragmentActivity {
@@ -163,6 +166,7 @@ public class CreateTimerActivity extends FragmentActivity {
         int currentHour = c.get(Calendar.HOUR_OF_DAY);
         int currentMin = c.get(Calendar.MINUTE);
         int nextHour = currentHour + 1;
+        int nextMin = c.get(Calendar.MINUTE);
         int currentDay = c.get(Calendar.DAY_OF_WEEK) - 1;
 
         String minString = (currentMin < 10)?  "0" + currentMin: Integer.toString(currentMin);
@@ -385,6 +389,11 @@ public class CreateTimerActivity extends FragmentActivity {
     private void createTimerSession (String name, TimerSession.TimerSessionType type, int startHour, int startMin, int endHour, int endMin, List<ToggleButton> days, int color) {
         if(name == null || name.equals("")) {
             createDialog("Insufficient info", "Please specify a timer name.");
+            return;
+        }
+
+        if (startHour > endHour || (startHour == endHour && startMin >= endMin)) {
+            createDialog("Invalid Time Range", "Please specify a valid range.");
             return;
         }
 
