@@ -12,7 +12,7 @@ import java.util.*;
  * Singleton data holder for our timers, connects the UI to our data
  * by taking care of timer actions done with UI and DB
  */
-public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
+public class TimerSessionHolder implements Iterable<TimerSession> {
 
     private TimerController timerController;
     private List<TimerSession> timers;
@@ -62,7 +62,7 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
      * @param timerSessions
      * @throws TimerConflictException if this timer to be added conflicts with existing timers
      */
-    public void addTimer(TimerSession ...  timerSessions) throws TimerConflictException {
+    public void addTimer(TimerSession ...  timerSessions) throws TimerConflictException{
         //TODO we can maybe try to coagulate 2 timers which are back to back of the same type
         for(TimerSession timerSession: timerSessions) {
             if(isTimerConflict(timerSession)) {
@@ -86,7 +86,12 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
         if(timerSession != null) {
             timerController.removeAlarm(timerSession);
             timersIdMap.remove(timerSession.getId());
-            timers.remove(timerSession);
+            for(TimerSession t : timers) {
+                if(t.getId() == timerSession.getId()) {
+                    timers.remove(t);
+                    break;
+                }
+            }
             notifyListViewChanged();
             return true;
         }
