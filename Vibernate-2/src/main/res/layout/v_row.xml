@@ -21,6 +21,10 @@
                 android:id="@+id/TSisActive"
                 android:background="@color/colorPrimary" android:layout_weight="0.37"/>
 
+        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                android:layout_weight="0.02"
+                android:id="@+id/click_area">
+
         <!-- Left Bar -->
         <LinearLayout
                 android:orientation="vertical"
@@ -130,6 +134,7 @@
                         android:textSize="20sp" android:layout_gravity="center_vertical"
                         android:layout_marginLeft="10dp"/>
             </LinearLayout>
+        </LinearLayout>
         </LinearLayout>
     </LinearLayout> <!-- End of Row -->
 </FrameLayout>

@@ -48,8 +48,8 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         } else {
             holder.typeIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_alarms));
         }
+        holder.colorTab.setBackgroundColor(current.getColor());
     }
-
 
 
 
@@ -58,6 +58,11 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         return timerSessionHolder.getSize();
     }
 
+    // TO BE REMOVED JUST SO I CAN GET RID OF LOTS OF DATA
+    private void removeItem(int position) {
+        timerSessionHolder.removeTimer(position);
+        notifyItemRemoved(position);
+    }
 
     public class vViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
         TextView description;
@@ -76,11 +81,10 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             typeIcon = (ImageView) itemView.findViewById(R.id.v_mute_icon);
             activeDays = (TextView) itemView.findViewById(R.id.v_show_activeDays);
             colorTab = itemView.findViewById(R.id.TSisActive);
-            box = itemView.findViewById(R.id.row);
-
+            box = itemView.findViewById(R.id.click_area);
             box.setOnClickListener(this);
             typeIcon.setOnClickListener(this);
-
+            colorTab.setOnClickListener(this);
         }
 
         @Override
@@ -93,6 +97,9 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
                 mBundle.putSerializable("Timer", TimerSessionHolder.getInstance().getTimer(getPosition()));
                 mIntent.putExtras(mBundle);
                 v.getContext().startActivity(mIntent);
+            } else if (v == colorTab) {
+                removeItem(getPosition());
+
             }
 
         }
