@@ -388,12 +388,7 @@ public class CreateTimerActivity extends FragmentActivity {
             createDialog("Insufficient info", "Please specify a timer name.");
             return;
         }
-
-        if (startHour > endHour || (startHour == endHour && startMin >= endMin) || (startHour == 0 && endHour != 0)) {
-            createDialog("Invalid Time Range", "Please specify a valid range.");
-            return;
-        }
-
+        
         boolean daySelected = false;
         for(int i = 0; i < 7; i++) {
             if(bDays[i]){
@@ -409,6 +404,10 @@ public class CreateTimerActivity extends FragmentActivity {
 
         Calendar start = generateCalendar(startHour, startMin);
         Calendar end   = generateCalendar(endHour, endMin);
+        if (start.after(end)) {
+            createDialog("Invalid Time Range", "Please specify a valid range.");
+            return;
+        }
         TimerSession newTimer = new TimerSession(name, type, start, end, bDays,color);
 
         TimerSessionHolder boss = TimerSessionHolder.getInstance();
