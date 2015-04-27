@@ -416,8 +416,10 @@ public class CreateTimerActivity extends FragmentActivity {
 
 
         try {
-            int check = isModified(newTimer);
-            if(ts == null || check == 1) {
+            if(ts == null || (ts!= null && isModified(newTimer) == 1)) {
+                if(ts!= null && isModified(newTimer) == 1) {
+                    TimerSessionHolder.getInstance().removeTimer(ts);
+                }
                 TimerSessionHolder.getInstance().addTimer(newTimer);
                 Log.d("CreateTimer", "creating timer with the following information: \n" +
                         "Name: " + name + "\n" +
@@ -425,14 +427,14 @@ public class CreateTimerActivity extends FragmentActivity {
                         "StartTime" + start.get(Calendar.HOUR_OF_DAY) + ":" + start.get(Calendar.MINUTE) + "\n" +
                         "EndTime" + end.get(Calendar.HOUR_OF_DAY) + ":" + end.get(Calendar.MINUTE) + "\n");
             } else {
-                if(check == -1) {
-                    Log.d("CreateTimer", "Bundle not null and Timer not modified");
-                } else {
+                if(ts != null && isModified(newTimer) == 0) {
                     TimerSessionHolder boss = TimerSessionHolder.getInstance();
                     TimerSession victim = boss.getTimerById(ts.getId());
                     victim.setName(name);
                     victim.setColor(color);
                     Log.d("CreateTimer", "Bundle not null and only name or color changed");
+                } else {
+                    Log.d("CreateTimer", "Bundle not null and Timer not modified");
                 }
             }
         } catch (TimerConflictException e) {
