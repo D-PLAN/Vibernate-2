@@ -211,33 +211,25 @@ public class CreateTimerActivity extends FragmentActivity {
         days.get(currentDay).setChecked(true);
         bDays[currentDay] = true;
 
-        // if sunday is clicked
-        days.get(0).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(days.get(0).isChecked()) {
-                    bDays[0] = true;
-                    if (days.get(6).isChecked()) weekends_btn.setChecked(true);
-                    else weekends_btn.setChecked(false);
-                } else {
-                    bDays[0] = false;
+        // if sunday(0) OR saturday(6)   is clicked
+        for(int i = 0; i < 7; i+=6){
+            final int finalI = i;
+            days.get(i).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(days.get(finalI).isChecked()) {
+                        bDays[finalI] = true;
+                        for(int j = 0; j < 7; j+=6){
+                            if(!days.get(j).isChecked()) return;
+                        }
+                        weekends_btn.setChecked(true);
+                    } else {
+                        weekends_btn.setChecked(false);
+                        bDays[finalI] = false;
+                    }
                 }
-            }
-        });
-
-        // if saturday is clicked
-        days.get(6).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(days.get(6).isChecked()) {
-                    bDays[6] = true;
-                    if (days.get(0).isChecked()) weekends_btn.setChecked(true);
-                    else weekends_btn.setChecked(false);
-                } else {
-                    bDays[6] = false;
-                }
-            }
-        });
+            });
+        }
 
         // if one of the days from mon-fri is clicked
         for(int i = 1; i < 6; i++){
@@ -290,7 +282,7 @@ public class CreateTimerActivity extends FragmentActivity {
                     }
                 } else {
                     for(int i = 0; i < 7; i++){
-                        if(i == 0 || i == 6) {
+                        if(i == 0 || i == 6) {;
                             days.get(i).setChecked(false);
                             bDays[i] = false;
                         }
