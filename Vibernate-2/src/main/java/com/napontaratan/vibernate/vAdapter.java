@@ -26,6 +26,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         inflater = LayoutInflater.from(context);
         this.context = context;
         this.timerSessionHolder = timerSessionHolder;
+        this.timerSessionHolder.setAdapter(this);
     }
 
     @Override

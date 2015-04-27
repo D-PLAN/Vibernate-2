@@ -1,6 +1,7 @@
 package com.napontaratan.vibernate.model;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import com.napontaratan.vibernate.controller.TimerController;
 
 import java.util.*;
@@ -16,6 +17,7 @@ public class TimerSessionHolder implements Iterable<TimerSession> {
     private TimerController timerController;
     private List<TimerSession> timers;
     private HashMap<Integer, TimerSession> timersIdMap;
+    private RecyclerView.Adapter adapter;
 
     private TimerSessionHolder() {
         timers = new ArrayList<TimerSession>();
@@ -37,6 +39,10 @@ public class TimerSessionHolder implements Iterable<TimerSession> {
         timerController = new TimerController(ctx);
         populateHolder(timerController.getAllTimers());
         return instance;
+    }
+
+    public void setAdapter(RecyclerView.Adapter adapter) {
+        this.adapter = adapter;
     }
 
     private void populateHolder(List<TimerSession> allTimers) {
@@ -66,6 +72,7 @@ public class TimerSessionHolder implements Iterable<TimerSession> {
                 timerController.setAlarm(timerSession);
                 timers.add(timerSession);
                 timersIdMap.put(timerSession.getId(), timerSession);
+                notifyListViewChanged();
             }
         }
     }
@@ -79,6 +86,7 @@ public class TimerSessionHolder implements Iterable<TimerSession> {
         if(timerSession != null) {
             timerController.removeAlarm(timerSession);
             timersIdMap.remove(timerSession.getId());
+            notifyListViewChanged();
         }
         return timers.remove(timerSession);
     }
@@ -93,6 +101,7 @@ public class TimerSessionHolder implements Iterable<TimerSession> {
         if(timerSession != null) {
             timers.remove(pos);
             timersIdMap.remove(timerSession.getId());
+            notifyListViewChanged();
             return true;
         }
 
@@ -124,6 +133,7 @@ public class TimerSessionHolder implements Iterable<TimerSession> {
         timerController.removeAllAlarm(timers);
         timers = new ArrayList<TimerSession>();
         timersIdMap = new HashMap<Integer, TimerSession>();
+        notifyListViewChanged();
     }
 
     private boolean isTimerConflict(TimerSession timer) {
@@ -174,6 +184,12 @@ public class TimerSessionHolder implements Iterable<TimerSession> {
 
     public int getSize() {
         return timers.size();
+    }
+
+    public void notifyListViewChanged() {
+        if(adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
     }
 
 }
