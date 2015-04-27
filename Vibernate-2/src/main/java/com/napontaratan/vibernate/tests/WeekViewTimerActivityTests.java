@@ -265,22 +265,22 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
 
         try {
             List<TimerSession> empty = new ArrayList<TimerSession>();
-            assertEquals(empty, timerSessionHolder.timerOnThisDay(0));
+            assertEquals(empty, timerSessionHolder.getTimerOnThisDay(0));
 
             timerSessionHolder.addTimer(one);
             List<TimerSession> result = new ArrayList<TimerSession>();
             result.add(one);
-            assertEquals(result, timerSessionHolder.timerOnThisDay(0));
-            assertEquals(empty, timerSessionHolder.timerOnThisDay(1));
+            assertEquals(result, timerSessionHolder.getTimerOnThisDay(0));
+            assertEquals(empty, timerSessionHolder.getTimerOnThisDay(1));
 
             timerSessionHolder.addTimer(two); // list: one, two
             result = new ArrayList<TimerSession>();
             result.add(one);
-            assertEquals(result, timerSessionHolder.timerOnThisDay(0));
+            assertEquals(result, timerSessionHolder.getTimerOnThisDay(0));
             result = new ArrayList<TimerSession>();
             result.add(two);
-            assertEquals(result, timerSessionHolder.timerOnThisDay(1));
-            assertEquals(empty, timerSessionHolder.timerOnThisDay(3));
+            assertEquals(result, timerSessionHolder.getTimerOnThisDay(1));
+            assertEquals(empty, timerSessionHolder.getTimerOnThisDay(3));
 
             // make sure it's sorted
             timerSessionHolder.addTimer(three,four,five); // list: one, two, three, four five
@@ -289,14 +289,14 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
             result.add(four);
             result.add(three);
             result.add(two);
-            assertNotSame(result, timerSessionHolder.timerOnThisDay(1));
+            assertNotSame(result, timerSessionHolder.getTimerOnThisDay(1));
             // manually add timers in correct order
             result = new ArrayList<TimerSession>();
             result.add(two);
             result.add(three);
             result.add(four);
             result.add(five);
-            assertEquals(result, timerSessionHolder.timerOnThisDay(1));
+            assertEquals(result, timerSessionHolder.getTimerOnThisDay(1));
 
         } catch (TimerConflictException e) {
            fail();
@@ -371,7 +371,7 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
         boolean [] days = timer.getDays();
         for(int i = 0; i < days.length; i++) {
             if(days[i]) {
-                boolean hasTimer = timerSessionHolder.timerOnThisDay(i).contains(timer);
+                boolean hasTimer = timerSessionHolder.getTimerOnThisDay(i).contains(timer);
                 assertTrue(hasTimer);
             }
         }
@@ -391,7 +391,7 @@ public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2
         boolean [] days = timer.getDays();
         for(int i = 0; i < days.length; i++) {
             if(days[i]) {
-                boolean hasTimer = timerSessionHolder.timerOnThisDay(i).contains(timer);
+                boolean hasTimer = timerSessionHolder.getTimerOnThisDay(i).contains(timer);
                 assertFalse(hasTimer);
             }
         }

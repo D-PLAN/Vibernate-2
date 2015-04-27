@@ -179,12 +179,12 @@ public final class TimerSession extends Observable implements Serializable, Comp
 
     public void setName(String n) {
         name = n;
-		notifyObservers();
+		notifyChange();
     }
 
     public void setColor(int c) {
         color = c;
-		notifyObservers();
+		notifyChange();
     }
 
 	@Override
@@ -254,5 +254,10 @@ public final class TimerSession extends Observable implements Serializable, Comp
 		result = 31 * result + getColor();
 		result = 31 * result + (snoozed ? 1 : 0);
 		return result;
+	}
+
+	private void notifyChange() {
+		setChanged();
+		notifyObservers();
 	}
 }

@@ -10,8 +10,8 @@ import java.util.*;
 /**
  * Created by daniel on 2015-02-28.
  *
- * Singleton data holder for our timers, connects the UI to our data
- * by taking care of timer actions done with UI and DB
+ * Singleton data holder for our timers, view controller connecting UI to our model
+ * by handling the user interactions and updating our model accordingly
  */
 public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
 
@@ -39,7 +39,7 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
      */
     public TimerSessionHolder setContext(Context ctx) {
         timerController = new TimerController(ctx);
-        populateHolder(timerController.getAllTimers());
+        initialPopulateHolder(timerController.getAllTimers());
         return instance;
     }
 
@@ -51,25 +51,24 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
         this.view = view;
     }
 
-    private void populateHolder(List<TimerSession> allTimers) {
-        for(TimerSession timerSession: allTimers) {
-            timers.add(timerSession);
-            timersIdMap.put(timerSession.getId(), timerSession);
+    private void initialPopulateHolder(List<TimerSession> allTimers) {
+        if(isEmpty()) {
+            for(TimerSession timerSession: allTimers) {
+                timers.add(timerSession);
+                timersIdMap.put(timerSession.getId(), timerSession);
+            }
         }
     }
 
-    @Override
-    public Iterator<TimerSession> iterator() {
-        return timers.iterator();
-    }
+    // ======   Common data structure operations =============
 
     /**
      * Adds a new timer if it passes conflict checks to collection and db
+     * Timer id is generated, observers added
      * @param timerSessions
      * @throws TimerConflictException if this timer to be added conflicts with existing timers
      */
     public void addTimer(TimerSession ...  timerSessions) throws TimerConflictException{
-        //TODO we can maybe try to coagulate 2 timers which are back to back of the same type
         for(TimerSession timerSession: timerSessions) {
             if(isTimerConflict(timerSession)) {
                 throw new TimerConflictException("Timer " + timerSession + " conflicts with existing timers");
@@ -82,6 +81,26 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
                 notifyListViewChanged();
             }
         }
+    }
+
+    public TimerSession get(int pos) {
+        return timers.get(pos);
+    }
+
+    public TimerSession getTimerById(int id) {
+        return timersIdMap.get(id);
+    }
+
+
+    public List<TimerSession> getTimerOnThisDay(int day) {
+        List<TimerSession> timersOnThisDay = new ArrayList<TimerSession>();
+        for(TimerSession session: timers) {
+            if(session.getDays()[day]) {
+                timersOnThisDay.add(session);
+            }
+        }
+        Collections.sort(timersOnThisDay);
+        return timersOnThisDay;
     }
 
     /**
@@ -118,6 +137,26 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
     }
 
 
+    public void removeAll() {
+        timerController.removeAllAlarm(timers);
+        timers = new ArrayList<TimerSession>();
+        timersIdMap = new HashMap<Integer, TimerSession>();
+        notifyListViewChanged();
+    }
+
+    @Override
+    public Iterator<TimerSession> iterator() {
+        return timers.iterator();
+    }
+
+    public boolean isEmpty() {
+        return timers.isEmpty() && timersIdMap.isEmpty();
+    }
+
+    public int getSize() {
+        return timers.size();
+    }
+
     /**
      * Snooze an existing timer
      */
@@ -134,17 +173,8 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
         }
     }
 
-    public boolean isEmpty() {
-        return timers.isEmpty() && timersIdMap.isEmpty();
-    }
 
-    public void removeAll() {
-        timerController.removeAllAlarm(timers);
-        timers = new ArrayList<TimerSession>();
-        timersIdMap = new HashMap<Integer, TimerSession>();
-        notifyListViewChanged();
-    }
-
+    // ======   Helpers  =============
     private boolean isTimerConflict(TimerSession timer) {
         boolean[] days =  timer.getDays();
         for(int i = 0; i < days.length; i++) {
@@ -160,7 +190,7 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
     private boolean hasConflict(TimerSession timerToAdd, int day) {
         // get all the days for which this timer is on
         // check this timer's start time for conflict with the timers on these days
-        List<TimerSession> timersOnThisDay = timerOnThisDay(day);
+        List<TimerSession> timersOnThisDay = getTimerOnThisDay(day);
         Calendar startTime = timerToAdd.getStartTime();
         Calendar endTime = timerToAdd.getEndTime();
         for(TimerSession timer: timersOnThisDay) {
@@ -173,37 +203,17 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
         return false;
     }
 
-    public List<TimerSession> timerOnThisDay(int day) {
-        List<TimerSession> timersOnThisDay = new ArrayList<TimerSession>();
-        for(TimerSession session: timers) {
-            if(session.getDays()[day]) {
-                timersOnThisDay.add(session);
-            }
-        }
-        Collections.sort(timersOnThisDay);
-        return timersOnThisDay;
-    }
 
-    public TimerSession getTimerById(int id) {
-        return timersIdMap.get(id);
-    }
-    public TimerSession getTimer(int pos) {
-        return timers.get(pos);
-    }
-
-    public int getSize() {
-        return timers.size();
-    }
-
-    public void notifyListViewChanged() {
+    // ======   Observer   =============
+    private void notifyListViewChanged() {
         if(adapter != null) {
             adapter.notifyDataSetChanged();
         }
     }
 
-    public void notifyCalendarViewChanged() {
+    private void notifyCalendarViewChanged() {
         if(view != null) {
-            view.invalidate();
+            view.invalidateDisplayTimerInfo();
         }
     }
 
