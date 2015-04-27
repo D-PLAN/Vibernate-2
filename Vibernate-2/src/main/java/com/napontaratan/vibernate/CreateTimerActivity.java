@@ -406,13 +406,21 @@ public class CreateTimerActivity extends FragmentActivity {
         Calendar end   = generateCalendar(endHour, endMin);
         TimerSession newTimer = new TimerSession(name, type, start, end, bDays,color);
 
-
+        TimerSessionHolder boss = TimerSessionHolder.getInstance();
         try {
             if(ts == null || (ts!= null && isModified(newTimer) == 1)) {
                 if(ts!= null && isModified(newTimer) == 1) {
-                    TimerSessionHolder.getInstance().removeTimer(ts);
+                    int oldid = boss.getTimerById(ts.getId()).getId();
+                    System.out.println("ts id " + oldid);
+                    boss.removeTimer(ts);
+                    if(ts == null) {
+                        System.out.println("ts is null");
+                    } else {
+                        TimerSession old = boss.getTimerById(ts.getId());
+                        System.out.println("ts id " + (old==null ? -1 : old.getId()));
+                    }
                 }
-                TimerSessionHolder.getInstance().addTimer(newTimer);
+                boss.addTimer(newTimer);
                 Log.d("CreateTimer", "creating timer with the following information: \n" +
                         "Name: " + name + "\n" +
                         "Type: " + type + "\n" +
@@ -420,7 +428,6 @@ public class CreateTimerActivity extends FragmentActivity {
                         "EndTime" + end.get(Calendar.HOUR_OF_DAY) + ":" + end.get(Calendar.MINUTE) + "\n");
             } else {
                 if(ts != null && isModified(newTimer) == 0) {
-                    TimerSessionHolder boss = TimerSessionHolder.getInstance();
                     TimerSession victim = boss.getTimerById(ts.getId());
                     victim.setName(name);
                     victim.setColor(color);
@@ -464,10 +471,13 @@ public class CreateTimerActivity extends FragmentActivity {
     private int isModified(TimerSession newTimer) {
         if (!newTimer.getStartTime().equals(ts.getStartTime()) || !newTimer.getEndTime().equals(ts.getEndTime()) ||
                 newTimer.getDays() != ts.getDays()){
+            Log.d("isModified", "returning 1");
             return 1;
         } else if (newTimer.getColor() != ts.getColor() || newTimer.getName() != ts.getName()) {
+            Log.d("isModified", "returning 0");
             return 0;
         } else {
+            Log.d("isModified", "returning -1");
             return -1;
         }
     }

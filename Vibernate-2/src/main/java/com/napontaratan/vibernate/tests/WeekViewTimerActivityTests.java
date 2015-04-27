@@ -10,9 +10,9 @@ import com.napontaratan.vibernate.model.TimerSessionHolder;
 import java.util.*;
 
 /**
- * Created by daniel on 2015-04-02.
- * https://developer.android.com/training/activity-testing/activity-basic-testing.html
- */
+* Created by daniel on 2015-04-02.
+* https://developer.android.com/training/activity-testing/activity-basic-testing.html
+*/
 public class WeekViewTimerActivityTests extends ActivityInstrumentationTestCase2<MainActivity> {
 
     private MainActivity mActiivty;
