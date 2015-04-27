@@ -57,6 +57,14 @@ public final class TimerController {
 	}
 
 	/**
+	 * Update DB with the timer's new information
+	 * @param timerSession
+	 */
+	public void updateTimer(TimerSession timerSession) {
+		datastore.updateTimerInDB(timerSession);
+	}
+
+	/**
 	 * Remove the TimerSession object from db and cancel the services
 	 * @param timerSession VibrateTimer object to cancel
 	 * @author Napon, Sunny

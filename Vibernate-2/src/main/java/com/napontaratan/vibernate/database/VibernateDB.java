@@ -86,6 +86,20 @@ public class VibernateDB extends SQLiteOpenHelper {
 		db.close(); 
 	}
 
+	public void updateTimerInDB(TimerSession timerSession) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues values = new ContentValues();
+
+		try {
+			values.put(KEY_ALARM, TimerSession.serialize(timerSession));
+		} catch (Exception e) {
+			System.out.println("Serialize Timer Exception when updating in DB");
+		}
+
+		db.update (TABLE_NAME, values, "id="+timerSession.getId(), null);
+		db.close();
+	}
+
 	/**
 	 * Retrieve all VibrateTimer objects in the database
 	 * @return List<VibrateTimer>

@@ -56,6 +56,7 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
             for(TimerSession timerSession: allTimers) {
                 timers.add(timerSession);
                 timersIdMap.put(timerSession.getId(), timerSession);
+                timerSession.addObserver(this);
             }
         }
     }
@@ -218,6 +219,7 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
     }
 
     public void update(Observable observable, Object o) {
+        timerController.updateTimer((TimerSession)observable);
         notifyListViewChanged();
         notifyCalendarViewChanged();
     }
