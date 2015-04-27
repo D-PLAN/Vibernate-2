@@ -41,12 +41,16 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         holder.description.setText(current.getName());
         holder.startTime.setText(TimerWeekView.getStartTimeInFormat(current, "HH:MM"));
         holder.endTime.setText(TimerWeekView.getEndTimeInFormat(current, "HH:MM"));
-        TimerSession.TimerSessionType cType = current.getType();
-        if (cType == TimerSession.TimerSessionType.SILENT) {
-
+        holder.activeDays.setText(TimerWeekView.getDaysInFormat(current));
+        if (current.getType() == TimerSession.TimerSessionType.SILENT) {
+            holder.typeIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_volume_muted));
+        } else {
+            holder.typeIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_alarms));
         }
-
     }
+
+
+
 
     @Override
     public int getItemCount() {
