@@ -18,13 +18,13 @@ import java.util.List;
  */
 public final class TimerSession implements Serializable, Comparable<TimerSession>{
 	private static final long serialVersionUID = 2881690379292284022L;
-	private final String name;
+	private String name;
 	private final Calendar startTime;
 	private final Calendar endTime;
 	private int id;
 	private final boolean[] days;
 	private final TimerSessionType type;
-	private final int color; // rgb value of color
+	private int color; // rgb value of color
 	private boolean snoozed;
 
 	public enum TimerSessionType {
@@ -178,6 +178,14 @@ public final class TimerSession implements Serializable, Comparable<TimerSession
 		}
 		return dayOfWeek;
 	}
+
+    public void setName(String n) {
+        name = n;
+    }
+
+    public void setColor(int c) {
+        color = c;
+    }
 
 	@Override
 	public String toString() {  // for testing purposes
