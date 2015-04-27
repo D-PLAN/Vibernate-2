@@ -373,9 +373,9 @@ public class TimerWeekView extends View {
      * @param selectedTimer
      * @return the string representation of the days this timer is on
      */
-    private String getDaysInFormat(TimerSession selectedTimer) {
+    public static String getDaysInFormat(TimerSession selectedTimer) {
         String dayString = "";
-        String[] daysStrings = new String[]{"Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"};
+        String[] daysStrings = new String[]{"SUN", "MON", "TUES", "WED", "THU", "FRI", "SAT"};
         boolean [] days = selectedTimer.getDays();
         // determines which days the timer are active and log it as String
         for(int day = 0; day < days.length; day++){
