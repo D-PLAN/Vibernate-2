@@ -38,12 +38,16 @@ public class CreateTimerActivity extends FragmentActivity {
     int colorPicked = -13388315;
     int colorPickedDarker;
     boolean[] bDays = new boolean[7];
+    TimerSession ts;
 
     @Override
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
         setContentView(R.layout.create_timer);
         timePicker = new CreateTimerTimePicker();
+
+        Bundle extras = getIntent().getBundleExtra("Timer");
+        ts = (TimerSession) getIntent().getSerializableExtra("Timer");
 
         //CheckMark Button made up here so that we can dynamically change color
         final ImageButton done = (ImageButton) findViewById(R.id.add_timer_button);
@@ -83,13 +87,11 @@ public class CreateTimerActivity extends FragmentActivity {
 
                 //Implement listener to get selected color value
                 colorCalendar.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
-
                     @Override
                     public void onColorSelected(int color) {
                         Toast.makeText(getBaseContext(), "Color is " + color, Toast.LENGTH_SHORT).show();
                         colorPicked = color;
                         System.out.println("colorPicked is " + colorPicked);
-
                         //To darken the colorPicked
                         float[] hsv = new float[3];
                         int colorPickedDarker = colorPicked;
@@ -312,6 +314,71 @@ public class CreateTimerActivity extends FragmentActivity {
                         colorPicked);
             }
         });
+
+        //grabbing information from bundle
+        if (ts != null) {
+
+            //Change color
+                    //To darken the colorPicked
+                    float[] hsv = new float[3];
+                    int colorPickedDarker = ts.getColor();
+                    Color.colorToHSV(ts.getColor(), hsv);
+                    hsv[2] *= 0.8f; // value component
+                    colorPickedDarker = Color.HSVToColor(hsv);
+                    System.out.println("colorPickedDarker is " + colorPickedDarker);
+
+                    //Changing toolbar color
+                    toolbar.setBackgroundColor(ts.getColor());
+
+                    //Changing Checkbox color
+                    Drawable button = (Drawable) done.getBackground();
+                    button.setColorFilter(ts.getColor(), PorterDuff.Mode.SRC_ATOP);
+
+                    //Changing Status Bar color
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        Window window = getWindow();
+                        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                        window.setStatusBarColor(colorPickedDarker);
+                    }
+            //Change name
+            nameField.setText(ts.getName(), TextView.BufferType.EDITABLE);
+            nameField.clearFocus();
+
+            //Vibrate/Silent
+            if (ts.getType() == TimerSession.TimerSessionType.VIBRATE) {
+                typeVibrate.setChecked(true);
+                typeSilent.setChecked(false);
+            } else {
+                typeSilent.setChecked(true);
+                typeVibrate.setChecked(false);
+            }
+
+            //Saved StartTime and EndTime
+            Calendar editedCalendar = ts.getStartTime();
+            int savedStartHour = editedCalendar.get(Calendar.HOUR_OF_DAY);
+            int savedStartMin = editedCalendar.get(Calendar.MINUTE);
+            editedCalendar = ts.getEndTime();
+            int savedEndHour = editedCalendar.get(Calendar.HOUR_OF_DAY);
+            int savedEndMin = editedCalendar.get(Calendar.MINUTE);
+
+            String savedStartHourString = (savedStartHour < 10)?  "0" + savedStartHour: Integer.toString(savedStartHour);
+            String savedStartMinString = (savedStartMin < 10)?  "0" + savedStartMin: Integer.toString(savedStartMin);
+            String savedEndHourString = (savedEndHour < 10)?  "0" + savedEndHour: Integer.toString(savedEndHour);
+            String savedEndMinString = (savedEndMin < 10)?  "0" + savedEndMin: Integer.toString(savedEndMin);
+
+            String start = savedStartHourString + ":" + savedStartMinString;
+            String end = savedEndHourString + ":" + savedEndMinString;
+
+            startTime.setText(start);
+            endTime.setText(end);
+
+            //Days
+            days.get(currentDay).setChecked(false);
+            bDays = ts.getDays();
+            for (int i=0; i<bDays.length;i++) {
+                if (bDays[i] == true) days.get(i).setChecked(true);
+            }
+        }
     }
 
     private void createTimerSession (String name, TimerSession.TimerSessionType type, int startHour, int startMin, int endHour, int endMin, List<ToggleButton> days, int color) {
@@ -352,7 +419,6 @@ public class CreateTimerActivity extends FragmentActivity {
 
         finish();
     }
-
 
     private Calendar generateCalendar(int hour, int minute) {
         Calendar cal = Calendar.getInstance();
