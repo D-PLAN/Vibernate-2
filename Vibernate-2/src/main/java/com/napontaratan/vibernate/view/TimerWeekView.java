@@ -108,6 +108,7 @@ public class TimerWeekView extends View {
         super(context, attrs);
         init(attrs, 0);
         timerSessionHolder = TimerSessionHolder.getInstance().setContext(getContext());
+        timerSessionHolder.setView(this);
     }
 
     public TimerWeekView(Context context, AttributeSet attrs, int defStyle) {

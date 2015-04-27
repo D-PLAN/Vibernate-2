@@ -3,6 +3,7 @@ package com.napontaratan.vibernate.model;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import com.napontaratan.vibernate.controller.TimerController;
+import com.napontaratan.vibernate.view.TimerWeekView;
 
 import java.util.*;
 
@@ -18,6 +19,7 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
     private List<TimerSession> timers;
     private HashMap<Integer, TimerSession> timersIdMap;
     private RecyclerView.Adapter adapter;
+    private TimerWeekView view;
 
     private TimerSessionHolder() {
         timers = new ArrayList<TimerSession>();
@@ -43,6 +45,10 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
 
     public void setAdapter(RecyclerView.Adapter adapter) {
         this.adapter = adapter;
+    }
+
+    public void setView(TimerWeekView view) {
+        this.view = view;
     }
 
     private void populateHolder(List<TimerSession> allTimers) {
@@ -194,4 +200,15 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
         }
     }
 
+    public void notifyCalendarViewChanged() {
+        if(view != null) {
+            view.invalidate();
+        }
+    }
+
+    @Override
+    public void update(Observable observable, Object o) {
+        notifyListViewChanged();
+        notifyCalendarViewChanged();
+    }
 }

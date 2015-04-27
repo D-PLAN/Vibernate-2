@@ -11,12 +11,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Observable;
 
 /**
  * VibrateTimer model
  * @author Paul, Amelia
  */
-public final class TimerSession implements Serializable, Comparable<TimerSession>{
+public final class TimerSession extends Observable implements Serializable, Comparable<TimerSession>{
 	private static final long serialVersionUID = 2881690379292284022L;
 	private String name;
 	private final Calendar startTime;
@@ -181,10 +182,12 @@ public final class TimerSession implements Serializable, Comparable<TimerSession
 
     public void setName(String n) {
         name = n;
+		notifyObservers();
     }
 
     public void setColor(int c) {
         color = c;
+		notifyObservers();
     }
 
 	@Override
