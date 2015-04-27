@@ -392,7 +392,7 @@ public class CreateTimerActivity extends FragmentActivity {
             return;
         }
 
-        if (startHour > endHour || (startHour == endHour && startMin >= endMin)) {
+        if (startHour > endHour || (startHour == endHour && startMin >= endMin) || (startHour == 0 && endHour != 0)) {
             createDialog("Invalid Time Range", "Please specify a valid range.");
             return;
         }
