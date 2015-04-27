@@ -323,6 +323,7 @@ public class CreateTimerActivity extends FragmentActivity {
                     //To darken the colorPicked
                     float[] hsv = new float[3];
                     int colorPickedDarker = ts.getColor();
+                    colorPicked = colorPickedDarker;
                     Color.colorToHSV(ts.getColor(), hsv);
                     hsv[2] *= 0.8f; // value component
                     colorPickedDarker = Color.HSVToColor(hsv);
