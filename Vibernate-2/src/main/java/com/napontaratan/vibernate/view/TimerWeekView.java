@@ -24,7 +24,7 @@ import java.util.*;
 /**
  * Custom Timer week view displaying timers for 7-day week that scales each timer's view
  * by the earliest and latest timers for the week
- * // TODO remove all debugging statements
+ * 3 main components in drawing are the timer rectangles, dividers ,and columns for each day
  */
 public class TimerWeekView extends View {
     // View
@@ -141,7 +141,6 @@ public class TimerWeekView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if(!isDimensionsSet()) {
-            System.out.println("DIMENSIONS BEING SET   =========== ");
             //These are member variables to reduce allocations per draw cycle.
             paddingLeft = getPaddingLeft();
             paddingTop = getPaddingTop();
@@ -184,7 +183,6 @@ public class TimerWeekView extends View {
         } else {
             timerLength = (float) (contentHeight - timerYPadding) / (float) getTimerDuration();
         }
-        System.out.println("timer total length   " + (contentHeight - timerYPadding) + ", timer each length  " + timerLength);
 
         for(int i = 0; i < numColumns; i++) {
             containerXLeft = (i * columnWidth) + (i * dividerWidth);
@@ -211,8 +209,6 @@ public class TimerWeekView extends View {
                 // draw the actual timers itself as rectangle blocks
                 RectF timerRect = new RectF();
                 timerRect.set(timerXLeft, timerYStart, timerXRight, timerYEnd);
-                System.out.println("ADDING THIS TIMER    =====   "   + timer.getId());
-                System.out.println("drawing starts at   " + timerYStart + ", ends at      " + timerYEnd);
                 // if timer id is already in map, add current timer to it's value
                 List<RectF> currTimers = (timerRectsMaps.get(timer.getId()) == null)? new ArrayList<RectF>() :
                         timerRectsMaps.get(timer.getId());
@@ -222,7 +218,7 @@ public class TimerWeekView extends View {
                 canvas.drawRoundRect(timerRect, 15, 15, timerPaint);
                 if((timerYEnd - timerYStart) > TIMER_ICON_HEIGHT) {
                     // draw timer icon
-                    // 50 is a good size for the icon, to prevent it being too strected in larger timer blocks
+                    // 50 is a good size for the icon, to prevent it being too stretched in larger timer blocks
                     int iconYEnd = (int)timerYStart + TIMER_ICON_HEIGHT;
                     if(timer.getType() == TimerSession.TimerSessionType.VIBRATE) {
                         vibrateDrawable.setBounds(timerXLeft, (int) timerYStart, timerXRight, iconYEnd);
@@ -240,19 +236,15 @@ public class TimerWeekView extends View {
             // i+1  to account for every timer block before the divider
             divXLeft = (((i+1) % (numDividers+1)) * columnWidth) + (i * dividerWidth);
             divXRight = divXLeft + dividerWidth;
-            //(int left, int top, int right, int bottom)
             dividerRect.set(divXLeft, 0, divXRight, contentHeight);
             canvas.drawRoundRect(dividerRect, 0, 0, dividerPaint);
         }
 
     }
 
-    /**
-     * Drawing height is determine by get the total duration of the day for the week
-     * and dividing it with the total content height scale to minutes
-     * @return drawing height for each second(s) for a timer
-     */
     private int getTimerDuration() {
+        // Drawing height is determine by get the total duration of the day for the week
+        // and dividing it with the total content height scale to minutes
         earliestTime = 86400;
         int latest = 0;
         for(TimerSession timerSession: timerSessionHolder) {
@@ -268,24 +260,17 @@ public class TimerWeekView extends View {
         return (latest - earliestTime);
     }
 
-    /**
-     * we scale the time so that the earliest time would be the starting point instead of 0
-     * scaling by HOUR
-     * @param realTime time before it got scaled
-     * @return the scaled time for onDraw
-     */
     private int scaled(Calendar realTime) {
+        //we scale the time so that the earliest time would be the starting point instead of 0
+        // scaling by HOUR
         int time = realTime.get(Calendar.MINUTE) + (60 * realTime.get(Calendar.HOUR_OF_DAY));
         return (time - earliestTime);
     }
 
 
-    /**
-     * Determines if the dimension has been set, all preset to -1
-     * since our dimensions do not change, we only want to set it once in onDraw
-     * @return true if dimensions of this view has been set, false otherwise
-     */
     private boolean isDimensionsSet() {
+        // Determines if the dimension has been set, all preset to -1
+        // since our dimensions do not change, we only want to set it once in onDraw
         return this.paddingLeft > -1 &&
                 this.paddingRight > -1 &&
                 this.paddingTop > -1 &&
@@ -305,18 +290,14 @@ public class TimerWeekView extends View {
         TimerSession selectedTimer = getSelectedTimer(x, y);
         if(selectedTimer != null && (prevTimer != selectedTimer.getId())) {
             // if selectedtimer is the same as last, do not need to update
-            System.out.println("update timer " + selectedTimer.getId()  + "'s info");
             displayTimerInfo(selectedTimer);
             prevTimer = selectedTimer.getId();
         }
         return true;
     }
 
-    /**
-     * Display this timer's name, time, days
-     * @param selectedTimer
-     */
     private void displayTimerInfo(final TimerSession selectedTimer) {
+        // Display this timer's specific information on the bottom cardview
         if(root == null) {
             root = getRootView();
 
@@ -375,7 +356,7 @@ public class TimerWeekView extends View {
                                 timerSessionHolder.removeTimer(selectedTimer);
                                 timerRectsMaps.remove(selectedTimer.getId());
                                 invalidateDisplayTimerInfo();
-                                Toast.makeText(getContext(), "Timer " + prevTimer + " deleted", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Timer " + selectedTimer.getName() + " deleted", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -402,7 +383,6 @@ public class TimerWeekView extends View {
                     timerSessionHolder.snoozeTimer(selectedTimer);
                 }
                 Toast.makeText(getContext(), (b == true) ? "Switching timer on" : "Switching timer off", Toast.LENGTH_SHORT).show();
-
             }
         });
 
@@ -416,14 +396,9 @@ public class TimerWeekView extends View {
         timerDaysView.setText(dayText);
     }
 
-    /**
-     *  Find the rectangle that contains this point
-     * get the timer using id correspoding to this timer
-     * @param x x-coordinate of the touch
-     * @param y y-coordinate of the touch
-     * @return the timersession object corresponding to the selected timer on the screen
-     */
     private TimerSession getSelectedTimer(float x, float y) {
+        // Find the rectangle that contains this point
+        // get the timer using id correspoding to this timer
         Iterator it = timerRectsMaps.entrySet().iterator();
         while(it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
@@ -441,7 +416,6 @@ public class TimerWeekView extends View {
      * Updates the display of timer's information. Called after timer has been edited or deleted
      */
     public void invalidateDisplayTimerInfo() {
-        System.out.println("Invalidate display timer");
         displayTimerInfo(timerSessionHolder.getTimerById(prevTimer));
     }
 

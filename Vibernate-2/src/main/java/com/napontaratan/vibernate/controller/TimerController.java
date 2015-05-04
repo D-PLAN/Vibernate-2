@@ -32,29 +32,53 @@ public final class TimerController {
 	 * @author Napon, Sunny
 	 */
 	public void setAlarm(TimerSession timerSession){
-		int timerId = timerSession.getId();
-		if(!datastore.contains(timerId))
+		if(!datastore.contains(timerSession.getId()))
 			datastore.addToDB(timerSession);
-		List<Calendar> startTimes = timerSession.getStartAlarmCalendars();
-		List<Calendar> endTimes = timerSession.getEndAlarmCalendars();
-		// Timer on
-		Intent activateVibration = null;
-		if(timerSession.getType() == TimerSession.TimerSessionType.VIBRATE) {
-			activateVibration = new Intent(context, VibrateOnBroadcastReceiver.class);
-		} else if(timerSession.getType() == TimerSession.TimerSessionType.SILENT) {
-			activateVibration = new Intent(context, SilentOnBroadcastReceiver.class);
-		}
-		for (Calendar startTime : startTimes) {
-			int id = timerId + startTime.get(Calendar.DAY_OF_WEEK);
-			createSystemTimer(startTime.getTimeInMillis(), id, activateVibration);
-		}
-		// Timer off
-		Intent disableVibration = new Intent(context, OffBroadcastReceiver.class);
-		for(Calendar endTime : endTimes){
-			int id = timerId + endTime.get(Calendar.DAY_OF_WEEK) + 10;
-			createSystemTimer(endTime.getTimeInMillis(), id, disableVibration);
-		}
+        setupTimers(timerSession);
+
 	}
+
+    private void setupTimers(TimerSession timerSession) {
+        int timerId = timerSession.getId();
+        List<Calendar> startTimes = timerSession.getStartAlarmCalendars();
+        List<Calendar> endTimes = timerSession.getEndAlarmCalendars();
+        Intent activateVibration = null;
+        if(timerSession.getType() == TimerSession.TimerSessionType.VIBRATE) {
+            activateVibration = new Intent(context, VibrateOnBroadcastReceiver.class);
+        } else if(timerSession.getType() == TimerSession.TimerSessionType.SILENT) {
+            activateVibration = new Intent(context, SilentOnBroadcastReceiver.class);
+        }
+        Intent disableVibration = new Intent(context, OffBroadcastReceiver.class);
+        // Timer on
+        Calendar cal = Calendar.getInstance();
+        int today = cal.get(Calendar.DAY_OF_WEEK);
+        Calendar start = null;
+        int immediateTimerId = -1;
+        for (Calendar startTime : startTimes) {
+            int day = startTime.get(Calendar.DAY_OF_WEEK);
+            int id = timerId + day;
+            long time = startTime.getTimeInMillis();
+            if(day == today){
+               start = startTime;
+                immediateTimerId = id;
+            }
+            createSystemTimer(time, id, activateVibration, true);
+        }
+        // Timer off
+        Calendar end = null;
+        for(Calendar endTime : endTimes){
+            int day = endTime.get(Calendar.DAY_OF_WEEK);
+            int id = timerId + day + 10;
+            if(day == today) {
+                end = endTime;
+            }
+            createSystemTimer(endTime.getTimeInMillis(), id, disableVibration, true);
+        }
+        if(start != null && end != null && immediateTimerId != -1) {
+            modifyImmediateTimer(1 , start, end, immediateTimerId, activateVibration);
+        }
+
+    }
 
 	/**
 	 * Update DB with the timer's new information
@@ -88,44 +112,95 @@ public final class TimerController {
 	 * Cancel the services corresponding to the VibrateTimer object
 	 */
 	public void cancelAlarm(TimerSession timerSession) {
-		List<Calendar> times = timerSession.getStartAlarmCalendars();
-		Intent intent = null;
-		if(timerSession.getType() == TimerSession.TimerSessionType.VIBRATE) {
-			intent = new Intent(context, VibrateOnBroadcastReceiver.class);
-		} else if (timerSession.getType() == TimerSession.TimerSessionType.SILENT) {
-			intent = new Intent(context, SilentOnBroadcastReceiver.class);
-		}
-		PendingIntent pi = null;
-		for(Calendar time : times){
-			int id = timerSession.getId() + time.get(Calendar.DAY_OF_WEEK);
-			pi = PendingIntent.getBroadcast(context, id,
-					intent, PendingIntent.FLAG_UPDATE_CURRENT);
-			pi.cancel();
-			am.cancel(pi);
-			pi = PendingIntent.getBroadcast(context, id+10,
-					new Intent(context, OffBroadcastReceiver.class),
-					PendingIntent.FLAG_UPDATE_CURRENT);
-			pi.cancel();
-			am.cancel(pi);
-		}
+		tearDownTimers(timerSession);
 	}
 
-	public List<TimerSession> getAllTimers() {
-		return datastore.getAllTimers();
-	}
+    private void tearDownTimers(TimerSession timerSession) {
+        List<Calendar> startTimes = timerSession.getStartAlarmCalendars();
+        List<Calendar> endTimes = timerSession.getEndAlarmCalendars();
+        Intent activateVibration = null;
+        if(timerSession.getType() == TimerSession.TimerSessionType.VIBRATE) {
+            activateVibration = new Intent(context, VibrateOnBroadcastReceiver.class);
+        } else if (timerSession.getType() == TimerSession.TimerSessionType.SILENT) {
+            activateVibration = new Intent(context, SilentOnBroadcastReceiver.class);
+        }
+        Intent disableVibration = new Intent(context, OffBroadcastReceiver.class);
+        Calendar cal = Calendar.getInstance();
+        int today = cal.get(Calendar.DAY_OF_WEEK);
+        Calendar start = null;
+        for(Calendar startTime: startTimes) {
+            int day = startTime.get(Calendar.DAY_OF_WEEK);
+            if(day == today) {
+                start = startTime;
+            }
+        }
+        Calendar end = null;
+        int immediateTimerId = -1;
+        for(Calendar endTime : endTimes){
+            int day = endTime.get(Calendar.DAY_OF_WEEK);
+            int id = timerSession.getId() + day;
+            if(day == today) {
+                end = endTime;
+                immediateTimerId = id;
+            }
+            cancelSystemTimer(id, activateVibration);
+            cancelSystemTimer(id + 10, disableVibration);
+        }
+        if(start != null && end != null && immediateTimerId != -1) {
+            modifyImmediateTimer(0 , start, end, immediateTimerId, disableVibration);
+        }
+    }
 
-	/**
+    private void modifyImmediateTimer(int status, Calendar start, Calendar end, int id, Intent intent) {
+        // if timer has started or canceled, do it immediately just once
+        // default behaviour is in ~15s
+        // switch back to normal ringtone
+        // 0 - cancel, 1 - update
+        Calendar cal = Calendar.getInstance();
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        int min = cal.get(Calendar.MINUTE);
+        if(cal.after(start) && cal.before(end)) {
+            switch (status) {
+                case 0:
+                    createSystemTimer(cal.getTimeInMillis(), id, intent, false);
+                    break;
+                case 1:
+                    createSystemTimer(cal.getTimeInMillis(), id ,intent, false);
+                    break;
+                default: break;
+            }
+        }
+    }
+
+    /**
 	 * Create a PendingIntent that will activate at the specified time
 	 * @param time - time in milliseconds
 	 * @param id - unique id from generateNextId(context)
 	 * @param intent - either VibrateOn or VibrateOff
 	 * @author Napon, Sunny
 	 */
-	private void createSystemTimer(long time, int id, Intent intent){
+	private void createSystemTimer(long time, int id, Intent intent, boolean repeat){
 		PendingIntent startVibrating = PendingIntent.getBroadcast(context,
-				id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-		am.setRepeating(AlarmManager.RTC, time, WEEK_MILLISECONDS, startVibrating); 
+                id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		if(repeat) {
+			am.setRepeating(AlarmManager.RTC, time, WEEK_MILLISECONDS, startVibrating);
+        } else {
+			am.set(AlarmManager.RTC, time, startVibrating);
+		}
+
 	}
+
+	private void cancelSystemTimer(int id, Intent intent) {
+		PendingIntent stopVibrating = PendingIntent.getBroadcast(context,
+				id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		stopVibrating.cancel();
+		am.cancel(stopVibrating);
+	}
+
+    public List<TimerSession> getAllTimers() {
+        return datastore.getAllTimers();
+    }
+
 
 	/**
 	 * Generate a unique id for each alarm.

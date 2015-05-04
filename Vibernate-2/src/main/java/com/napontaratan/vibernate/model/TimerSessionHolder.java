@@ -110,14 +110,7 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
      * @return true if successfully removed, false otherwise
      */
     public boolean removeTimer(TimerSession timerSession) {
-        if(timerSession != null) {
-            timerController.removeAlarm(timerSession);
-            timersIdMap.remove(timerSession.getId());
-            timers.remove(timerSession);
-            notifyListViewChanged();
-            return true;
-        }
-        return false;
+        return remove(timerSession);
     }
 
     /**
@@ -127,13 +120,17 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
      */
     public boolean removeTimer(int pos) {
         TimerSession timerSession = timers.get(pos);
+        return remove(timerSession);
+    }
+
+    private boolean remove(TimerSession timerSession) {
         if(timerSession != null) {
-            timers.remove(pos);
+            timerController.removeAlarm(timerSession);
             timersIdMap.remove(timerSession.getId());
+            timers.remove(timerSession);
             notifyListViewChanged();
             return true;
         }
-
         return false;
     }
 
@@ -169,9 +166,7 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
      * wake an existing snoozed timer
      */
     public void wakeTimer(TimerSession timerSession) {
-        if(timerSession.getTimerSnooze()) {
-            timerController.setAlarm(timerSession);
-        }
+        timerController.setAlarm(timerSession);
     }
 
 
