@@ -18,7 +18,6 @@ import com.napontaratan.vibernate.model.TimerSession;
 import com.napontaratan.vibernate.model.TimerSessionHolder;
 import com.napontaratan.vibernate.model.TimerUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -96,16 +95,21 @@ public class TimerWeekView extends View {
     private int earliestTime;
     private final String TIME_STRING_FORMAT = "HH:mm";
 
-    private HashMap<Integer, List<RectF>> timerRectsMaps =  new HashMap<Integer, List<RectF>>(); // List of timer rectangles
+    private HashMap<Integer, List<RectF>> timerRectsMaps; // List of timer rectangles
     private TimerSessionHolder timerSessionHolder;
     private int prevTimer = -1;
 
     public TimerWeekView(Context context) {
+        // Simple constructor to use when creating a view from code.
         super(context);
         init(null, 0);
     }
 
     public TimerWeekView(Context context, AttributeSet attrs) {
+        // Constructor that is called when inflating a view from XML.
+        // This is called when a view is being constructed from an XML file, supplying attributes that were specified in the XML file.
+        // This version uses a default style of 0, so the only attribute values applied are those in the Context's Theme and the given AttributeSet.
+        // The method onFinishInflate() will be called after all children have been added.
         super(context, attrs);
         init(attrs, 0);
         timerSessionHolder = TimerSessionHolder.getInstance();
@@ -113,6 +117,10 @@ public class TimerWeekView extends View {
     }
 
     public TimerWeekView(Context context, AttributeSet attrs, int defStyle) {
+        // Perform inflation from XML and apply a class-specific base style.
+        // This constructor of View allows subclasses to use their own base style when they are inflating.
+        // For example, a Button class's constructor would call this version of the super class constructor and supply R.attr.buttonStyle for defStyle;
+        // this allows the theme's button style to modify all of the base view attributes (in particular its background) as well as the Button class's attributes.
         super(context, attrs, defStyle);
         init(attrs, defStyle);
     }
@@ -183,6 +191,7 @@ public class TimerWeekView extends View {
         } else {
             timerLength = (float) (contentHeight - timerYPadding) / (float) getTimerDuration();
         }
+        timerRectsMaps =  new HashMap<Integer, List<RectF>>();
 
         for(int i = 0; i < numColumns; i++) {
             containerXLeft = (i * columnWidth) + (i * dividerWidth);
@@ -296,8 +305,7 @@ public class TimerWeekView extends View {
         return true;
     }
 
-    private void displayTimerInfo(final TimerSession selectedTimer) {
-        // Display this timer's specific information on the bottom cardview
+    private void setupCardView() {
         if(root == null) {
             root = getRootView();
 
@@ -312,88 +320,97 @@ public class TimerWeekView extends View {
             timerDaysView = (TextView) root.findViewById(R.id.timer_days);
 
         }
+    }
 
-        if(selectedTimer == null) {
-            // timer has been removed
-            timerPlaceholder.setVisibility(View.VISIBLE);
-            timerInfoView.setVisibility(View.GONE);
-            prevTimer = -1;
-            this.invalidate();
-            return;
-        }
+    private void displayTimerInfo(final TimerSession selectedTimer) {
+        // Display this timer's specific information on the bottom cardview
+        if(selectedTimer != null) {
+            setupCardView();
+            timerPlaceholder.setVisibility(View.GONE);
+            timerInfoView.setVisibility(View.VISIBLE);
 
-        timerPlaceholder.setVisibility(View.GONE);
-        timerInfoView.setVisibility(View.VISIBLE);
-
-        timerInfoView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent mIntent = new Intent(view.getContext(), CreateTimerActivity.class);
-                Bundle mBundle = new Bundle();
-                mBundle.putSerializable("Timer", selectedTimer);
-                mIntent.putExtras(mBundle);
-                view.getContext().startActivity(mIntent);
-            }
-        });
-
-        timerName.setText(selectedTimer.getName());
-        timerName.setTextColor(selectedTimer.getColor());
-
-        if(selectedTimer.getType() == TimerSession.TimerSessionType.VIBRATE) {
-            timerTypeIcon.setImageBitmap(vibrateBitmap);
-        } else if(selectedTimer.getType() == TimerSession.TimerSessionType.SILENT) {
-            timerTypeIcon.setImageBitmap(silentBitmap);
-        }
-
-        timerDeleteIcon.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new AlertDialog.Builder(view.getContext())
-                        .setTitle("Delete timer")
-                        .setMessage("Are you sure you want to delete this timer?")
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                timerSessionHolder.removeTimer(selectedTimer);
-                                timerRectsMaps.remove(selectedTimer.getId());
-                                invalidateDisplayTimerInfo();
-                                Toast.makeText(getContext(), "Timer " + selectedTimer.getName() + " deleted", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(getContext(), "Timer kept", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-            }
-        });
-
-        timerOnOffSwitch.setChecked(!selectedTimer.getTimerSnooze());
-        timerOnOffSwitch.getTrackDrawable().setColorFilter(selectedTimer.getColor(), PorterDuff.Mode.MULTIPLY);
-        timerOnOffSwitch.getThumbDrawable().setColorFilter(selectedTimer.getColor(), PorterDuff.Mode.MULTIPLY);
-        timerOnOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    selectedTimer.setTimerSnooze(false);
-                    timerSessionHolder.wakeTimer(selectedTimer);
-                } else {
-                    selectedTimer.setTimerSnooze(true);
-                    timerSessionHolder.snoozeTimer(selectedTimer);
+            timerInfoView.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent mIntent = new Intent(view.getContext(), CreateTimerActivity.class);
+                    Bundle mBundle = new Bundle();
+                    mBundle.putSerializable("Timer", selectedTimer);
+                    mIntent.putExtras(mBundle);
+                    view.getContext().startActivity(mIntent);
                 }
-                Toast.makeText(getContext(), (b == true) ? "Switching timer on" : "Switching timer off", Toast.LENGTH_SHORT).show();
+            });
+
+            timerName.setText(selectedTimer.getName());
+            timerName.setTextColor(selectedTimer.getColor());
+
+            if(selectedTimer.getType() == TimerSession.TimerSessionType.VIBRATE) {
+                timerTypeIcon.setImageBitmap(vibrateBitmap);
+            } else if(selectedTimer.getType() == TimerSession.TimerSessionType.SILENT) {
+                timerTypeIcon.setImageBitmap(silentBitmap);
             }
-        });
 
-        String startTimeText = TimerUtils.getStartTimeInFormat(selectedTimer, TIME_STRING_FORMAT);
-        timerStartTimeView.setText(startTimeText);
+            timerDeleteIcon.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new AlertDialog.Builder(view.getContext())
+                            .setTitle("Delete timer")
+                            .setMessage("Are you sure you want to delete this timer?")
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    timerSessionHolder.removeTimer(selectedTimer);
+                                    timerRectsMaps.remove(selectedTimer.getId());
+                                    invalidateDisplayTimerInfo();
+                                    Toast.makeText(getContext(), "Timer " + selectedTimer.getName() + " deleted", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Toast.makeText(getContext(), "Timer kept", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
+            });
 
-        String endTimeText = TimerUtils.getEndTimeInFormat(selectedTimer, TIME_STRING_FORMAT);
-        timerEndTimeView.setText(endTimeText);
+            timerOnOffSwitch.setChecked(!selectedTimer.getTimerSnooze());
+            timerOnOffSwitch.getTrackDrawable().setColorFilter(selectedTimer.getColor(), PorterDuff.Mode.MULTIPLY);
+            timerOnOffSwitch.getThumbDrawable().setColorFilter(selectedTimer.getColor(), PorterDuff.Mode.MULTIPLY);
+            timerOnOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (b) {
+                        selectedTimer.setTimerSnooze(false);
+                        timerSessionHolder.wakeTimer(selectedTimer);
+                    } else {
+                        selectedTimer.setTimerSnooze(true);
+                        timerSessionHolder.snoozeTimer(selectedTimer);
+                    }
+                    Toast.makeText(getContext(), (b == true) ? "Switching timer on" : "Switching timer off", Toast.LENGTH_SHORT).show();
+                }
+            });
 
-        String dayText = TimerUtils.getDaysInFormat(selectedTimer);
-        timerDaysView.setText(dayText);
+            String startTimeText = TimerUtils.getStartTimeInFormat(selectedTimer, TIME_STRING_FORMAT);
+            timerStartTimeView.setText(startTimeText);
+
+            String endTimeText = TimerUtils.getEndTimeInFormat(selectedTimer, TIME_STRING_FORMAT);
+            timerEndTimeView.setText(endTimeText);
+
+            String dayText = TimerUtils.getDaysInFormat(selectedTimer);
+            timerDaysView.setText(dayText);
+        }
+
+    }
+
+    /**
+     * Clears the display of timer's information. Called after timer has been edited or deleted
+     */
+    public void invalidateDisplayTimerInfo() {
+        setupCardView();
+        timerPlaceholder.setVisibility(View.VISIBLE);
+        timerInfoView.setVisibility(View.GONE);
+        prevTimer = -1;
+        this.invalidate();
     }
 
     private TimerSession getSelectedTimer(float x, float y) {
@@ -412,11 +429,7 @@ public class TimerWeekView extends View {
         return null;
     }
 
-    /**
-     * Updates the display of timer's information. Called after timer has been edited or deleted
-     */
-    public void invalidateDisplayTimerInfo() {
-        displayTimerInfo(timerSessionHolder.getTimerById(prevTimer));
-    }
+
+
 
 }

@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * Created by daniel on 2015-02-28.
  *
- * Singleton data holder for our timers, view controller connecting UI to our model
+ * Singleton data holder for our timers, timerWeekView controller connecting UI to our model
  * by handling the user interactions and updating our model accordingly
  */
 public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
@@ -18,8 +18,8 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
     private TimerController timerController;
     private List<TimerSession> timers;
     private HashMap<Integer, TimerSession> timersIdMap;
-    private RecyclerView.Adapter adapter;
-    private TimerWeekView view;
+    private RecyclerView.Adapter recyclerViewAdapter;
+    private TimerWeekView timerWeekView;
 
     private TimerSessionHolder() {
         timers = new ArrayList<TimerSession>();
@@ -43,12 +43,12 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
         return instance;
     }
 
-    public void setAdapter(RecyclerView.Adapter adapter) {
-        this.adapter = adapter;
+    public void setAdapter(RecyclerView.Adapter recyclerViewAdapter) {
+        this.recyclerViewAdapter = recyclerViewAdapter;
     }
 
-    public void setView(TimerWeekView view) {
-        this.view = view;
+    public void setView(TimerWeekView timerWeekView) {
+        this.timerWeekView = timerWeekView;
     }
 
     private void initialPopulateHolder(List<TimerSession> allTimers) {
@@ -79,7 +79,7 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
                 timerController.setAlarm(timerSession);
                 timers.add(timerSession);
                 timersIdMap.put(timerSession.getId(), timerSession);
-                notifyListViewChanged();
+                notifyViewChanged();
             }
         }
     }
@@ -128,7 +128,7 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
             timerController.removeAlarm(timerSession);
             timersIdMap.remove(timerSession.getId());
             timers.remove(timerSession);
-            notifyListViewChanged();
+            notifyViewChanged();
             return true;
         }
         return false;
@@ -139,7 +139,7 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
         timerController.removeAllAlarm(timers);
         timers = new ArrayList<TimerSession>();
         timersIdMap = new HashMap<Integer, TimerSession>();
-        notifyListViewChanged();
+        notifyViewChanged();
     }
 
     @Override
@@ -199,23 +199,19 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
         return false;
     }
 
-
     // ======   Observer   =============
-    private void notifyListViewChanged() {
-        if(adapter != null) {
-            adapter.notifyDataSetChanged();
-        }
-    }
-
-    private void notifyCalendarViewChanged() {
-        if(view != null) {
-            view.invalidateDisplayTimerInfo();
-        }
-    }
-
     public void update(Observable observable, Object o) {
-        timerController.updateTimer((TimerSession)observable);
-        notifyListViewChanged();
-        notifyCalendarViewChanged();
+        timerController.updateTimer((TimerSession) observable);
+        notifyViewChanged();
+    }
+
+    private void notifyViewChanged() {
+        // notify both week and list view
+        if(recyclerViewAdapter != null) {
+            recyclerViewAdapter.notifyDataSetChanged();
+        }
+        if(timerWeekView != null) {
+            timerWeekView.invalidateDisplayTimerInfo();
+        }
     }
 }
