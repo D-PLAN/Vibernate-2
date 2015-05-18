@@ -1,6 +1,7 @@
 package com.napontaratan.vibernate;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,6 +19,7 @@ import android.view.View;
 
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
@@ -123,11 +125,9 @@ public class CreateTimerActivity extends FragmentActivity {
                 });
 
                 colorCalendar.show(getFragmentManager(), "cal");
-
                 return false;
             }
         });
-
 
         /* name field */
         final EditText nameField = (EditText) findViewById(R.id.create_timer_name_field);
@@ -183,6 +183,13 @@ public class CreateTimerActivity extends FragmentActivity {
         startTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //to get rid of keyboard
+                if(getCurrentFocus()!=null && getCurrentFocus() instanceof EditText){
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(nameField.getWindowToken(), 0);
+                }
+
                 String[] start = startTime.getText().toString().split(":");
                 timePicker.setTime(Integer.parseInt(start[0]), Integer.parseInt(start[1]));
                 timePicker.show(getSupportFragmentManager(), "startTimePicker");
@@ -192,6 +199,13 @@ public class CreateTimerActivity extends FragmentActivity {
         endTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //to get rid of keyboard
+                if(getCurrentFocus()!=null && getCurrentFocus() instanceof EditText){
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(nameField.getWindowToken(), 0);
+                }
+
                 String[] end = endTime.getText().toString().split(":");
                 timePicker.setTime(Integer.parseInt(end[0]), Integer.parseInt(end[1]));
                 timePicker.show(getSupportFragmentManager(), "endTimePicker");
