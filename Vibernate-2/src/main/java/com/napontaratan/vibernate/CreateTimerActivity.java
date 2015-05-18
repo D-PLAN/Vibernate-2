@@ -490,10 +490,10 @@ public class CreateTimerActivity extends FragmentActivity {
     // return -1 if nothing is modified
     private int isModified(TimerSession newTimer) {
         if (!newTimer.getStartTime().equals(ts.getStartTime()) || !newTimer.getEndTime().equals(ts.getEndTime()) ||
-                newTimer.getDays() != ts.getDays()){
+                newTimer.getDays() != ts.getDays() || newTimer.getType() != ts.getType()){
             Log.d("isModified", "returning 1");
             return 1;
-        } else if (newTimer.getColor() != ts.getColor() || newTimer.getName() != ts.getName()) {
+        } else if (newTimer.getColor() != ts.getColor() || !newTimer.getName().equals(ts.getName())) {
             Log.d("isModified", "returning 0");
             return 0;
         } else {
