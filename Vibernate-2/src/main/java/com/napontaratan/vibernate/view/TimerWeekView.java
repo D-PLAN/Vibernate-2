@@ -373,6 +373,7 @@ public class TimerWeekView extends View {
                 }
             });
 
+            timerOnOffSwitch.setOnCheckedChangeListener(null);
             timerOnOffSwitch.setChecked(!selectedTimer.getTimerSnooze());
             timerOnOffSwitch.getTrackDrawable().setColorFilter(selectedTimer.getColor(), PorterDuff.Mode.MULTIPLY);
             timerOnOffSwitch.getThumbDrawable().setColorFilter(selectedTimer.getColor(), PorterDuff.Mode.MULTIPLY);
@@ -382,9 +383,13 @@ public class TimerWeekView extends View {
                     if (b) {
                         selectedTimer.setTimerSnooze(false);
                         timerSessionHolder.wakeTimer(selectedTimer);
+                        timerOnOffSwitch.getTrackDrawable().setColorFilter(selectedTimer.getColor(), PorterDuff.Mode.MULTIPLY);
+                        timerOnOffSwitch.getThumbDrawable().setColorFilter(selectedTimer.getColor(), PorterDuff.Mode.MULTIPLY);
                     } else {
                         selectedTimer.setTimerSnooze(true);
                         timerSessionHolder.snoozeTimer(selectedTimer);
+                        timerOnOffSwitch.getTrackDrawable().setColorFilter(getResources().getColor(android.R.color.darker_gray), PorterDuff.Mode.MULTIPLY);
+                        timerOnOffSwitch.getThumbDrawable().setColorFilter(getResources().getColor(android.R.color.darker_gray), PorterDuff.Mode.MULTIPLY);
                     }
                     Toast.makeText(getContext(), (b == true) ? "Switching timer on" : "Switching timer off", Toast.LENGTH_SHORT).show();
                 }

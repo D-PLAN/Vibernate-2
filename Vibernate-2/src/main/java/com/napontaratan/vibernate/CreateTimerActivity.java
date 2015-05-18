@@ -414,6 +414,8 @@ public class CreateTimerActivity extends FragmentActivity {
         try {
             if(ts == null || (ts!= null && isModified(newTimer) == 1)) {
                 if(ts!= null && isModified(newTimer) == 1) {
+                    newTimer.setTimerSnooze(ts.getTimerSnooze());
+                    //TODO do something to napon's boss uh oh
                     int oldid = boss.getTimerById(ts.getId()).getId();
                     System.out.println("ts id " + oldid);
                     boss.removeTimer(ts);
