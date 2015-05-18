@@ -4,7 +4,7 @@
     <item android:drawable="@drawable/ic_silent_tinted"
           android:state_checked="true" />
     <!-- When not selected, use background -->
-    <item android:drawable="@drawable/ic_action_volume_muted"
+    <item android:drawable="@drawable/ic_action_silent"
           android:state_checked="false"/>
 
 </selector>
