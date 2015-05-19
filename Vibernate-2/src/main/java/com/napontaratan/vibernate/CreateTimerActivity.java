@@ -1,6 +1,7 @@
 package com.napontaratan.vibernate;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -16,6 +17,7 @@ import android.view.View;
 
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
@@ -118,11 +120,9 @@ public class CreateTimerActivity extends FragmentActivity {
                 });
 
                 colorCalendar.show(getFragmentManager(), "cal");
-
                 return false;
             }
         });
-
 
         /* name field */
         final EditText nameField = (EditText) findViewById(R.id.create_timer_name_field);
@@ -179,6 +179,13 @@ public class CreateTimerActivity extends FragmentActivity {
         startTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //to get rid of keyboard
+                if(getCurrentFocus()!=null && getCurrentFocus() instanceof EditText){
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(nameField.getWindowToken(), 0);
+                }
+
                 String[] start = startTime.getText().toString().split(":");
                 timePicker.setTime(Integer.parseInt(start[0]), Integer.parseInt(start[1]));
                 timePicker.show(getSupportFragmentManager(), "startTimePicker");
@@ -188,6 +195,13 @@ public class CreateTimerActivity extends FragmentActivity {
         endTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //to get rid of keyboard
+                if(getCurrentFocus()!=null && getCurrentFocus() instanceof EditText){
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(nameField.getWindowToken(), 0);
+                }
+
                 String[] end = endTime.getText().toString().split(":");
                 timePicker.setTime(Integer.parseInt(end[0]), Integer.parseInt(end[1]));
                 timePicker.show(getSupportFragmentManager(), "endTimePicker");
@@ -410,6 +424,8 @@ public class CreateTimerActivity extends FragmentActivity {
         try {
             if(ts == null || (ts!= null && isModified(newTimer) == 1)) {
                 if(ts!= null && isModified(newTimer) == 1) {
+                    newTimer.setTimerSnooze(ts.getTimerSnooze());
+                    //TODO do something to napon's boss uh oh
                     int oldid = boss.getTimerById(ts.getId()).getId();
                     System.out.println("ts id " + oldid);
                     boss.removeTimer(ts);
@@ -470,10 +486,10 @@ public class CreateTimerActivity extends FragmentActivity {
     // return -1 if nothing is modified
     private int isModified(TimerSession newTimer) {
         if (!newTimer.getStartTime().equals(ts.getStartTime()) || !newTimer.getEndTime().equals(ts.getEndTime()) ||
-                newTimer.getDays() != ts.getDays()){
+                newTimer.getDays() != ts.getDays() || newTimer.getType() != ts.getType()){
             Log.d("isModified", "returning 1");
             return 1;
-        } else if (newTimer.getColor() != ts.getColor() || newTimer.getName() != ts.getName()) {
+        } else if (newTimer.getColor() != ts.getColor() || !newTimer.getName().equals(ts.getName())) {
             Log.d("isModified", "returning 0");
             return 0;
         } else {

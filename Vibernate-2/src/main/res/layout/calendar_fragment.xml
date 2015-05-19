@@ -57,11 +57,11 @@
                           android:layout_height="wrap_content"
                           style="@style/timer_title_text"/>
                 <ImageView android:id="@+id/timer_type_icon"
-                           android:layout_height="80px"
+                           android:layout_height="wrap_content"
                            android:layout_width="wrap_content"
                            android:layout_toRightOf="@+id/timer_name"/>
                 <ImageView android:id="@+id/timer_delete_icon"
-                           android:layout_height="80px"
+                           android:layout_height="wrap_content"
                            android:layout_width="wrap_content"
                            android:layout_toRightOf="@+id/timer_type_icon"
                            android:src="@drawable/ic_action_discard"/>
@@ -77,8 +77,9 @@
                 <ImageView android:id="@+id/timer_image_view"
                            android:layout_height="wrap_content"
                            android:layout_width="wrap_content"
+                           android:paddingRight="10dp"
                            android:layout_alignParentLeft="true"
-                           android:src="@drawable/ic_action_alarms"/>
+                           android:src="@drawable/ic_action_timer"/>
                 <RelativeLayout android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_toRightOf="@+id/timer_image_view">

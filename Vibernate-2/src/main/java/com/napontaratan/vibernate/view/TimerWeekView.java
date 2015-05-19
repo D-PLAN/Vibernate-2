@@ -87,6 +87,8 @@ public class TimerWeekView extends View {
     // Bitmaps
     private Bitmap vibrateBitmap;
     private Bitmap silentBitmap;
+    private Bitmap vibrateBitmapWhite;
+    private Bitmap silentBitmapWhite;
     private Drawable vibrateDrawable;
     private Drawable silentDrawable;
     private final static int TIMER_ICON_HEIGHT = 50;
@@ -137,11 +139,14 @@ public class TimerWeekView extends View {
         containerRect = new RectF();
         dividerRect = new RectF();
 
-        vibrateBitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_action_alarms);
-        silentBitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_action_volume_muted);
+        vibrateBitmapWhite = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_action_vibrate_white);
+        silentBitmapWhite = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_action_silent_white );
 
-        vibrateDrawable = new BitmapDrawable(getResources(), vibrateBitmap);
-        silentDrawable = new BitmapDrawable(getResources(), silentBitmap);
+        vibrateBitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_action_vibrate);
+        silentBitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_action_silent);
+
+        vibrateDrawable = new BitmapDrawable(getResources(), vibrateBitmapWhite);
+        silentDrawable = new BitmapDrawable(getResources(), silentBitmapWhite);
 
     }
 
@@ -373,6 +378,7 @@ public class TimerWeekView extends View {
                 }
             });
 
+            timerOnOffSwitch.setOnCheckedChangeListener(null);
             timerOnOffSwitch.setChecked(!selectedTimer.getTimerSnooze());
             timerOnOffSwitch.getTrackDrawable().setColorFilter(selectedTimer.getColor(), PorterDuff.Mode.MULTIPLY);
             timerOnOffSwitch.getThumbDrawable().setColorFilter(selectedTimer.getColor(), PorterDuff.Mode.MULTIPLY);
@@ -382,9 +388,13 @@ public class TimerWeekView extends View {
                     if (b) {
                         selectedTimer.setTimerSnooze(false);
                         timerSessionHolder.wakeTimer(selectedTimer);
+                        timerOnOffSwitch.getTrackDrawable().setColorFilter(selectedTimer.getColor(), PorterDuff.Mode.MULTIPLY);
+                        timerOnOffSwitch.getThumbDrawable().setColorFilter(selectedTimer.getColor(), PorterDuff.Mode.MULTIPLY);
                     } else {
                         selectedTimer.setTimerSnooze(true);
                         timerSessionHolder.snoozeTimer(selectedTimer);
+                        timerOnOffSwitch.getTrackDrawable().setColorFilter(getResources().getColor(android.R.color.darker_gray), PorterDuff.Mode.MULTIPLY);
+                        timerOnOffSwitch.getThumbDrawable().setColorFilter(getResources().getColor(android.R.color.darker_gray), PorterDuff.Mode.MULTIPLY);
                     }
                     Toast.makeText(getContext(), (b == true) ? "Switching timer on" : "Switching timer off", Toast.LENGTH_SHORT).show();
                 }

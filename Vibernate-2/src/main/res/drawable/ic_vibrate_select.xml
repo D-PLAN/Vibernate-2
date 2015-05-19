@@ -5,7 +5,7 @@
           android:state_checked="true" />
 
     <!-- When not selected, use background -->
-    <item android:drawable="@drawable/ic_action_alarms"
+    <item android:drawable="@drawable/ic_action_vibrate"
           android:state_checked="false"/>
 
 </selector>

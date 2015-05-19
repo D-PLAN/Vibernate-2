@@ -12,7 +12,6 @@ import android.widget.*;
 import com.napontaratan.vibernate.model.TimerSession;
 import com.napontaratan.vibernate.model.TimerSessionHolder;
 import com.napontaratan.vibernate.model.TimerUtils;
-import com.napontaratan.vibernate.view.TimerWeekView;
 
 
 /**
@@ -45,9 +44,9 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         holder.endTime.setText(TimerUtils.getEndTimeInFormat(current, "HH:mm"));
         holder.activeDays.setText(TimerUtils.getDaysInFormat(current));
         if (current.getType() == TimerSession.TimerSessionType.SILENT) {
-            holder.typeIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_volume_muted));
+            holder.typeIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_silent));
         } else {
-            holder.typeIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_alarms));
+            holder.typeIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_vibrate));
         }
         holder.colorTab.setBackgroundColor(current.getColor());
     }
