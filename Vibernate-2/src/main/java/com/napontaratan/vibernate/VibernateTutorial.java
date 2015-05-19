@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import com.google.android.gms.analytics.GoogleAnalytics;
 import com.napontaratan.vibernate.tutorials.*;
 import com.viewpagerindicator.CirclePageIndicator;
 import com.viewpagerindicator.PageIndicator;
@@ -18,11 +19,22 @@ import java.util.Random;
  * Created by napontaratan on 15-04-26.
  */
 public class VibernateTutorial extends FragmentActivity{
-    private static final Random RANDOM = new Random();
 
-    TutorialFragmentAdapter mAdapter;
-    ViewPager mPager;
-    PageIndicator mIndicator;
+    private TutorialFragmentAdapter mAdapter;
+    private ViewPager mPager;
+    private PageIndicator mIndicator;
+
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

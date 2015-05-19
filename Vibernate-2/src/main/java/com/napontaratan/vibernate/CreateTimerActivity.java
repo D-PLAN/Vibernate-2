@@ -19,6 +19,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
+import com.google.android.gms.analytics.GoogleAnalytics;
 import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
 import com.napontaratan.vibernate.model.TimerSessionHolder;
@@ -32,12 +33,23 @@ import java.util.List;
 
 public class CreateTimerActivity extends FragmentActivity {
 
-    CreateTimerTimePicker timePicker;
-    List<ToggleButton> days;
-    int colorPicked = -13388315;
-    int colorPickedDarker;
-    boolean[] bDays = new boolean[7];
-    TimerSession ts;
+    private CreateTimerTimePicker timePicker;
+    private List<ToggleButton> days;
+    private int colorPicked = -13388315;
+    private boolean[] bDays = new boolean[7];
+    private TimerSession ts;
+
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+//    }
 
     @Override
     public void onCreate(Bundle savedInstance){
