@@ -19,6 +19,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
+import com.google.android.gms.analytics.GoogleAnalytics;
 import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
 import com.napontaratan.vibernate.model.TimerSessionHolder;
@@ -32,12 +33,23 @@ import java.util.List;
 
 public class CreateTimerActivity extends FragmentActivity {
 
-    CreateTimerTimePicker timePicker;
-    List<ToggleButton> days;
-    int colorPicked = -13388315;
-    int colorPickedDarker;
-    boolean[] bDays = new boolean[7];
-    TimerSession ts;
+    private CreateTimerTimePicker timePicker;
+    private List<ToggleButton> days;
+    private int colorPicked = -13388315;
+    private boolean[] bDays = new boolean[7];
+    private TimerSession ts;
+
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+//    }
 
     @Override
     public void onCreate(Bundle savedInstance){
@@ -126,7 +138,7 @@ public class CreateTimerActivity extends FragmentActivity {
 
         /* name field */
         final EditText nameField = (EditText) findViewById(R.id.create_timer_name_field);
-        nameField.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+        nameField.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         nameField.clearFocus();
 
         /* vibrate or silent mode */
@@ -418,25 +430,17 @@ public class CreateTimerActivity extends FragmentActivity {
             createDialog("Invalid Time Range", "Please specify a valid range.");
             return;
         }
-        TimerSession newTimer = new TimerSession(name, type, start, end, bDays,color);
 
-        TimerSessionHolder boss = TimerSessionHolder.getInstance();
+        TimerSession newTimer = new TimerSession(name, type, start, end, bDays,color);
+        TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
+
         try {
             if(ts == null || (ts!= null && isModified(newTimer) == 1)) {
-                if(ts!= null && isModified(newTimer) == 1) {
+                if(ts != null && isModified(newTimer) == 1) {
                     newTimer.setTimerSnooze(ts.getTimerSnooze());
-                    //TODO do something to napon's boss uh oh
-                    int oldid = boss.getTimerById(ts.getId()).getId();
-                    System.out.println("ts id " + oldid);
-                    boss.removeTimer(ts);
-                    if(ts == null) {
-                        System.out.println("ts is null");
-                    } else {
-                        TimerSession old = boss.getTimerById(ts.getId());
-                        System.out.println("ts id " + (old==null ? -1 : old.getId()));
-                    }
+                    timerSessionHolder.removeTimer(ts);
                 }
-                boss.addTimer(newTimer);
+                timerSessionHolder.addTimer(newTimer);
                 Log.d("CreateTimer", "creating timer with the following information: \n" +
                         "Name: " + name + "\n" +
                         "Type: " + type + "\n" +
@@ -444,9 +448,9 @@ public class CreateTimerActivity extends FragmentActivity {
                         "EndTime" + end.get(Calendar.HOUR_OF_DAY) + ":" + end.get(Calendar.MINUTE) + "\n");
             } else {
                 if(ts != null && isModified(newTimer) == 0) {
-                    TimerSession victim = boss.getTimerById(ts.getId());
-                    victim.setName(name);
-                    victim.setColor(color);
+                    TimerSession existingTimer = timerSessionHolder.getTimerById(ts.getId());
+                    existingTimer.setName(name);
+                    existingTimer.setColor(color);
                     Log.d("CreateTimer", "Bundle not null and only name or color changed");
                 } else {
                     Log.d("CreateTimer", "Bundle not null and Timer not modified");

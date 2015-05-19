@@ -13,26 +13,50 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.napontaratan.vibernate.model.TimerSessionHolder;
 
 
 public class MainActivity extends ActionBarActivity {
 
     public static String FIRST_LAUNCH = "Tutorial";
+    public static GoogleAnalytics analytics;
+    public static Tracker tracker;
 
-    SectionsPagerAdapter mSectionsPagerAdapter;
-    ViewPager mViewPager;
-    Toolbar toolbar;
-    ImageButton addButton;
+    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private ViewPager mViewPager;
+    private Toolbar toolbar;
+    private ImageButton addButton;
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /* Analytics Code */
+//        analytics = GoogleAnalytics.getInstance(this);
+//        analytics.setLocalDispatchPeriod(1800);
+//
+//        tracker = analytics.newTracker("UA-XXXXX-Y");
+//        tracker.enableExceptionReporting(true);
+//        tracker.enableAdvertisingIdCollection(true);
+//        tracker.enableAutoActivityTracking(true);
+//
+//        analytics.reportActivityStart(this);
+
+        /* Tutorial Code */
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isFirstLaunch = prefs.getBoolean(FIRST_LAUNCH, true);
 
+        // uncomment the code below before release
+        // currently the tutorial will run every time the app starts
 //        if(isFirstLaunch) {
             Intent tutorial = new Intent();
             tutorial.setClass(MainActivity.this, VibernateTutorial.class);

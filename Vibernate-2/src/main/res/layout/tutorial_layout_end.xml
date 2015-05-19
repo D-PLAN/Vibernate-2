@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/colorPrimary">
+                android:background="@color/colorPrimaryDark">
 
     <ImageView
             android:layout_width="wrap_content"
@@ -13,7 +13,7 @@
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
+            android:background="@drawable/tutorial_finish_selector"
             android:textColor="@color/white"
             android:text="@string/tutorial_instruction_7_2"
             android:id="@+id/tutorial_finish" android:layout_below="@+id/tutorialImageView"
