@@ -9,11 +9,10 @@ import android.support.v7.widget.RecyclerView;
 public class vAnimate {
 
 
-    public static void animate(RecyclerView.ViewHolder holder) {
-        ObjectAnimator animator = ObjectAnimator.ofFloat(holder.itemView, "translationY", 0, 100);
+    public static void animate(RecyclerView.ViewHolder holder, boolean status) {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(holder.itemView, "translationY", status? 300:-300, 0);
         animator.setDuration(1000);
         animator.start();
-
     }
 
 

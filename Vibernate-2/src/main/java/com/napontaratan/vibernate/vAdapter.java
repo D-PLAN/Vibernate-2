@@ -25,6 +25,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
     private LayoutInflater inflater;
     private TimerSessionHolder timerSessionHolder;
     private Context context;
+    private int previousPosition = 0;
   
     public vAdapter(Context context, TimerSessionHolder timerSessionHolder) {
         inflater = LayoutInflater.from(context);
@@ -53,14 +54,16 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             holder.typeIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_vibrate));
         }
         holder.colorTab.setBackgroundColor(current.getColor());
-        vAnimate.animate(holder);
+
+        if (position > previousPosition) {
+            vAnimate.animate(holder, true);
+        } else {
+            vAnimate.animate(holder, false);
+        }
+        previousPosition = position;
+
 
     }
-
-
-
-
-
 
     @Override
     public int getItemCount() {
