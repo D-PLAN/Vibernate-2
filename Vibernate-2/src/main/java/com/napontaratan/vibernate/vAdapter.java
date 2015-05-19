@@ -3,12 +3,16 @@ package com.napontaratan.vibernate;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.*;
+import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
 import com.napontaratan.vibernate.model.TimerSessionHolder;
 import com.napontaratan.vibernate.model.TimerUtils;
@@ -50,7 +54,12 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             holder.typeIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_alarms));
         }
         holder.colorTab.setBackgroundColor(current.getColor());
+        vAnimate.animate(holder);
+
     }
+
+
+
 
 
 
@@ -59,10 +68,19 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         return timerSessionHolder.getSize();
     }
 
-    // TO BE REMOVED JUST SO I CAN GET RID OF LOTS OF DATA
+
     private void removeItem(int position) {
         timerSessionHolder.removeTimer(position);
         notifyItemRemoved(position);
+    }
+
+    public void addItem(TimerSession timer) {
+        try {
+            timerSessionHolder.addTimer(timer);
+            notifyItemInserted(timerSessionHolder.getSize());
+        } catch (TimerConflictException e) {
+            System.out.println("Timer Conflict please check your time again");
+        }
     }
 
     public class vViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
