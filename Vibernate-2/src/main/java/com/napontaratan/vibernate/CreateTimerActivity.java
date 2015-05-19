@@ -2,16 +2,14 @@ package com.napontaratan.vibernate;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,11 +24,8 @@ import com.napontaratan.vibernate.view.ColorPickerDialog;
 import com.napontaratan.vibernate.view.ColorPickerSwatch;
 import com.napontaratan.vibernate.view.CreateTimerTimePicker;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class CreateTimerActivity extends FragmentActivity {
@@ -131,6 +126,7 @@ public class CreateTimerActivity extends FragmentActivity {
 
         /* name field */
         final EditText nameField = (EditText) findViewById(R.id.create_timer_name_field);
+        nameField.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
         nameField.clearFocus();
 
         /* vibrate or silent mode */

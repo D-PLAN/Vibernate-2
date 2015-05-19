@@ -21,7 +21,33 @@
     <string name="timer_hint_1">Click on a block</string>
     <string name="timer_hint_2">to view details</string>
 
-
-
+    <!-- Tutorial Instructions -->
+    <string name="tutorial_instruction_1">
+        Welcome to Vibernate!
+    </string>
+    <string name="tutorial_instruction_1_2">
+        To get started swipe to the right!
+    </string>
+    <string name="tutorial_instruction_2">
+        Create a Timer View
+    </string>
+    <string name="tutorial_instruction_3">
+        This is your week view.
+    </string>
+    <string name="tutorial_instruction_4">
+        See specific information about a timer
+    </string>
+    <string name="tutorial_instruction_5">
+        Switch between week view and list view
+    </string>
+    <string name="tutorial_instruction_6">
+        Press + to add your first timer!
+    </string>
+    <string name="tutorial_instruction_7">
+        Let\'s get started!
+    </string>
+    <string name="tutorial_instruction_7_2">
+        Begin
+    </string>
 
 </resources>

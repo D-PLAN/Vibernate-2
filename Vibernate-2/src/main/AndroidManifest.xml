@@ -29,6 +29,7 @@
                   android:screenOrientation="portrait"
                   android:configChanges="keyboardHidden|orientation|screenSize">>
         </activity>
+        <activity android:name=".VibernateTutorial"></activity>
 
     <receiver android:name=".controller.SilentOnBroadcastReceiver" />
     <receiver android:name=".controller.VibrateOnBroadcastReceiver" />

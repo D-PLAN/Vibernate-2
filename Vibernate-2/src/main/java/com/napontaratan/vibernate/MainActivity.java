@@ -3,7 +3,9 @@ package com.napontaratan.vibernate;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
@@ -16,6 +18,8 @@ import com.napontaratan.vibernate.model.TimerSessionHolder;
 
 public class MainActivity extends ActionBarActivity {
 
+    public static String FIRST_LAUNCH = "Tutorial";
+
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
     Toolbar toolbar;
@@ -26,6 +30,15 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isFirstLaunch = prefs.getBoolean(FIRST_LAUNCH, true);
+
+//        if(isFirstLaunch) {
+            Intent tutorial = new Intent();
+            tutorial.setClass(MainActivity.this, VibernateTutorial.class);
+            startActivity(tutorial);
+//        }
+
         TimerSessionHolder.getInstance().setContext(getApplicationContext());
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -35,9 +48,9 @@ public class MainActivity extends ActionBarActivity {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent a = new Intent();
-                a.setClass(MainActivity.this, CreateTimerActivity.class);
-                startActivity(a);
+                Intent addTimer = new Intent();
+                addTimer.setClass(MainActivity.this, CreateTimerActivity.class);
+                startActivity(addTimer);
             }
         });
 
@@ -92,21 +105,6 @@ public class MainActivity extends ActionBarActivity {
 
 
     }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-////        if (id == R.id.action_settings) {
-////            return true;
-////        }
-//        return super.onOptionsItemSelected(item);
-//    }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 

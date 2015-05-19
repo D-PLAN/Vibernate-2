@@ -2,20 +2,12 @@
 
 
     <string-array name="default_color_choice_values" translatable="false">
-        <!--<item>#33b5e5</item>-->
-        <!--<item>#70A097</item>-->
-        <!--<item>#818E99</item>-->
-        <!--<item>#BE597E</item>-->
-        <!--<item>#9548B8</item>-->
-        <!--<item>#CFC3FF</item>-->
-
-        <item>#7ACBE9</item>
-        <item>#33B5E5</item>
-        <item>#288DB2</item>
-        <item>#175065</item>
-        <item>#355865</item>
-        <item>#4F597F</item>
-
+        <item>#25C5D9</item>
+        <item>#25A599</item>
+        <item>#778F9B</item>
+        <item>#FFA625</item>
+        <item>#EB3F79</item>
+        <item>#AA46BB</item>
     </string-array>
 
     <string-array name="homescreen_color_choice_values" translatable="false">
