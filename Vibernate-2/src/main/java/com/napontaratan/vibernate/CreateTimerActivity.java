@@ -138,7 +138,7 @@ public class CreateTimerActivity extends FragmentActivity {
 
         /* name field */
         final EditText nameField = (EditText) findViewById(R.id.create_timer_name_field);
-        nameField.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+        nameField.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         nameField.clearFocus();
 
         /* vibrate or silent mode */

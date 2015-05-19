@@ -37,6 +37,7 @@
                 android:fontFamily="sans-serif-regular"
                 android:textColor="@color/black"
                 android:textSize="18sp"
+                android:capitalize="sentences"
                 android:textCursorDrawable="@null"
                 android:cursorVisible="false"
                 android:drawableRight="@android:drawable/ic_input_delete"
