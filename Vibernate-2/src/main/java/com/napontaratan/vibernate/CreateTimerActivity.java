@@ -19,7 +19,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
-import com.google.android.gms.analytics.GoogleAnalytics;
 import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
 import com.napontaratan.vibernate.model.TimerSessionHolder;
@@ -38,6 +37,7 @@ public class CreateTimerActivity extends FragmentActivity {
     private int colorPicked = -13388315;
     private boolean[] bDays = new boolean[7];
     private TimerSession ts;
+    EditText nameField;
 
 //    @Override
 //    protected void onStart() {
@@ -72,6 +72,7 @@ public class CreateTimerActivity extends FragmentActivity {
         toolbar.setTitle("New Timer");
         toolbar.setNavigationIcon(R.drawable.ic_action_remove);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 finish();
@@ -85,7 +86,7 @@ public class CreateTimerActivity extends FragmentActivity {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
 
-
+                hideSoftKeyboard();
                 String[] color_array = getBaseContext().getResources().getStringArray(R.array.default_color_choice_values);
                 int[] cArray = new int[color_array.length];
                 for (int k = 0; k < color_array.length; k++) {
@@ -137,7 +138,7 @@ public class CreateTimerActivity extends FragmentActivity {
         });
 
         /* name field */
-        final EditText nameField = (EditText) findViewById(R.id.create_timer_name_field);
+        nameField = (EditText) findViewById(R.id.create_timer_name_field);
         nameField.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         nameField.clearFocus();
 
@@ -148,6 +149,7 @@ public class CreateTimerActivity extends FragmentActivity {
         typeVibrate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideSoftKeyboard();
                 if(typeSilent.isChecked()) {
                     typeSilent.setChecked(false);
                 }
@@ -160,6 +162,7 @@ public class CreateTimerActivity extends FragmentActivity {
         typeSilent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideSoftKeyboard();
                 if(typeVibrate.isChecked()) {
                     typeVibrate.setChecked(false);
                 }
@@ -191,13 +194,7 @@ public class CreateTimerActivity extends FragmentActivity {
         startTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //to get rid of keyboard
-                if(getCurrentFocus()!=null && getCurrentFocus() instanceof EditText){
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(nameField.getWindowToken(), 0);
-                }
-
+                hideSoftKeyboard();
                 String[] start = startTime.getText().toString().split(":");
                 timePicker.setTime(Integer.parseInt(start[0]), Integer.parseInt(start[1]));
                 timePicker.show(getSupportFragmentManager(), "startTimePicker");
@@ -207,13 +204,7 @@ public class CreateTimerActivity extends FragmentActivity {
         endTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //to get rid of keyboard
-                if(getCurrentFocus()!=null && getCurrentFocus() instanceof EditText){
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(nameField.getWindowToken(), 0);
-                }
-
+                hideSoftKeyboard();
                 String[] end = endTime.getText().toString().split(":");
                 timePicker.setTime(Integer.parseInt(end[0]), Integer.parseInt(end[1]));
                 timePicker.show(getSupportFragmentManager(), "endTimePicker");
@@ -280,6 +271,7 @@ public class CreateTimerActivity extends FragmentActivity {
         weekdays_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideSoftKeyboard();
                 if(weekdays_btn.isChecked()) {
                     for(int i = 0; i < 7; i++){
                         if(i != 0 && i != 6) {
@@ -299,6 +291,7 @@ public class CreateTimerActivity extends FragmentActivity {
         weekends_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideSoftKeyboard();
                 if(weekends_btn.isChecked()) {
                     for(int i = 0; i < 7; i++){
                         if(i == 0 || i == 6) {
@@ -462,6 +455,14 @@ public class CreateTimerActivity extends FragmentActivity {
         }
 
         finish();
+    }
+
+    //to get rid of keyboard
+    private void hideSoftKeyboard() {
+        if (getCurrentFocus() != null && getCurrentFocus() instanceof EditText) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(nameField.getWindowToken(), 0);
+        }
     }
 
     private Calendar generateCalendar(int hour, int minute) {
