@@ -329,7 +329,6 @@ public class TimerWeekView extends View {
             timerStartTimeView = (TextView) root.findViewById(R.id.timer_start_time);
             timerEndTimeView = (TextView) root.findViewById(R.id.timer_end_time);
             timerDaysView = (TextView) root.findViewById(R.id.timer_days);
-
         }
     }
 
@@ -339,6 +338,8 @@ public class TimerWeekView extends View {
             setupCardView();
             timerPlaceholder.setVisibility(View.GONE);
             timerInfoView.setVisibility(View.VISIBLE);
+
+            root.findViewById(R.id.bottom_wrapper).setBackgroundColor(selectedTimer.getColor());
 
             timerEditIcon.setOnClickListener(new OnClickListener() {
                 @Override
