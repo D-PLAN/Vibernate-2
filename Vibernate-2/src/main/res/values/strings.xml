@@ -35,7 +35,7 @@
         Get an overall look at your weekly schedule
     </string>
     <string name="tutorial_instruction_3">
-        See specific information about a timer
+        See specific information about a timer\nTap on a timer to modify
     </string>
     <string name="tutorial_instruction_4">
         Switch between week view and list view

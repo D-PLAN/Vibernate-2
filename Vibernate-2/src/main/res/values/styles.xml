@@ -21,7 +21,7 @@
     </style>
 
     <!-- Calendar Fragment styles -->
-    <style name="week_text">
+    <style name="WeekText">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">fill_parent</item>
         <item name="android:layout_weight">1</item>
@@ -31,13 +31,13 @@
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="timer_container">
+    <style name="TimerContainer">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">15</item>
     </style>
 
-    <style name="vertical_divider">
+    <style name="VerticalDivider">
         <item name="android:clickable">false</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
@@ -45,7 +45,7 @@
         <item name="android:layout_weight">1</item>
     </style>
 
-    <style name="horizontal_divider">
+    <style name="HorizontalDivider">
         <item name="android:clickable">false</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1px</item>
@@ -53,12 +53,12 @@
     </style>
 
     <!-- Timer placeholder -->
-    <style name="timer_placeholder_1">
+    <style name="TimerPlaceholderTop">
         <item name="android:fontFamily">san-serif</item>
         <item name="android:textSize">24sp</item>
         <item name="android:textColor">@color/dividers</item>
     </style>
-    <style name="timer_placeholder_2">
+    <style name="TimerPlaceholderBottom">
         <item name="android:fontFamily">san-serif</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/dividers</item>
@@ -66,35 +66,27 @@
 
 
     <!-- Timer info card -->
-    <style name="timer_title_text">
+    <style name="TimerTitleText">
         <item name="android:fontFamily">san-serif-medium</item>
         <item name="android:textSize">26sp</item>
     </style>
-    <style name="timer_time_text">
+    <style name="TimerTimeText">
         <item name="android:fontFamily">san-serif-regular</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/black</item>
     </style>
-    <style name="timer_days_text">
+    <style name="TimerDaysText">
         <item name="android:fontFamily">san-serif-light</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/light_grey_text</item>
     </style>
 
     <!-- Create timer styles -->
-    <style name="create_timer_divider">
+    <style name="CreateTimerDivider">
         <item name="android:clickable">false</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">5px</item>
         <item name="android:background">@color/dividers</item>
-    </style>
-
-    <style name="create_timer_vdivider">
-        <item name="android:clickable">false</item>
-        <item name="android:layout_width">2px</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:background">@color/dividers</item>
-        <item name="android:layout_weight">1</item>
     </style>
 
 </resources>

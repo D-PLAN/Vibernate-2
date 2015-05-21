@@ -33,6 +33,7 @@ public class TimerWeekView extends View {
     private TextView timerName;
     private ImageView timerTypeIcon;
     private ImageView timerDeleteIcon;
+    private ImageView timerEditIcon;
     private Switch timerOnOffSwitch;
     private TextView timerStartTimeView;
     private TextView timerEndTimeView;
@@ -60,6 +61,14 @@ public class TimerWeekView extends View {
 
     private int containerXLeft;
     private int containerXRight;
+
+    // percentages
+    private final double PERCENTAGE_COLUMN = 0.95;
+    private final double PERCENTAGE_DIVIDER = 0.05;
+    private final double PERCENTAGE_TIMER_PADDING_TOP = 0.025;
+    private final double PERCENTAGE_TIMER_WIDTH = 0.5;
+    private final double PERCENTAGE_TIMER_PADDING_LEFT = 0.25;
+
 
     // timer layout
     private int timerYPadding;
@@ -167,8 +176,8 @@ public class TimerWeekView extends View {
             numColumns = 7;
             numDividers = 6;
 
-            totalColumnWidth = (int) (contentWidth * 0.95);
-            totalDividerWidth = (int) (contentWidth * 0.05);
+            totalColumnWidth = (int) (contentWidth * PERCENTAGE_COLUMN);
+            totalDividerWidth = (int) (contentWidth * PERCENTAGE_DIVIDER);
 
             columnWidth = totalColumnWidth / numColumns;
             dividerWidth = totalDividerWidth / numDividers;
@@ -177,10 +186,10 @@ public class TimerWeekView extends View {
             containerXLeft = 0;
             containerXRight = 0;
 
-            timerYPadding = (int) (contentHeight * 0.025);
+            timerYPadding = (int) (contentHeight * PERCENTAGE_TIMER_PADDING_TOP);
 
-            timerWidth = (int) (columnWidth * 0.5);
-            timerPaddingLeft = (int) (columnWidth * 0.25);
+            timerWidth = (int) (columnWidth * PERCENTAGE_TIMER_WIDTH);
+            timerPaddingLeft = (int) (columnWidth * PERCENTAGE_TIMER_PADDING_LEFT);
 
             timerXLeft = 0;
             timerXRight = 0;
@@ -315,6 +324,7 @@ public class TimerWeekView extends View {
             timerName = (TextView) root.findViewById(R.id.timer_name);
             timerTypeIcon = (ImageView) root.findViewById(R.id.timer_type_icon);
             timerDeleteIcon = (ImageView) root.findViewById(R.id.timer_delete_icon);
+            timerEditIcon = (ImageView) root.findViewById(R.id.timer_edit_icon);
             timerOnOffSwitch = (Switch) root.findViewById(R.id.timer_switch);
             timerStartTimeView = (TextView) root.findViewById(R.id.timer_start_time);
             timerEndTimeView = (TextView) root.findViewById(R.id.timer_end_time);
@@ -330,7 +340,7 @@ public class TimerWeekView extends View {
             timerPlaceholder.setVisibility(View.GONE);
             timerInfoView.setVisibility(View.VISIBLE);
 
-            timerInfoView.setOnClickListener(new OnClickListener() {
+            timerEditIcon.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent mIntent = new Intent(view.getContext(), CreateTimerActivity.class);
@@ -340,15 +350,6 @@ public class TimerWeekView extends View {
                     view.getContext().startActivity(mIntent);
                 }
             });
-
-            timerName.setText(selectedTimer.getName());
-            timerName.setTextColor(selectedTimer.getColor());
-
-            if(selectedTimer.getType() == TimerSession.TimerSessionType.VIBRATE) {
-                timerTypeIcon.setImageBitmap(vibrateBitmap);
-            } else if(selectedTimer.getType() == TimerSession.TimerSessionType.SILENT) {
-                timerTypeIcon.setImageBitmap(silentBitmap);
-            }
 
             timerDeleteIcon.setOnClickListener(new OnClickListener() {
                 @Override
@@ -373,6 +374,15 @@ public class TimerWeekView extends View {
                             .show();
                 }
             });
+
+            timerName.setText(selectedTimer.getName());
+            timerName.setTextColor(selectedTimer.getColor());
+
+            if(selectedTimer.getType() == TimerSession.TimerSessionType.VIBRATE) {
+                timerTypeIcon.setImageBitmap(vibrateBitmap);
+            } else if(selectedTimer.getType() == TimerSession.TimerSessionType.SILENT) {
+                timerTypeIcon.setImageBitmap(silentBitmap);
+            }
 
             timerOnOffSwitch.setOnCheckedChangeListener(null);
             timerOnOffSwitch.setChecked(!selectedTimer.getTimerSnooze());
@@ -434,8 +444,4 @@ public class TimerWeekView extends View {
         }
         return null;
     }
-
-
-
-
 }

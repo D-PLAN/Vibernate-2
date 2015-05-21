@@ -93,7 +93,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp" >
 
-        <View style="@style/create_timer_divider" />
+        <View style="@style/CreateTimerDivider" />
     </LinearLayout>
 
 
@@ -167,7 +167,7 @@
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dp" >
-        <View style="@style/create_timer_divider" />
+        <View style="@style/CreateTimerDivider" />
     </LinearLayout>
 
     <!-- Container for Weekday/Weekend Headings -->
@@ -353,7 +353,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp" >
 
-        <View style="@style/create_timer_divider" />
+        <View style="@style/CreateTimerDivider" />
     </LinearLayout>
 
     <ImageButton
