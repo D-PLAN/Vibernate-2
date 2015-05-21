@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.*;
+import com.daimajia.swipe.SwipeLayout;
 import com.napontaratan.vibernate.CreateTimerActivity;
 import com.napontaratan.vibernate.R;
 import com.napontaratan.vibernate.model.TimerSession;
@@ -38,6 +39,7 @@ public class TimerWeekView extends View {
     private TextView timerStartTimeView;
     private TextView timerEndTimeView;
     private TextView timerDaysView;
+    private SwipeLayout swipeLayout;
 
     // Draw variables, set to -1 as flag for variables' value not set
     private int paddingLeft = -1;
@@ -341,6 +343,10 @@ public class TimerWeekView extends View {
 
             root.findViewById(R.id.bottom_wrapper).setBackgroundColor(selectedTimer.getColor());
 
+            swipeLayout = (SwipeLayout) root.findViewById(R.id.timer_swipe_layout);
+            swipeLayout.setLeftSwipeEnabled(true);
+            swipeLayout.addDrag(SwipeLayout.DragEdge.Left, root.findViewById(R.id.bottom_wrapper));
+
             timerEditIcon.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -426,6 +432,7 @@ public class TimerWeekView extends View {
         setupCardView();
         timerPlaceholder.setVisibility(View.VISIBLE);
         timerInfoView.setVisibility(View.GONE);
+        swipeLayout.setLeftSwipeEnabled(false);
         prevTimer = -1;
         this.invalidate();
     }
