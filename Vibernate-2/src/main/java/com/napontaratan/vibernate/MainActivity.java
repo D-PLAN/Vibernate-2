@@ -90,6 +90,11 @@ public class MainActivity extends ActionBarActivity {
                     case R.id.action_list:
                         mViewPager.setCurrentItem(1);
                         break;
+                    case R.id.action_tutorial:
+                        Intent tutorial = new Intent();
+                        tutorial.setClass(MainActivity.this, VibernateTutorial.class);
+                        startActivity(tutorial);
+                        break;
                     default:
                         break;
                 }
@@ -126,7 +131,6 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onPageScrollStateChanged(int i) {}
         });
-
 
     }
 
