@@ -83,6 +83,7 @@ public class TimerWeekView extends View {
     // Rects
     private RectF containerRect;
     private RectF dividerRect;
+    private int BORDER_RADIUS = 15;
 
     // Bitmaps
     private Bitmap vibrateBitmap;
@@ -91,7 +92,6 @@ public class TimerWeekView extends View {
     private Bitmap silentBitmapWhite;
     private Drawable vibrateDrawable;
     private Drawable silentDrawable;
-    private final static int TIMER_ICON_HEIGHT = 50;
 
     //timer info
     private int earliestTime;
@@ -211,6 +211,7 @@ public class TimerWeekView extends View {
             List<TimerSession> timersForTheDay = timerSessionHolder.getTimerOnThisDay(i);
             float timerYStart = 0;
             float timerYEnd = 0;
+            int iconDimension = timerXRight - timerXLeft;
             for(int j = 0; j < timersForTheDay.size(); j++) {
                 TimerSession timer = timersForTheDay.get(j);
                 if(j == 0) {
@@ -229,18 +230,13 @@ public class TimerWeekView extends View {
                 currTimers.add(timerRect);
                 timerRectsMaps.put(timer.getId(), currTimers);
                 timerPaint.setColor(timer.getColor());
-                canvas.drawRoundRect(timerRect, 15, 15, timerPaint);
-                if((timerYEnd - timerYStart) > TIMER_ICON_HEIGHT) {
-                    // draw timer icon
-                    // 50 is a good size for the icon, to prevent it being too stretched in larger timer blocks
-                    int iconYEnd = (int)timerYStart + TIMER_ICON_HEIGHT;
-                    if(timer.getType() == TimerSession.TimerSessionType.VIBRATE) {
-                        vibrateDrawable.setBounds(timerXLeft, (int) timerYStart, timerXRight, iconYEnd);
-                        vibrateDrawable.draw(canvas);
-                    } else if (timer.getType() == TimerSession.TimerSessionType.SILENT) {
-                        silentDrawable.setBounds(timerXLeft, (int) timerYStart, timerXRight, iconYEnd);
-                        silentDrawable.draw(canvas);
-                    }
+                canvas.drawRoundRect(timerRect, BORDER_RADIUS, BORDER_RADIUS, timerPaint);
+                if(timer.getType() == TimerSession.TimerSessionType.VIBRATE) {
+                    vibrateDrawable.setBounds(timerXLeft, (int) timerYStart, timerXRight, (int)(timerYStart + iconDimension));
+                    vibrateDrawable.draw(canvas);
+                } else if (timer.getType() == TimerSession.TimerSessionType.SILENT) {
+                    silentDrawable.setBounds(timerXLeft, (int) timerYStart, timerXRight, (int)(timerYStart + iconDimension));
+                    silentDrawable.draw(canvas);
                 }
 
             }
