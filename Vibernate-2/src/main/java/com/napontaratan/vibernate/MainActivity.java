@@ -55,13 +55,11 @@ public class MainActivity extends ActionBarActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isFirstLaunch = prefs.getBoolean(FIRST_LAUNCH, true);
 
-        // uncomment the code below before release
-        // currently the tutorial will run every time the app starts
-//        if(isFirstLaunch) {
+        if(isFirstLaunch) {
             Intent tutorial = new Intent();
             tutorial.setClass(MainActivity.this, VibernateTutorial.class);
             startActivity(tutorial);
-//        }
+        }
 
         TimerSessionHolder.getInstance().setContext(getApplicationContext());
 
