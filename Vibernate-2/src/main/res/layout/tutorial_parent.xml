@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="fill_parent"
@@ -10,22 +10,55 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/tutorial_instruction_1"
+            android:text="@string/tutorial_instruction"
             android:textColor="@color/white"
-            android:id="@+id/textView" android:layout_gravity="center_horizontal" android:layout_marginTop="30dp"
-            android:textSize="25sp"/>
+            android:layout_marginTop="30dp"
+            android:id="@+id/titleText" android:layout_gravity="center_horizontal"
+            android:textSize="25sp" android:layout_alignParentTop="true" android:layout_centerHorizontal="true"/>
 
-    <android.support.v4.view.ViewPager
-            android:id="@+id/pager"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                  android:layout_centerInParent="true"
+                  android:layout_marginTop="20dp"
+                  android:layout_below="@id/titleText"
+                  android:orientation="vertical">
+        <android.support.v4.view.ViewPager
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="5"
+                android:id="@+id/pager"/>
 
-    <com.viewpagerindicator.CirclePageIndicator
-            android:id="@+id/indicator"
-            android:padding="10dip"
-            android:layout_height="wrap_content"
-            android:layout_width="fill_parent"
-            />
-</LinearLayout>
+        <TextView
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="To get started, swipe left!"
+                android:id="@+id/instruction"
+                android:textColor="@color/white" />
+
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/tutorial_finish_selector"
+                android:textColor="@color/white"
+                android:text="@string/tutorial_instruction_7_2"
+                android:id="@+id/tutorial_finish"
+                style="?android:attr/borderlessButtonStyle"
+                android:visibility="gone"
+                android:fontFamily="sans-serif-light"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:layout_gravity="center_horizontal"/>
+
+        <com.viewpagerindicator.CirclePageIndicator
+                android:id="@+id/indicator"
+                android:padding="10dip"
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                />
+    </LinearLayout>
+
+</RelativeLayout>

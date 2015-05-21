@@ -4,20 +4,178 @@
                 android:layout_height="match_parent"
                 android:background="@color/colorPrimaryDark">
 
-    <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tutorialImageView"
-            android:src="@drawable/ic_launcher"
-            android:layout_centerVertical="true" android:layout_centerHorizontal="true"/>
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/tutorial_finish_selector"
-            android:textColor="@color/white"
-            android:text="@string/tutorial_instruction_7_2"
-            android:id="@+id/tutorial_finish" android:layout_below="@+id/tutorialImageView"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_centerHorizontal="true" android:layout_marginTop="10dp"/>
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp">
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true">
+            <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="200px"
+                    android:layout_weight="3">
+                <ImageView
+                        android:layout_width="200px"
+                        android:layout_height="200px"
+                        android:id="@+id/author_1"
+                        android:src="@drawable/napon"
+                        android:layout_gravity="right"/>
+            </FrameLayout>
+
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_margin="10dp"
+                    android:layout_weight="8">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                          android:textColor="@color/white"
+                          android:text="Napon"/>
+                <TextView android:layout_height="wrap_content"
+                          android:layout_width="wrap_content"
+                          android:textColor="@color/dividers"
+                          android:text="Developer"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true">
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_margin="10dp"
+                    android:layout_weight="8">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                          android:textColor="@color/white"
+                          android:text="Daniel"
+                          android:layout_gravity="right" />
+                <TextView android:layout_height="wrap_content"
+                          android:layout_width="wrap_content"
+                          android:textColor="@color/dividers"
+                          android:text="Developer"
+                          android:layout_gravity="right" />
+            </LinearLayout>
+            <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="200px"
+                    android:layout_weight="3">
+                <ImageView
+                        android:layout_width="200px"
+                        android:layout_height="200px"
+                        android:id="@+id/author_2"
+                        android:src="@drawable/daniel"
+                        android:layout_gravity="left"/>
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true">
+            <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="200px"
+                    android:layout_weight="3">
+                <ImageView
+                        android:layout_width="200px"
+                        android:layout_height="200px"
+                        android:id="@+id/author_3"
+                        android:src="@drawable/paul"
+                        android:layout_gravity="right"/>
+            </FrameLayout>
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_margin="10dp"
+                    android:layout_weight="8">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                          android:textColor="@color/white"
+                          android:text="Paul"/>
+                <TextView android:layout_height="wrap_content"
+                          android:layout_width="wrap_content"
+                          android:textColor="@color/dividers"
+                          android:text="Developer"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true">
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_margin="10dp"
+                    android:layout_weight="8">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                          android:textColor="@color/white"
+                          android:text="Amelia"
+                          android:layout_gravity="right"/>
+                <TextView android:layout_height="wrap_content"
+                          android:layout_width="wrap_content"
+                          android:textColor="@color/dividers"
+                          android:text="Developer"
+                          android:layout_gravity="right"/>
+            </LinearLayout>
+            <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="200px"
+                    android:layout_weight="3">
+                <ImageView
+                        android:layout_width="200px"
+                        android:layout_height="200px"
+                        android:id="@+id/author_4"
+                        android:src="@drawable/amelia"
+                        android:layout_gravity="left"/>
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true">
+            <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="200px"
+                    android:layout_weight="3">
+                <ImageView
+                        android:layout_width="200px"
+                        android:layout_height="200px"
+                        android:id="@+id/author_5"
+                        android:src="@drawable/lia"
+                        android:layout_gravity="right"/>
+            </FrameLayout>
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_margin="10dp"
+                    android:layout_weight="8">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                          android:textColor="@color/white"
+                          android:text="Lia"/>
+                <TextView android:layout_height="wrap_content"
+                          android:layout_width="wrap_content"
+                          android:textColor="@color/dividers"
+                          android:text="Designer"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 
 </RelativeLayout>
