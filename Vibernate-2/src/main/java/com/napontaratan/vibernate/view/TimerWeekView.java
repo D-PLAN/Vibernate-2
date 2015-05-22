@@ -432,7 +432,7 @@ public class TimerWeekView extends View {
         setupCardView();
         timerPlaceholder.setVisibility(View.VISIBLE);
         timerInfoView.setVisibility(View.GONE);
-        swipeLayout.setLeftSwipeEnabled(false);
+        if(swipeLayout != null) swipeLayout.setLeftSwipeEnabled(false);
         prevTimer = -1;
         this.invalidate();
     }
