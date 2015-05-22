@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 
+import android.graphics.drawable.*;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -25,6 +26,8 @@ import com.napontaratan.vibernate.view.ColorPickerDialog;
 import com.napontaratan.vibernate.view.ColorPickerSwatch;
 import com.napontaratan.vibernate.view.CreateTimerTimePicker;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -39,15 +42,6 @@ public class CreateTimerActivity extends FragmentActivity {
     private TimerSession ts;
     private boolean[] bundleDays;
     EditText nameField;
-    Button colorButtonMon;
-    Button colorButtonTue;
-    Button colorButtonWed;
-    Button colorButtonThu;
-    Button colorButtonFri;
-    Button colorButtonSat;
-    Button colorButtonSun;
-    Button colorButtonWeekday;
-    Button colorButtonWeekend;
 
 //    @Override
 //    protected void onStart() {
@@ -134,10 +128,6 @@ public class CreateTimerActivity extends FragmentActivity {
                         //Changing toolbar color
                         toolbar.setBackgroundColor(color);
 
-   /*                     //Changing Checkbox color
-                        Drawable button = (Drawable) done.getBackground();
-                        button.setColorFilter(colorPicked, PorterDuff.Mode.SRC_ATOP);
-*/
                         //Changing Status Bar color
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                            Window window = getWindow();
@@ -244,6 +234,8 @@ public class CreateTimerActivity extends FragmentActivity {
         days.get(currentDay).setChecked(true);
         bDays[currentDay] = true;
 
+        changeButtonColors(getResources().getColor(R.color.colorPrimary));
+
         // if sunday(0) OR saturday(6)   is clicked
         for(int i = 0; i < 7; i+=6){
             final int finalI = i;
@@ -328,6 +320,8 @@ public class CreateTimerActivity extends FragmentActivity {
             }
         });
 
+
+
         /* Click on check mark */
         //ImageButton done = (ImageButton) findViewById(R.id.add_timer_button);
         done.setOnClickListener(new View.OnClickListener() {
@@ -353,30 +347,26 @@ public class CreateTimerActivity extends FragmentActivity {
         if (ts != null) {
 
             //Change color
-                    //To darken the colorPicked
-                    float[] hsv = new float[3];
-                    int colorPickedDarker = ts.getColor();
-                    colorPicked = colorPickedDarker;
-                    Color.colorToHSV(ts.getColor(), hsv);
-                    hsv[2] *= 0.8f; // value component
-                    colorPickedDarker = Color.HSVToColor(hsv);
-                    System.out.println("colorPickedDarker is " + colorPickedDarker);
-            
-                    changeButtonColors(colorPicked);
+            //To darken the colorPicked
+            float[] hsv = new float[3];
+            int colorPickedDarker = ts.getColor();
+            colorPicked = colorPickedDarker;
+            Color.colorToHSV(ts.getColor(), hsv);
+            hsv[2] *= 0.8f; // value component
+            colorPickedDarker = Color.HSVToColor(hsv);
+            System.out.println("colorPickedDarker is " + colorPickedDarker);
 
-                    //Changing toolbar color
-                    toolbar.setBackgroundColor(ts.getColor());
+            changeButtonColors(colorPicked);
 
-                    /*//Changing Checkbox color
-                    Drawable button = (Drawable) done.getBackground();
-                    button.setColorFilter(ts.getColor(), PorterDuff.Mode.SRC_ATOP);*/
+            //Changing toolbar color
+            toolbar.setBackgroundColor(ts.getColor());
 
-                    //Changing Status Bar color
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        Window window = getWindow();
-                        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                        window.setStatusBarColor(colorPickedDarker);
-                    }
+            //Changing Status Bar color
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Window window = getWindow();
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.setStatusBarColor(colorPickedDarker);
+            }
             //Change name
             nameField.setText(ts.getName(), TextView.BufferType.EDITABLE);
             nameField.clearFocus();
@@ -483,87 +473,60 @@ public class CreateTimerActivity extends FragmentActivity {
 
         finish();
     }
+
     //change weekdays + weekends button colors
     private void changeButtonColors(int colorPicked) {
-        colorButtonMon = (Button) findViewById(R.id.create_timer_mon);
-        colorButtonTue = (Button) findViewById(R.id.create_timer_tue);
-        colorButtonWed = (Button) findViewById(R.id.create_timer_wed);
-        colorButtonThu = (Button) findViewById(R.id.create_timer_thu);
-        colorButtonFri = (Button) findViewById(R.id.create_timer_fri);
-        colorButtonSat = (Button) findViewById(R.id.create_timer_sat);
-        colorButtonSun = (Button) findViewById(R.id.create_timer_sun);
-        colorButtonWeekday = (Button) findViewById(R.id.create_timer_weekdays_btn);
-        colorButtonWeekend = (Button) findViewById(R.id.create_timer_weekends_btn);
+        for(ToggleButton day : days) {
+            if(day.isChecked()) {
+                changeButtonColor(day, colorPicked);
+            } else {
+                day.setChecked(true);
+                changeButtonColor(day, colorPicked);
+                day.setChecked(false);
+            }
+        }
 
-        switch (colorPicked) {
-            case -14301735:
-                //normal
-                colorButtonMon.setBackgroundResource(R.drawable.circle_select);
-                colorButtonTue.setBackgroundResource(R.drawable.circle_select);
-                colorButtonWed.setBackgroundResource(R.drawable.circle_select);
-                colorButtonThu.setBackgroundResource(R.drawable.circle_select);
-                colorButtonFri.setBackgroundResource(R.drawable.circle_select);
-                colorButtonSat.setBackgroundResource(R.drawable.circle_select);
-                colorButtonSun.setBackgroundResource(R.drawable.circle_select);
-                colorButtonWeekday.setBackgroundResource(R.drawable.rounded_rectangle_select);
-                colorButtonWeekend.setBackgroundResource(R.drawable.rounded_rectangle_select);
-                break;
-            case -14309991:
-                System.out.println("I AM NOW IN TURQUOISE");
-                colorButtonMon.setBackgroundResource(R.drawable.circle_select_turquoise);
-                colorButtonTue.setBackgroundResource(R.drawable.circle_select_turquoise);
-                colorButtonWed.setBackgroundResource(R.drawable.circle_select_turquoise);
-                colorButtonThu.setBackgroundResource(R.drawable.circle_select_turquoise);
-                colorButtonFri.setBackgroundResource(R.drawable.circle_select_turquoise);
-                colorButtonSat.setBackgroundResource(R.drawable.circle_select_turquoise);
-                colorButtonSun.setBackgroundResource(R.drawable.circle_select_turquoise);
-                colorButtonWeekday.setBackgroundResource(R.drawable.rounded_rectangle_select_turquoise);
-                colorButtonWeekend.setBackgroundResource(R.drawable.rounded_rectangle_select_turquoise);
-                break;
-            case -8941669:
-                colorButtonMon.setBackgroundResource(R.drawable.circle_select_grey);
-                colorButtonTue.setBackgroundResource(R.drawable.circle_select_grey);
-                colorButtonWed.setBackgroundResource(R.drawable.circle_select_grey);
-                colorButtonThu.setBackgroundResource(R.drawable.circle_select_grey);
-                colorButtonFri.setBackgroundResource(R.drawable.circle_select_grey);
-                colorButtonSat.setBackgroundResource(R.drawable.circle_select_grey);
-                colorButtonSun.setBackgroundResource(R.drawable.circle_select_grey);
-                colorButtonWeekday.setBackgroundResource(R.drawable.rounded_rectangle_select_grey);
-                colorButtonWeekend.setBackgroundResource(R.drawable.rounded_rectangle_select_grey);
-                break;
-            case -5617989:
-                colorButtonMon.setBackgroundResource(R.drawable.circle_select_purple);
-                colorButtonTue.setBackgroundResource(R.drawable.circle_select_purple);
-                colorButtonWed.setBackgroundResource(R.drawable.circle_select_purple);
-                colorButtonThu.setBackgroundResource(R.drawable.circle_select_purple);
-                colorButtonFri.setBackgroundResource(R.drawable.circle_select_purple);
-                colorButtonSat.setBackgroundResource(R.drawable.circle_select_purple);
-                colorButtonSun.setBackgroundResource(R.drawable.circle_select_purple);
-                colorButtonWeekday.setBackgroundResource(R.drawable.rounded_rectangle_select_purple);
-                colorButtonWeekend.setBackgroundResource(R.drawable.rounded_rectangle_select_purple);
-                break;
-            case -1360007:
-                colorButtonMon.setBackgroundResource(R.drawable.circle_select_pink);
-                colorButtonTue.setBackgroundResource(R.drawable.circle_select_pink);
-                colorButtonWed.setBackgroundResource(R.drawable.circle_select_pink);
-                colorButtonThu.setBackgroundResource(R.drawable.circle_select_pink);
-                colorButtonFri.setBackgroundResource(R.drawable.circle_select_pink);
-                colorButtonSat.setBackgroundResource(R.drawable.circle_select_pink);
-                colorButtonSun.setBackgroundResource(R.drawable.circle_select_pink);
-                colorButtonWeekday.setBackgroundResource(R.drawable.rounded_rectangle_select_pink);
-                colorButtonWeekend.setBackgroundResource(R.drawable.rounded_rectangle_select_pink);
-                break;
-            case -23003:
-                colorButtonMon.setBackgroundResource(R.drawable.circle_select_orange);
-                colorButtonTue.setBackgroundResource(R.drawable.circle_select_orange);
-                colorButtonWed.setBackgroundResource(R.drawable.circle_select_orange);
-                colorButtonThu.setBackgroundResource(R.drawable.circle_select_orange);
-                colorButtonFri.setBackgroundResource(R.drawable.circle_select_orange);
-                colorButtonSat.setBackgroundResource(R.drawable.circle_select_orange);
-                colorButtonSun.setBackgroundResource(R.drawable.circle_select_orange);
-                colorButtonWeekday.setBackgroundResource(R.drawable.rounded_rectangle_select_orange);
-                colorButtonWeekend.setBackgroundResource(R.drawable.rounded_rectangle_select_orange);
-                break;
+        ToggleButton weekdays_btn = (ToggleButton) findViewById(R.id.create_timer_weekdays_btn);
+        ToggleButton weekends_btn = (ToggleButton) findViewById(R.id.create_timer_weekends_btn);
+
+        if(weekdays_btn.isChecked()) {
+            changeButtonColor(weekdays_btn, colorPicked);
+        } else {
+            weekdays_btn.setChecked(true);
+            changeButtonColor(weekdays_btn, colorPicked);
+            weekdays_btn.setChecked(false);
+        }
+        if(weekends_btn.isChecked()) {
+            changeButtonColor(weekends_btn, colorPicked);
+        } else {
+            weekends_btn.setChecked(true);
+            changeButtonColor(weekends_btn, colorPicked);
+            weekends_btn.setChecked(false);
+        }
+    }
+
+    private void changeButtonColor(ToggleButton btn, int rgbColor) {
+        try {
+            StateListDrawable stateListDrawable = (StateListDrawable) btn.getBackground();
+            int[] currentState = btn.getBackground().getState();
+            Method getStateDrawable = StateListDrawable.class.getMethod("getStateDrawable", int.class);
+            Method getStateDrawableIndex = StateListDrawable.class.getMethod("getStateDrawableIndex", int[].class);
+            int index = (int) getStateDrawableIndex.invoke(stateListDrawable,currentState);
+            GradientDrawable drawable = (GradientDrawable) getStateDrawable.invoke(stateListDrawable,index);
+            drawable.setColor(colorPicked);
+            drawable.invalidateSelf();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            return;
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+            return;
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
         }
     }
 
