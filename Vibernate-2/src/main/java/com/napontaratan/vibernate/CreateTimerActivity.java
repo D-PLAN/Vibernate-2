@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -108,6 +109,8 @@ public class CreateTimerActivity extends FragmentActivity {
                         Toast.makeText(getBaseContext(), "Color is " + color, Toast.LENGTH_SHORT).show();
                         colorPicked = color;
                         System.out.println("colorPicked is " + colorPicked);
+
+                        
                         //To darken the colorPicked
                         float[] hsv = new float[3];
                         int colorPickedDarker = colorPicked;
@@ -119,10 +122,10 @@ public class CreateTimerActivity extends FragmentActivity {
                         //Changing toolbar color
                         toolbar.setBackgroundColor(color);
 
-                        //Changing Checkbox color
+   /*                     //Changing Checkbox color
                         Drawable button = (Drawable) done.getBackground();
                         button.setColorFilter(colorPicked, PorterDuff.Mode.SRC_ATOP);
-
+*/
                         //Changing Status Bar color
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                            Window window = getWindow();
@@ -347,9 +350,9 @@ public class CreateTimerActivity extends FragmentActivity {
                     //Changing toolbar color
                     toolbar.setBackgroundColor(ts.getColor());
 
-                    //Changing Checkbox color
+                    /*//Changing Checkbox color
                     Drawable button = (Drawable) done.getBackground();
-                    button.setColorFilter(ts.getColor(), PorterDuff.Mode.SRC_ATOP);
+                    button.setColorFilter(ts.getColor(), PorterDuff.Mode.SRC_ATOP);*/
 
                     //Changing Status Bar color
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
