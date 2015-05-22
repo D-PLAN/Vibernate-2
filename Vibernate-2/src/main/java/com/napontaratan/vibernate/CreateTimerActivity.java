@@ -450,7 +450,7 @@ public class CreateTimerActivity extends FragmentActivity {
                         "Type: " + type + "\n" +
                         "StartTime" + start.get(Calendar.HOUR_OF_DAY) + ":" + start.get(Calendar.MINUTE) + "\n" +
                         "EndTime" + end.get(Calendar.HOUR_OF_DAY) + ":" + end.get(Calendar.MINUTE) + "\n" +
-                        "Days" + bDays + "\n");
+                        "Days" + printArray(bDays) + "\n");
             } else {
                 if(ts != null && isModified(newTimer) == 0) {
                     TimerSession existingTimer = timerSessionHolder.getTimerById(ts.getId());
