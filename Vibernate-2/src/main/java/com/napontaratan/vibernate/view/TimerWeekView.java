@@ -445,6 +445,7 @@ public class TimerWeekView extends View {
         timerPlaceholder.setVisibility(View.VISIBLE);
         timerInfoView.setVisibility(View.GONE);
         swipeLayout.setLeftSwipeEnabled(false);
+        swipeLayout.setOnClickListener(null);
         prevTimer = -1;
         this.invalidate();
     }
