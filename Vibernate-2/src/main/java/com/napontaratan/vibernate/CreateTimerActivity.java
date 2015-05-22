@@ -281,8 +281,10 @@ public class CreateTimerActivity extends FragmentActivity {
                     }
                 } else {
                     for(int i = 0; i < 7; i++){
-                        if(i != 0 && i != 6) days.get(i).setChecked(false);
-                        bDays[i] = false;
+                        if(i != 0 && i != 6) {
+                            days.get(i).setChecked(false);
+                            bDays[i] = false;
+                        }
                     }
                 }
             }
@@ -301,7 +303,7 @@ public class CreateTimerActivity extends FragmentActivity {
                     }
                 } else {
                     for(int i = 0; i < 7; i++){
-                        if(i == 0 || i == 6) {;
+                        if(i == 0 || i == 6) {
                             days.get(i).setChecked(false);
                             bDays[i] = false;
                         }
