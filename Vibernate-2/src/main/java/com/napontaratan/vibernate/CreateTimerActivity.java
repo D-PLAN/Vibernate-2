@@ -27,6 +27,7 @@ import com.napontaratan.vibernate.view.ColorPickerSwatch;
 import com.napontaratan.vibernate.view.CreateTimerTimePicker;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class CreateTimerActivity extends FragmentActivity {
     private int colorPicked = -13388315;
     private boolean[] bDays = new boolean[7];
     private TimerSession ts;
+    private boolean[] bundleDays;
     EditText nameField;
 
 //    @Override
@@ -60,6 +62,7 @@ public class CreateTimerActivity extends FragmentActivity {
         Bundle extras = getIntent().getExtras();
         if(extras != null) {
             ts = (TimerSession)extras.getSerializable("Timer");
+            bundleDays = Arrays.copyOf(ts.getDays(), 7);
         } else {
             ts = null;
         }
@@ -392,11 +395,17 @@ public class CreateTimerActivity extends FragmentActivity {
             endTime.setText(end);
 
             //Days
-            days.get(currentDay).setChecked(false);
-            bDays = ts.getDays();
-            for (int i=0; i<bDays.length;i++) {
-                if (bDays[i] == true) days.get(i).setChecked(true);
+//            days.get(currentDay).setChecked(false);
+
+            for (int i=0; i < bundleDays.length ; i++) {
+                if (bundleDays[i] == true) {
+                    days.get(i).setChecked(true);
+                    bDays[i] = true;
+                }
             }
+
+            if(bundleDays[0] && bundleDays[6]) weekends_btn.setChecked(true);
+            if(bundleDays[1] && bundleDays[2] && bundleDays[3] && bundleDays[4] && bundleDays[5]) weekdays_btn.setChecked(true);
         }
     }
 
@@ -440,7 +449,8 @@ public class CreateTimerActivity extends FragmentActivity {
                         "Name: " + name + "\n" +
                         "Type: " + type + "\n" +
                         "StartTime" + start.get(Calendar.HOUR_OF_DAY) + ":" + start.get(Calendar.MINUTE) + "\n" +
-                        "EndTime" + end.get(Calendar.HOUR_OF_DAY) + ":" + end.get(Calendar.MINUTE) + "\n");
+                        "EndTime" + end.get(Calendar.HOUR_OF_DAY) + ":" + end.get(Calendar.MINUTE) + "\n" +
+                        "Days" + bDays + "\n");
             } else {
                 if(ts != null && isModified(newTimer) == 0) {
                     TimerSession existingTimer = timerSessionHolder.getTimerById(ts.getId());
@@ -492,6 +502,8 @@ public class CreateTimerActivity extends FragmentActivity {
     // return 0 if only color or name are modified
     // return -1 if nothing is modified
     private int isModified(TimerSession newTimer) {
+        Log.d("TSDAYS", printArray(bundleDays));
+        Log.d("NEWDAYS", printArray(newTimer.getDays()));
         if (!newTimer.getStartTime().equals(ts.getStartTime()) || !newTimer.getEndTime().equals(ts.getEndTime()) ||
                 newTimer.getDays() != ts.getDays() || newTimer.getType() != ts.getType()){
             Log.d("isModified", "returning 1");
@@ -503,5 +515,14 @@ public class CreateTimerActivity extends FragmentActivity {
             Log.d("isModified", "returning -1");
             return -1;
         }
+    }
+
+    String printArray(boolean[] array) {
+        StringBuffer sb = new StringBuffer();
+        for(int i = 0; i < array.length; i++){
+            if(array[i]) sb.append("1 ");
+            else sb.append("0 ");
+        }
+        return sb.toString();
     }
 }
