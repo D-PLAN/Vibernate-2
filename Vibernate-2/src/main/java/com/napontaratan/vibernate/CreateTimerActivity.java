@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -39,6 +37,15 @@ public class CreateTimerActivity extends FragmentActivity {
     private boolean[] bDays = new boolean[7];
     private TimerSession ts;
     EditText nameField;
+    Button colorButtonMon;
+    Button colorButtonTue;
+    Button colorButtonWed;
+    Button colorButtonThu;
+    Button colorButtonFri;
+    Button colorButtonSat;
+    Button colorButtonSun;
+    Button colorButtonWeekday;
+    Button colorButtonWeekend;
 
 //    @Override
 //    protected void onStart() {
@@ -110,7 +117,88 @@ public class CreateTimerActivity extends FragmentActivity {
                         colorPicked = color;
                         System.out.println("colorPicked is " + colorPicked);
 
-                        
+                        //change button colors
+                        colorButtonMon = (Button) findViewById(R.id.create_timer_mon);
+                        colorButtonTue = (Button) findViewById(R.id.create_timer_tue);
+                        colorButtonWed = (Button) findViewById(R.id.create_timer_wed);
+                        colorButtonThu = (Button) findViewById(R.id.create_timer_thu);
+                        colorButtonFri = (Button) findViewById(R.id.create_timer_fri);
+                        colorButtonSat = (Button) findViewById(R.id.create_timer_sat);
+                        colorButtonSun = (Button) findViewById(R.id.create_timer_sun);
+                        colorButtonWeekday = (Button) findViewById(R.id.create_timer_weekdays_btn);
+                        colorButtonWeekend = (Button) findViewById(R.id.create_timer_weekends_btn);
+
+                        switch (colorPicked) {
+                            case -14301735:
+                                //normal
+                                colorButtonMon.setBackgroundResource(R.drawable.circle_select);
+                                colorButtonTue.setBackgroundResource(R.drawable.circle_select);
+                                colorButtonWed.setBackgroundResource(R.drawable.circle_select);
+                                colorButtonThu.setBackgroundResource(R.drawable.circle_select);
+                                colorButtonFri.setBackgroundResource(R.drawable.circle_select);
+                                colorButtonSat.setBackgroundResource(R.drawable.circle_select);
+                                colorButtonSun.setBackgroundResource(R.drawable.circle_select);
+                                colorButtonWeekday.setBackgroundResource(R.drawable.rounded_rectangle_select);
+                                colorButtonWeekend.setBackgroundResource(R.drawable.rounded_rectangle_select);
+                                break;
+                            case -14309991:
+                                System.out.println("I AM NOW IN TURQUOISE");
+                                colorButtonMon.setBackgroundResource(R.drawable.circle_select_turquoise);
+                                colorButtonTue.setBackgroundResource(R.drawable.circle_select_turquoise);
+                                colorButtonWed.setBackgroundResource(R.drawable.circle_select_turquoise);
+                                colorButtonThu.setBackgroundResource(R.drawable.circle_select_turquoise);
+                                colorButtonFri.setBackgroundResource(R.drawable.circle_select_turquoise);
+                                colorButtonSat.setBackgroundResource(R.drawable.circle_select_turquoise);
+                                colorButtonSun.setBackgroundResource(R.drawable.circle_select_turquoise);
+                                colorButtonWeekday.setBackgroundResource(R.drawable.rounded_rectangle_select_turquoise);
+                                colorButtonWeekend.setBackgroundResource(R.drawable.rounded_rectangle_select_turquoise);
+                                break;
+                            case -8941669:
+                                colorButtonMon.setBackgroundResource(R.drawable.circle_select_grey);
+                                colorButtonTue.setBackgroundResource(R.drawable.circle_select_grey);
+                                colorButtonWed.setBackgroundResource(R.drawable.circle_select_grey);
+                                colorButtonThu.setBackgroundResource(R.drawable.circle_select_grey);
+                                colorButtonFri.setBackgroundResource(R.drawable.circle_select_grey);
+                                colorButtonSat.setBackgroundResource(R.drawable.circle_select_grey);
+                                colorButtonSun.setBackgroundResource(R.drawable.circle_select_grey);
+                                colorButtonWeekday.setBackgroundResource(R.drawable.rounded_rectangle_select_grey);
+                                colorButtonWeekend.setBackgroundResource(R.drawable.rounded_rectangle_select_grey);
+                                break;
+                            case -5617989:
+                                colorButtonMon.setBackgroundResource(R.drawable.circle_select_purple);
+                                colorButtonTue.setBackgroundResource(R.drawable.circle_select_purple);
+                                colorButtonWed.setBackgroundResource(R.drawable.circle_select_purple);
+                                colorButtonThu.setBackgroundResource(R.drawable.circle_select_purple);
+                                colorButtonFri.setBackgroundResource(R.drawable.circle_select_purple);
+                                colorButtonSat.setBackgroundResource(R.drawable.circle_select_purple);
+                                colorButtonSun.setBackgroundResource(R.drawable.circle_select_purple);
+                                colorButtonWeekday.setBackgroundResource(R.drawable.rounded_rectangle_select_purple);
+                                colorButtonWeekend.setBackgroundResource(R.drawable.rounded_rectangle_select_purple);
+                                break;
+                            case -1360007:
+                                colorButtonMon.setBackgroundResource(R.drawable.circle_select_pink);
+                                colorButtonTue.setBackgroundResource(R.drawable.circle_select_pink);
+                                colorButtonWed.setBackgroundResource(R.drawable.circle_select_pink);
+                                colorButtonThu.setBackgroundResource(R.drawable.circle_select_pink);
+                                colorButtonFri.setBackgroundResource(R.drawable.circle_select_pink);
+                                colorButtonSat.setBackgroundResource(R.drawable.circle_select_pink);
+                                colorButtonSun.setBackgroundResource(R.drawable.circle_select_pink);
+                                colorButtonWeekday.setBackgroundResource(R.drawable.rounded_rectangle_select_pink);
+                                colorButtonWeekend.setBackgroundResource(R.drawable.rounded_rectangle_select_pink);
+                                break;
+                            case -23003:
+                                colorButtonMon.setBackgroundResource(R.drawable.circle_select_orange);
+                                colorButtonTue.setBackgroundResource(R.drawable.circle_select_orange);
+                                colorButtonWed.setBackgroundResource(R.drawable.circle_select_orange);
+                                colorButtonThu.setBackgroundResource(R.drawable.circle_select_orange);
+                                colorButtonFri.setBackgroundResource(R.drawable.circle_select_orange);
+                                colorButtonSat.setBackgroundResource(R.drawable.circle_select_orange);
+                                colorButtonSun.setBackgroundResource(R.drawable.circle_select_orange);
+                                colorButtonWeekday.setBackgroundResource(R.drawable.rounded_rectangle_select_orange);
+                                colorButtonWeekend.setBackgroundResource(R.drawable.rounded_rectangle_select_orange);
+                                break;
+                        }
+
                         //To darken the colorPicked
                         float[] hsv = new float[3];
                         int colorPickedDarker = colorPicked;
@@ -131,6 +219,7 @@ public class CreateTimerActivity extends FragmentActivity {
                            Window window = getWindow();
                             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                             window.setStatusBarColor(colorPickedDarker);
+
                         }
                     }
                 });
