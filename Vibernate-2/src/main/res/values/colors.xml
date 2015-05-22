@@ -11,4 +11,12 @@
     <color name="blue">#3e6284</color>
     <color name="dividers">#DADADA</color>
     <color name="background">#ebebeb</color>
+
+    <color name="turquoise">#25A599</color>
+    <color name="grey">#778F9B</color>
+    <color name="orange">#FFA625</color>
+    <color name="pink">#EB3F79</color>
+    <color name="purple">#AA46BB</color>
+
+
 </resources>
