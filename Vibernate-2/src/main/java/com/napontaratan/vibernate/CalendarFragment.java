@@ -13,11 +13,6 @@ public class CalendarFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.calendar_fragment, container, false);
-        SwipeLayout swipeLayout =  (SwipeLayout) rootView.findViewById(R.id.timer_swipe_layout);
-        // Swipe from left, since swiping right is for list view
-        swipeLayout.setRightSwipeEnabled(false);
-        swipeLayout.setLeftSwipeEnabled(false);
-        swipeLayout.setBottomSwipeEnabled(false);
         return rootView;
     }
 }

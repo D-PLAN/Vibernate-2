@@ -349,12 +349,7 @@ public class TimerWeekView extends View {
             swipeLayout.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(swipeLayout.getOpenStatus() == SwipeLayout.Status.Close) {
-                        swipeLayout.addDrag(SwipeLayout.DragEdge.Bottom, swipeBottomWrapperLayout);
-                        swipeLayout.open(SwipeLayout.DragEdge.Bottom);
-                    } else {
-                        swipeLayout.close();
-                    }
+                    swipeLayout.toggle(true);
                 }
             });
 
@@ -443,9 +438,6 @@ public class TimerWeekView extends View {
         setupCardView();
         timerPlaceholder.setVisibility(View.VISIBLE);
         timerInfoView.setVisibility(View.GONE);
-        swipeLayout.setRightSwipeEnabled(false);
-        swipeLayout.setLeftSwipeEnabled(false);
-        swipeLayout.setBottomSwipeEnabled(false);
         swipeLayout.setOnClickListener(null);
         prevTimer = -1;
         this.invalidate();
