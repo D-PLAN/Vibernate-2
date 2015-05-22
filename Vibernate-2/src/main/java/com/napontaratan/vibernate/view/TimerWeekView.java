@@ -354,7 +354,6 @@ public class TimerWeekView extends View {
                         swipeLayout.open(SwipeLayout.DragEdge.Bottom);
                     } else {
                         swipeLayout.close();
-//                        swipeLayout.removeAllRevealListeners(swipeBottomWrapperLayout.getId());
                     }
                 }
             });
@@ -444,7 +443,9 @@ public class TimerWeekView extends View {
         setupCardView();
         timerPlaceholder.setVisibility(View.VISIBLE);
         timerInfoView.setVisibility(View.GONE);
+        swipeLayout.setRightSwipeEnabled(false);
         swipeLayout.setLeftSwipeEnabled(false);
+        swipeLayout.setBottomSwipeEnabled(false);
         swipeLayout.setOnClickListener(null);
         prevTimer = -1;
         this.invalidate();
