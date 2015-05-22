@@ -9,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.*;
@@ -346,10 +347,16 @@ public class TimerWeekView extends View {
 
             swipeBottomWrapperLayout.setBackgroundColor(selectedTimer.getColor());
 
+            swipeLayout.setClickable(true);
             swipeLayout.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    swipeLayout.toggle(true);
+                    Log.d("onClick", "clicked swipeLayout");
+                    if(swipeLayout.getOpenStatus() == SwipeLayout.Status.Close){
+                        swipeLayout.open(SwipeLayout.DragEdge.Bottom);
+                    } else {
+                        swipeLayout.close(true);
+                    }
                 }
             });
 
