@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.*;
+import com.daimajia.swipe.SwipeLayout;
 import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
 import com.napontaratan.vibernate.model.TimerSessionHolder;
@@ -54,13 +55,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         }
         holder.colorTab.setBackgroundColor(current.getColor());
         vAnimate.animate(holder);
-
     }
-
-
-
-
-
 
     @Override
     public int getItemCount() {
@@ -90,6 +85,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         ImageView typeIcon;
         View colorTab;
         View box;
+        SwipeLayout swipeLayout;
 
         public vViewHolder(View itemView) {
             super(itemView);
@@ -103,22 +99,30 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             box.setOnClickListener(this);
             typeIcon.setOnClickListener(this);
             colorTab.setOnClickListener(this);
+            swipeLayout = (SwipeLayout) itemView.findViewById(R.id.listview_swipe_layout);
+            swipeLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    swipeLayout.toggle();
+                }
+            });
         }
 
         @Override
         public void onClick(View v) {
-            if (v == typeIcon) {
-                Toast.makeText(context, "Timer" + getPosition() + "is muted", Toast.LENGTH_SHORT).show();
-            } else if (v == box) {
-                Intent mIntent = new Intent(v.getContext(), CreateTimerActivity.class);
-                Bundle mBundle = new Bundle();
-                mBundle.putSerializable("Timer", TimerSessionHolder.getInstance().get(getPosition()));
-                mIntent.putExtras(mBundle);
-                v.getContext().startActivity(mIntent);
-            } else if (v == colorTab) {
-                removeItem(getPosition());
-
-            }
+//            if (v == typeIcon) {
+//                Toast.makeText(context, "Timer" + getPosition() + "is muted", Toast.LENGTH_SHORT).show();
+//            } else if (v == box) {
+//                Intent mIntent = new Intent(v.getContext(), CreateTimerActivity.class);
+//                Bundle mBundle = new Bundle();
+//                mBundle.putSerializable("Timer", TimerSessionHolder.getInstance().get(getPosition()));
+//                mIntent.putExtras(mBundle);
+//                v.getContext().startActivity(mIntent);
+//            } else if (v == colorTab) {
+//                removeItem(getPosition());
+//
+//            }
+            swipeLayout.toggle();
 
         }
 
