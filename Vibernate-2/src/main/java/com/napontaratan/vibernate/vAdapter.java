@@ -74,12 +74,12 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         });
 
 
-        if (position > previousPosition) {
-            vAnimate.animate(holder, true);
-        } else {
-            vAnimate.animate(holder, false);
-        }
-        previousPosition = position;
+//        if (position > previousPosition) {
+//            vAnimate.animate(holder, true);
+//        } else {
+//            vAnimate.animate(holder, false);
+//        }
+//        previousPosition = position;
 
     }
 
