@@ -41,6 +41,7 @@ public class TimerWeekView extends View {
     private TextView timerEndTimeView;
     private TextView timerDaysView;
     private SwipeLayout swipeLayout;
+    private RelativeLayout swipeBottomWrapperLayout;
 
     // Draw variables, set to -1 as flag for variables' value not set
     private int paddingLeft = -1;
@@ -322,6 +323,8 @@ public class TimerWeekView extends View {
         if(root == null) {
             root = getRootView();
 
+            swipeLayout = (SwipeLayout) root.findViewById(R.id.timer_swipe_layout);
+            swipeBottomWrapperLayout = (RelativeLayout) root.findViewById(R.id.bottom_wrapper);
             timerPlaceholder = root.findViewById(R.id.timer_placeholder);
             timerInfoView = root.findViewById(R.id.timer_info_layout);
             timerName = (TextView) root.findViewById(R.id.timer_name);
@@ -342,11 +345,19 @@ public class TimerWeekView extends View {
             timerPlaceholder.setVisibility(View.GONE);
             timerInfoView.setVisibility(View.VISIBLE);
 
-            root.findViewById(R.id.bottom_wrapper).setBackgroundColor(selectedTimer.getColor());
+            swipeBottomWrapperLayout.setBackgroundColor(selectedTimer.getColor());
 
-            swipeLayout = (SwipeLayout) root.findViewById(R.id.timer_swipe_layout);
-            swipeLayout.setLeftSwipeEnabled(true);
-            swipeLayout.addDrag(SwipeLayout.DragEdge.Left, root.findViewById(R.id.bottom_wrapper));
+            swipeLayout.setBottomSwipeEnabled(false);
+            swipeLayout.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (swipeLayout.getOpenStatus() == SwipeLayout.Status.Close) {
+                        swipeLayout.open(SwipeLayout.DragEdge.Bottom);
+                    } else {
+                        swipeLayout.close(true);
+                    }
+                }
+            });
 
             timerEditIcon.setOnClickListener(new OnClickListener() {
                 @Override
@@ -442,6 +453,7 @@ public class TimerWeekView extends View {
         timerPlaceholder.setVisibility(View.VISIBLE);
         timerInfoView.setVisibility(View.GONE);
         if(swipeLayout != null) swipeLayout.setLeftSwipeEnabled(false);
+        swipeLayout.setOnClickListener(null);
         prevTimer = -1;
         this.invalidate();
     }

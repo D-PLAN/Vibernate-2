@@ -2,7 +2,6 @@ package com.napontaratan.vibernate;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -61,7 +60,18 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             holder.colorTab.setBackgroundColor(context.getResources().getColor(R.color.light_grey_text));
         }
 
+        holder.colorTab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (current.getActive()) {
+                    current.setActive(false);
+                } else {
+                    holder.colorTab.setBackgroundColor(context.getResources().getColor(R.color.light_grey_text));
+                    current.setActive(true);
+                }
 
+            }
+        });
 
 
         if (position > previousPosition) {
@@ -120,15 +130,15 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             editIcon = (ImageView) itemView.findViewById(R.id.listview_edit_icon);
             deleteIcon = (ImageView) itemView.findViewById(R.id.listview_delete_icon);
 
-
-
+            swipeLayout.setLeftSwipeEnabled(false);
             box.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public  void onClick(View v) {
-                    swipeLayout.toggle();
+                    if(swipeLayout.getOpenStatus() == SwipeLayout.Status.Close)
+                        swipeLayout.open(SwipeLayout.DragEdge.Left);
+                    else swipeLayout.close();
                 }
             });
-
 
             editIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
