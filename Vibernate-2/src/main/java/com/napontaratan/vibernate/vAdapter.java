@@ -86,6 +86,8 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         View colorTab;
         View box;
         SwipeLayout swipeLayout;
+        ImageView editIcon;
+        ImageView deleteIcon;
 
         public vViewHolder(View itemView) {
             super(itemView);
@@ -100,29 +102,24 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             typeIcon.setOnClickListener(this);
             colorTab.setOnClickListener(this);
             swipeLayout = (SwipeLayout) itemView.findViewById(R.id.listview_swipe_layout);
-            swipeLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    swipeLayout.toggle();
-                }
-            });
+            editIcon = (ImageView) itemView.findViewById(R.id.listview_edit_icon);
+            deleteIcon = (ImageView) itemView.findViewById(R.id.listview_delete_icon);
+
         }
 
         @Override
         public void onClick(View v) {
-//            if (v == typeIcon) {
-//                Toast.makeText(context, "Timer" + getPosition() + "is muted", Toast.LENGTH_SHORT).show();
-//            } else if (v == box) {
-//                Intent mIntent = new Intent(v.getContext(), CreateTimerActivity.class);
-//                Bundle mBundle = new Bundle();
-//                mBundle.putSerializable("Timer", TimerSessionHolder.getInstance().get(getPosition()));
-//                mIntent.putExtras(mBundle);
-//                v.getContext().startActivity(mIntent);
-//            } else if (v == colorTab) {
-//                removeItem(getPosition());
-//
-//            }
-            swipeLayout.toggle();
+            if (v == swipeLayout) {
+                swipeLayout.toggle();
+            } else if (v == editIcon) {
+                Intent mIntent = new Intent(v.getContext(), CreateTimerActivity.class);
+                Bundle mBundle = new Bundle();
+                mBundle.putSerializable("Timer", TimerSessionHolder.getInstance().get(getPosition()));
+                mIntent.putExtras(mBundle);
+                v.getContext().startActivity(mIntent);
+            } else if (v == deleteIcon) {
+                
+            }
 
         }
 
