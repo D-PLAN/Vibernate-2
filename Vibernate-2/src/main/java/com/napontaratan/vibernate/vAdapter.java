@@ -81,7 +81,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         }
     }
 
-    public class vViewHolder extends RecyclerView.ViewHolder {
+    public class vViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView description;
         TextView startTime;
         TextView endTime;
@@ -132,7 +132,11 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
                     removeItem(getPosition());
                 }
             });
+        }
 
+        @Override
+        public void onClick(View v) {
+            swipeLayout.toggle();
         }
     }
 }
