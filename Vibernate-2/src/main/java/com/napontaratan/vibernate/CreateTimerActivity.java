@@ -453,7 +453,7 @@ public class CreateTimerActivity extends FragmentActivity {
         try {
             if (ts == null || (ts != null && isModified(newTimer) == 1)) {
                 if (ts != null && isModified(newTimer) == 1) {
-                    newTimer.setTimerSnooze(ts.getTimerSnooze());
+                    newTimer.setActive(ts.getActive());
                     timerSessionHolder.removeTimer(ts);
                 }
                 timerSessionHolder.addTimer(newTimer);

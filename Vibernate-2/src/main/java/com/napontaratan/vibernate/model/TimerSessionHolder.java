@@ -76,7 +76,7 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
             } else {
                 timerSession.setId(timerController.generateNextId());
                 timerSession.addObserver(this);
-                if(!timerSession.getTimerSnooze()) {
+                if(!timerSession.getActive()) {
                     timerController.setAlarm(timerSession);
                 }
                 timers.add(timerSession);
