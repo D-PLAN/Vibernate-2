@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -107,15 +108,15 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             swipeLayout = (SwipeLayout) itemView.findViewById(R.id.listview_swipe_layout);
             editIcon = (ImageView) itemView.findViewById(R.id.listview_edit_icon);
             deleteIcon = (ImageView) itemView.findViewById(R.id.listview_delete_icon);
-
+            swipeLayout.setLeftSwipeEnabled(false);
             swipeLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public  void onClick(View v) {
-                    swipeLayout.toggle();
+                    if(swipeLayout.getOpenStatus() == SwipeLayout.Status.Close)
+                        swipeLayout.open(SwipeLayout.DragEdge.Left);
+                    else swipeLayout.close();
                 }
             });
-
-
 
             editIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
