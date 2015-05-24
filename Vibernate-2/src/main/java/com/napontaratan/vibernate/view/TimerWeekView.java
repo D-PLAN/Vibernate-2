@@ -370,12 +370,12 @@ public class TimerWeekView extends View {
                                     timerSessionHolder.removeTimer(selectedTimer);
                                     timerRectsMaps.remove(selectedTimer.getId());
                                     invalidateDisplayTimerInfo();
-                                    Toast.makeText(getContext(), "Timer " + selectedTimer.getName() + " deleted", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), "Timer " + "'" + selectedTimer.getName() + "'"+ " deleted", Toast.LENGTH_SHORT).show();
                                 }
                             })
                             .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Toast.makeText(getContext(), "Timer kept", Toast.LENGTH_SHORT).show();
+                                    //Toast.makeText(getContext(), "Timer kept", Toast.LENGTH_SHORT).show();
                                 }
                             })
                             .setIcon(android.R.drawable.ic_dialog_alert)

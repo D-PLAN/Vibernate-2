@@ -112,7 +112,6 @@ public class CreateTimerActivity extends FragmentActivity {
                 colorCalendar.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
                     @Override
                     public void onColorSelected(int color) {
-                        Toast.makeText(getBaseContext(), "Color is " + color, Toast.LENGTH_SHORT).show();
                         colorPicked = color;
                         System.out.println("colorPicked is " + colorPicked);
 
@@ -333,10 +332,7 @@ public class CreateTimerActivity extends FragmentActivity {
             }
         });
 
-
-
         /* Click on check mark */
-        //ImageButton done = (ImageButton) findViewById(R.id.add_timer_button);
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -359,17 +355,14 @@ public class CreateTimerActivity extends FragmentActivity {
         //grabbing information from bundle
         if (ts != null) {
 
-            //Change color
-            //To darken the colorPicked
+            //For color changes
             float[] hsv = new float[3];
-
             colorPicked = ts.getColor();
             changeButtonColors(colorPicked);
             Color.colorToHSV(ts.getColor(), hsv);
             hsv[2] *= 0.8f; // value component
             int colorPickedDarker = ts.getColor();
             colorPickedDarker = Color.HSVToColor(hsv);
-            System.out.println("colorPickedDarker is " + colorPickedDarker);
 
             //Changing toolbar color
             toolbar.setBackgroundColor(ts.getColor());
