@@ -24,6 +24,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
     private LayoutInflater inflater;
     private TimerSessionHolder timerSessionHolder;
     private Context context;
+    private int lastPosition = -1;
   
     public vAdapter(Context context, TimerSessionHolder timerSessionHolder) {
         inflater = LayoutInflater.from(context);
@@ -74,14 +75,10 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             }
         });
 
-        SetAnimation(holder.itemView, position);
-    }
-
-    private void SetAnimation(View itemView, int position) {
-        Animation animation = AnimationUtils.loadAnimation(context, R.anim.up_from_bottom);
-        itemView.startAnimation(animation);
 
     }
+
+
 
     @Override
     public int getItemCount() {
