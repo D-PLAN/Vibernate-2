@@ -3,15 +3,12 @@ package com.napontaratan.vibernate;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.*;
+import com.daimajia.swipe.SwipeLayout;
 import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
 import com.napontaratan.vibernate.model.TimerSessionHolder;
@@ -54,14 +51,12 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             holder.typeIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_vibrate));
         }
         holder.colorTab.setBackgroundColor(current.getColor());
-
         if (position > previousPosition) {
             vAnimate.animate(holder, true);
         } else {
             vAnimate.animate(holder, false);
         }
         previousPosition = position;
-
 
     }
 
@@ -85,7 +80,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         }
     }
 
-    public class vViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
+    public class vViewHolder extends RecyclerView.ViewHolder {
         TextView description;
         TextView startTime;
         TextView endTime;
@@ -93,6 +88,9 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         ImageView typeIcon;
         View colorTab;
         View box;
+        SwipeLayout swipeLayout;
+        ImageView editIcon;
+        ImageView deleteIcon;
 
         public vViewHolder(View itemView) {
             super(itemView);
@@ -103,38 +101,35 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             activeDays = (TextView) itemView.findViewById(R.id.v_show_activeDays);
             colorTab = itemView.findViewById(R.id.TSisActive);
             box = itemView.findViewById(R.id.click_area);
-            box.setOnClickListener(this);
-            typeIcon.setOnClickListener(this);
-            colorTab.setOnClickListener(this);
-        }
+            swipeLayout = (SwipeLayout) itemView.findViewById(R.id.listview_swipe_layout);
+            editIcon = (ImageView) itemView.findViewById(R.id.listview_edit_icon);
+            deleteIcon = (ImageView) itemView.findViewById(R.id.listview_delete_icon);
 
-        @Override
-        public void onClick(View v) {
-            if (v == typeIcon) {
-                Toast.makeText(context, "Timer" + getPosition() + "is muted", Toast.LENGTH_SHORT).show();
-            } else if (v == box) {
-                Intent mIntent = new Intent(v.getContext(), CreateTimerActivity.class);
-                Bundle mBundle = new Bundle();
-                mBundle.putSerializable("Timer", TimerSessionHolder.getInstance().get(getPosition()));
-                mIntent.putExtras(mBundle);
-                v.getContext().startActivity(mIntent);
-            } else if (v == colorTab) {
-                removeItem(getPosition());
+            swipeLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    swipeLayout.toggle();
+                }
+            });
 
-            }
+            editIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(v.getContext(), CreateTimerActivity.class);
+                    Bundle mBundle = new Bundle();
+                    mBundle.putSerializable("Timer", TimerSessionHolder.getInstance().get(getPosition()));
+                    mIntent.putExtras(mBundle);
+                    v.getContext().startActivity(mIntent);
+                }
+            });
 
-        }
+            deleteIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    removeItem(getPosition());
+                }
+            });
 
-
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    break;
-                case MotionEvent.ACTION_UP:
-                    break;
-            }
-            return false;
         }
     }
 }

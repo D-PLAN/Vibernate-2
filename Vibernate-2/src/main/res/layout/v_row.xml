@@ -1,9 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:background="@color/background"
              android:layout_width="match_parent"
              android:layout_height="100dp" android:weightSum="1">
+
+    <com.daimajia.swipe.SwipeLayout xmlns:swipe="http://schemas.android.com/apk/res-auto"
+                                    android:id="@+id/listview_swipe_layout"
+                                    android:orientation="horizontal"
+                                    swipe:drag_edge="left"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent">
+        <!-- Bottom View Start-->
+        <RelativeLayout
+                android:background="@color/colorPrimaryDark"
+                android:id="@+id/row_wrapper"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent" >
+            <!--What you want to show-->
+            <ImageView android:id="@+id/listview_edit_icon"
+                       android:layout_height="wrap_content"
+                       android:layout_width="wrap_content"
+                       android:layout_centerInParent="true"
+                       android:src="@drawable/ic_action_edit"/>
+            <ImageView android:id="@+id/listview_delete_icon"
+                       android:layout_height="wrap_content"
+                       android:layout_width="wrap_content"
+                       android:layout_centerInParent="true"
+                       android:layout_toRightOf="@+id/listview_edit_icon"
+                       android:src="@drawable/ic_action_delete"/>
+        </RelativeLayout>
+
     <!-- Row -->
     <LinearLayout
             android:orientation="horizontal"
@@ -37,7 +65,8 @@
             <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.2">
+                    android:layout_weight="0.2"
+                    android:paddingTop="5dp">
             <TextView
                     android:id="@+id/v_description"
                     android:layout_width="wrap_content"
@@ -93,6 +122,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="0.5"
+                    android:paddingTop="5dp"
                     android:orientation="vertical" android:gravity="left|clip_horizontal">
                 <TextView
                         android:layout_width="wrap_content"
@@ -119,6 +149,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="0.5"
+                    android:paddingTop="5dp"
                     android:orientation="vertical">
                 <TextView
                         android:layout_width="wrap_content"
@@ -137,4 +168,5 @@
         </LinearLayout>
         </LinearLayout>
     </LinearLayout> <!-- End of Row -->
+    </com.daimajia.swipe.SwipeLayout>
 </FrameLayout>
