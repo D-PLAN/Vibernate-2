@@ -393,18 +393,17 @@ public class TimerWeekView extends View {
             }
 
             timerOnOffSwitch.setOnCheckedChangeListener(null);
-            timerOnOffSwitch.setChecked(!selectedTimer.getTimerSnooze());
+            timerOnOffSwitch.setChecked(selectedTimer.getActive());
             drawSwitch(timerOnOffSwitch, selectedTimer.getColor(), getResources().getColor(android.R.color.darker_gray));
             timerOnOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    selectedTimer.setActive(b);
                     if (b) {
-                        selectedTimer.setTimerSnooze(false);
                         timerSessionHolder.wakeTimer(selectedTimer);
                         timerOnOffSwitch.getTrackDrawable().setColorFilter(selectedTimer.getColor(), PorterDuff.Mode.MULTIPLY);
                         timerOnOffSwitch.getThumbDrawable().setColorFilter(selectedTimer.getColor(), PorterDuff.Mode.MULTIPLY);
                     } else {
-                        selectedTimer.setTimerSnooze(true);
                         timerSessionHolder.snoozeTimer(selectedTimer);
                         timerOnOffSwitch.getTrackDrawable().setColorFilter(getResources().getColor(android.R.color.darker_gray), PorterDuff.Mode.MULTIPLY);
                         timerOnOffSwitch.getThumbDrawable().setColorFilter(getResources().getColor(android.R.color.darker_gray), PorterDuff.Mode.MULTIPLY);

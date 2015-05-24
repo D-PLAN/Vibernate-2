@@ -1,7 +1,5 @@
 package com.napontaratan.vibernate.model;
 
-import com.napontaratan.vibernate.R;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -23,7 +21,7 @@ public final class TimerSession extends Observable implements Serializable, Comp
 	private final boolean[] days;
 	private final TimerSessionType type;
 	private int color; // rgb value of color
-	private boolean snoozed;
+	private boolean isActive;
 
 	public enum TimerSessionType {
 		VIBRATE, SILENT
@@ -38,7 +36,7 @@ public final class TimerSession extends Observable implements Serializable, Comp
 		this.endTime = endTime;
 		this.days = days;
 		this.id = -1;
-		this.snoozed = false;
+		this.isActive = true;
 	}
 
 	/**
@@ -61,12 +59,8 @@ public final class TimerSession extends Observable implements Serializable, Comp
 		return id;
 	}
 
-	public void setTimerSnooze(boolean snoozed) {
-		this.snoozed = snoozed;
-	}
-
-	public boolean getTimerSnooze() {
-		return this.snoozed;
+	public boolean getActive() {
+		return this.isActive;
 	}
 
 	public Calendar getEndTime() {
@@ -187,6 +181,12 @@ public final class TimerSession extends Observable implements Serializable, Comp
 		notifyChange();
     }
 
+	public void setActive(boolean active) {
+		this.isActive = active;
+		notifyChange();
+	}
+
+
 	@Override
 	public String toString() {  // for testing purposes
 		String response = "VibrateTimer id: " + getId() + " startTime: " + getStartTime() + " endTime: " + getEndTime();
@@ -232,7 +232,7 @@ public final class TimerSession extends Observable implements Serializable, Comp
 
 		if (getId() != that.getId()) return false;
 		if (getColor() != that.getColor()) return false;
-		if (snoozed != that.snoozed) return false;
+		if (isActive != that.isActive) return false;
 		if (getName() != null ? !getName().equals(that.getName()) : that.getName() != null) return false;
 		if (getStartTime() != null ? !getStartTime().equals(that.getStartTime()) : that.getStartTime() != null)
 			return false;
@@ -252,7 +252,7 @@ public final class TimerSession extends Observable implements Serializable, Comp
 		result = 31 * result + (getDays() != null ? Arrays.hashCode(getDays()) : 0);
 		result = 31 * result + (getType() != null ? getType().hashCode() : 0);
 		result = 31 * result + getColor();
-		result = 31 * result + (snoozed ? 1 : 0);
+		result = 31 * result + (isActive ? 1 : 0);
 		return result;
 	}
 

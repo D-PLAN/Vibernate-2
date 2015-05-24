@@ -2,6 +2,7 @@ package com.napontaratan.vibernate;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -40,7 +41,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
 
     @Override
     public void onBindViewHolder(final vViewHolder holder, int position) {
-        TimerSession current = timerSessionHolder.get(position);
+        final TimerSession current = timerSessionHolder.get(position);
         holder.description.setText(current.getName());
         holder.startTime.setText(TimerUtils.getStartTimeInFormat(current, "HH:mm"));
         holder.endTime.setText(TimerUtils.getEndTimeInFormat(current, "HH:mm"));
@@ -50,8 +51,19 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         } else {
             holder.typeIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_vibrate));
         }
-        holder.colorTab.setBackgroundColor(current.getColor());
+
         holder.wrapper.setBackgroundColor(current.getColor());
+
+
+        if (current.getActive()) {
+            holder.colorTab.setBackgroundColor(current.getColor());
+        } else {
+            holder.colorTab.setBackgroundColor(context.getResources().getColor(R.color.light_grey_text));
+        }
+
+
+
+
         if (position > previousPosition) {
             vAnimate.animate(holder, true);
         } else {
@@ -94,7 +106,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         ImageView editIcon;
         ImageView deleteIcon;
 
-        public vViewHolder(View itemView) {
+        public vViewHolder(final View itemView) {
             super(itemView);
             description = (TextView) itemView.findViewById(R.id.v_description);
             startTime = (TextView) itemView.findViewById(R.id.v_startTime);
@@ -108,13 +120,14 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             editIcon = (ImageView) itemView.findViewById(R.id.listview_edit_icon);
             deleteIcon = (ImageView) itemView.findViewById(R.id.listview_delete_icon);
 
-            swipeLayout.setOnClickListener(new View.OnClickListener() {
+
+
+            box.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public  void onClick(View v) {
                     swipeLayout.toggle();
                 }
             });
-
 
 
             editIcon.setOnClickListener(new View.OnClickListener() {
