@@ -39,7 +39,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(vViewHolder holder, int position) {
+    public void onBindViewHolder(final vViewHolder holder, int position) {
         TimerSession current = timerSessionHolder.get(position);
         holder.description.setText(current.getName());
         holder.startTime.setText(TimerUtils.getStartTimeInFormat(current, "HH:mm"));
@@ -81,7 +81,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         }
     }
 
-    public class vViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class vViewHolder extends RecyclerView.ViewHolder {
         TextView description;
         TextView startTime;
         TextView endTime;
@@ -108,12 +108,14 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             editIcon = (ImageView) itemView.findViewById(R.id.listview_edit_icon);
             deleteIcon = (ImageView) itemView.findViewById(R.id.listview_delete_icon);
 
-            box.setOnClickListener(new View.OnClickListener() {
+            swipeLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
+                public  void onClick(View v) {
                     swipeLayout.toggle();
                 }
             });
+
+
 
             editIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -134,9 +136,5 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             });
         }
 
-        @Override
-        public void onClick(View v) {
-            swipeLayout.toggle();
-        }
     }
 }

@@ -10,6 +10,7 @@
                                     android:id="@+id/listview_swipe_layout"
                                     android:orientation="horizontal"
                                     swipe:drag_edge="left"
+                                    android:scaleX="0.9" android:scaleY="0.9"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent">
         <!-- Bottom View Start-->
@@ -37,7 +38,6 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleX="0.9" android:scaleY="0.9"
             android:elevation="3dp" android:layout_gravity="center"
             android:id="@+id/row" android:background="@color/white"
             android:baselineAligned="false">
