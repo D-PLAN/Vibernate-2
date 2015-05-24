@@ -347,12 +347,11 @@ public class TimerWeekView extends View {
 
             swipeBottomWrapperLayout.setBackgroundColor(selectedTimer.getColor());
 
-            swipeLayout.setClickable(true);
+            swipeLayout.setBottomSwipeEnabled(false);
             swipeLayout.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.d("onClick", "clicked swipeLayout");
-                    if(swipeLayout.getOpenStatus() == SwipeLayout.Status.Close){
+                    if (swipeLayout.getOpenStatus() == SwipeLayout.Status.Close) {
                         swipeLayout.open(SwipeLayout.DragEdge.Bottom);
                     } else {
                         swipeLayout.close(true);
