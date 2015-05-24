@@ -77,7 +77,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         }
     }
 
-    public class vViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
+    public class vViewHolder extends RecyclerView.ViewHolder {
         TextView description;
         TextView startTime;
         TextView endTime;
@@ -98,41 +98,35 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             activeDays = (TextView) itemView.findViewById(R.id.v_show_activeDays);
             colorTab = itemView.findViewById(R.id.TSisActive);
             box = itemView.findViewById(R.id.click_area);
-            box.setOnClickListener(this);
-            typeIcon.setOnClickListener(this);
-            colorTab.setOnClickListener(this);
             swipeLayout = (SwipeLayout) itemView.findViewById(R.id.listview_swipe_layout);
             editIcon = (ImageView) itemView.findViewById(R.id.listview_edit_icon);
             deleteIcon = (ImageView) itemView.findViewById(R.id.listview_delete_icon);
 
-        }
+            swipeLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    swipeLayout.toggle();
+                }
+            });
 
-        @Override
-        public void onClick(View v) {
-            if (v == swipeLayout) {
-                swipeLayout.toggle();
-            } else if (v == editIcon) {
-                Intent mIntent = new Intent(v.getContext(), CreateTimerActivity.class);
-                Bundle mBundle = new Bundle();
-                mBundle.putSerializable("Timer", TimerSessionHolder.getInstance().get(getPosition()));
-                mIntent.putExtras(mBundle);
-                v.getContext().startActivity(mIntent);
-            } else if (v == deleteIcon) {
-                
-            }
+            editIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(v.getContext(), CreateTimerActivity.class);
+                    Bundle mBundle = new Bundle();
+                    mBundle.putSerializable("Timer", TimerSessionHolder.getInstance().get(getPosition()));
+                    mIntent.putExtras(mBundle);
+                    v.getContext().startActivity(mIntent);
+                }
+            });
 
-        }
+            deleteIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    removeItem(getPosition());
+                }
+            });
 
-
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    break;
-                case MotionEvent.ACTION_UP:
-                    break;
-            }
-            return false;
         }
     }
 }
