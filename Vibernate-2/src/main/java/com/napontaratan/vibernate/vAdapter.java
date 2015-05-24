@@ -51,6 +51,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             holder.typeIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_vibrate));
         }
         holder.colorTab.setBackgroundColor(current.getColor());
+        holder.wrapper.setBackgroundColor(current.getColor());
         if (position > previousPosition) {
             vAnimate.animate(holder, true);
         } else {
@@ -89,6 +90,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
         View colorTab;
         View box;
         SwipeLayout swipeLayout;
+        RelativeLayout wrapper;
         ImageView editIcon;
         ImageView deleteIcon;
 
@@ -101,11 +103,12 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             activeDays = (TextView) itemView.findViewById(R.id.v_show_activeDays);
             colorTab = itemView.findViewById(R.id.TSisActive);
             box = itemView.findViewById(R.id.click_area);
+            wrapper = (RelativeLayout) itemView.findViewById(R.id.row_wrapper);
             swipeLayout = (SwipeLayout) itemView.findViewById(R.id.listview_swipe_layout);
             editIcon = (ImageView) itemView.findViewById(R.id.listview_edit_icon);
             deleteIcon = (ImageView) itemView.findViewById(R.id.listview_delete_icon);
 
-            swipeLayout.setOnClickListener(new View.OnClickListener() {
+            box.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     swipeLayout.toggle();
