@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.*;
 import com.daimajia.swipe.SwipeLayout;
 import com.napontaratan.vibernate.model.TimerConflictException;
@@ -22,7 +24,6 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
     private LayoutInflater inflater;
     private TimerSessionHolder timerSessionHolder;
     private Context context;
-    private int previousPosition = 0;
   
     public vAdapter(Context context, TimerSessionHolder timerSessionHolder) {
         inflater = LayoutInflater.from(context);
@@ -73,13 +74,12 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             }
         });
 
+        SetAnimation(holder.itemView, position);
+    }
 
-//        if (position > previousPosition) {
-//            vAnimate.animate(holder, true);
-//        } else {
-//            vAnimate.animate(holder, false);
-//        }
-//        previousPosition = position;
+    private void SetAnimation(View itemView, int position) {
+        Animation animation = AnimationUtils.loadAnimation(context, R.anim.up_from_bottom);
+        itemView.startAnimation(animation);
 
     }
 
@@ -131,7 +131,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             deleteIcon = (ImageView) itemView.findViewById(R.id.listview_delete_icon);
 
             swipeLayout.setLeftSwipeEnabled(false);
-            box.setOnClickListener(new View.OnClickListener() {
+            swipeLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public  void onClick(View v) {
                     if(swipeLayout.getOpenStatus() == SwipeLayout.Status.Close)
