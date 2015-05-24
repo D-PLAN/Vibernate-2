@@ -43,6 +43,8 @@ public class CreateTimerActivity extends FragmentActivity {
     private boolean[] bundleDays;
     EditText nameField;
 
+    int color_default;
+
 //    @Override
 //    protected void onStart() {
 //        super.onStart();
@@ -148,20 +150,19 @@ public class CreateTimerActivity extends FragmentActivity {
         nameField.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         nameField.clearFocus();
 
+        color_default = getResources().getColor(R.color.black);
+
         /* vibrate or silent mode */
         final ToggleButton typeVibrate = (ToggleButton) findViewById(R.id.create_timer_type_vibrate);
         final ToggleButton typeSilent  = (ToggleButton) findViewById(R.id.create_timer_type_silent);
         typeVibrate.setChecked(true);
+        typeVibrate.setTextColor(colorPicked);
         typeVibrate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 hideSoftKeyboard();
-                if(typeSilent.isChecked()) {
-                    typeSilent.setChecked(false);
-                }
-
-                if(!typeVibrate.isChecked())
-                    typeVibrate.setChecked(true);
+                if(typeSilent.isChecked()) typeSilent.setChecked(false);
+                if(!typeVibrate.isChecked()) typeVibrate.setChecked(true);
             }
         });
 
@@ -169,12 +170,24 @@ public class CreateTimerActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 hideSoftKeyboard();
-                if(typeVibrate.isChecked()) {
-                    typeVibrate.setChecked(false);
-                }
+                if(typeVibrate.isChecked()) typeVibrate.setChecked(false);
+                if(!typeSilent.isChecked()) typeSilent.setChecked(true);
+            }
+        });
 
-                if(!typeSilent.isChecked())
-                    typeSilent.setChecked(true);
+        typeVibrate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                if(checked) compoundButton.setTextColor(colorPicked);
+                else compoundButton.setTextColor(color_default);
+            }
+        });
+
+        typeSilent.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                if(checked) compoundButton.setTextColor(colorPicked);
+                else compoundButton.setTextColor(color_default);
             }
         });
 
@@ -349,14 +362,14 @@ public class CreateTimerActivity extends FragmentActivity {
             //Change color
             //To darken the colorPicked
             float[] hsv = new float[3];
-            int colorPickedDarker = ts.getColor();
-            colorPicked = colorPickedDarker;
+
+            colorPicked = ts.getColor();
+            changeButtonColors(colorPicked);
             Color.colorToHSV(ts.getColor(), hsv);
             hsv[2] *= 0.8f; // value component
+            int colorPickedDarker = ts.getColor();
             colorPickedDarker = Color.HSVToColor(hsv);
             System.out.println("colorPickedDarker is " + colorPickedDarker);
-
-            changeButtonColors(colorPicked);
 
             //Changing toolbar color
             toolbar.setBackgroundColor(ts.getColor());
@@ -399,8 +412,8 @@ public class CreateTimerActivity extends FragmentActivity {
             startTime.setText(start);
             endTime.setText(end);
 
-            //Days
-//            days.get(currentDay).setChecked(false);
+            // set current day to false because we are editing a timer not creating a new one
+            days.get(currentDay).setChecked(false);
 
             for (int i=0; i < bundleDays.length ; i++) {
                 if (bundleDays[i] == true) {
@@ -415,37 +428,37 @@ public class CreateTimerActivity extends FragmentActivity {
     }
 
     private void createTimerSession (String name, TimerSession.TimerSessionType type, int startHour, int startMin, int endHour, int endMin, List<ToggleButton> days, int color) {
-        if(name == null || name.equals("")) {
+        if (name == null || name.equals("")) {
             createDialog("Insufficient info", "Please specify a timer name.");
             return;
         }
-        
+
         boolean daySelected = false;
-        for(int i = 0; i < 7; i++) {
-            if(bDays[i]){
+        for (int i = 0; i < 7; i++) {
+            if (bDays[i]) {
                 daySelected = true;
                 break;
             }
         }
 
-        if(!daySelected) {
+        if (!daySelected) {
             createDialog("Insufficient info", "Please specify a day.");
             return;
         }
 
         Calendar start = generateCalendar(startHour, startMin);
-        Calendar end   = generateCalendar(endHour, endMin);
+        Calendar end = generateCalendar(endHour, endMin);
         if (start.after(end)) {
             createDialog("Invalid Time Range", "Please specify a valid range.");
             return;
         }
 
-        TimerSession newTimer = new TimerSession(name, type, start, end, bDays,color);
+        TimerSession newTimer = new TimerSession(name, type, start, end, bDays, color);
         TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
 
         try {
-            if(ts == null || (ts!= null && isModified(newTimer) == 1)) {
-                if(ts != null && isModified(newTimer) == 1) {
+            if (ts == null || (ts != null && isModified(newTimer) == 1)) {
+                if (ts != null && isModified(newTimer) == 1) {
                     newTimer.setTimerSnooze(ts.getTimerSnooze());
                     timerSessionHolder.removeTimer(ts);
                 }
@@ -457,7 +470,7 @@ public class CreateTimerActivity extends FragmentActivity {
                         "EndTime" + end.get(Calendar.HOUR_OF_DAY) + ":" + end.get(Calendar.MINUTE) + "\n" +
                         "Days" + printArray(bDays) + "\n");
             } else {
-                if(ts != null && isModified(newTimer) == 0) {
+                if (ts != null && isModified(newTimer) == 0) {
                     TimerSession existingTimer = timerSessionHolder.getTimerById(ts.getId());
                     existingTimer.setName(name);
                     existingTimer.setColor(color);
@@ -503,6 +516,12 @@ public class CreateTimerActivity extends FragmentActivity {
             changeButtonColor(weekends_btn, colorPicked);
             weekends_btn.setChecked(false);
         }
+
+        ToggleButton vibrate_btn = (ToggleButton) findViewById(R.id.create_timer_type_vibrate);
+        ToggleButton silent_btn  = (ToggleButton) findViewById(R.id.create_timer_type_silent);
+
+        if(vibrate_btn.isChecked()) vibrate_btn.setTextColor(colorPicked);
+        else silent_btn.setTextColor(colorPicked);
     }
 
     private void changeButtonColor(ToggleButton btn, int rgbColor) {

@@ -63,10 +63,9 @@
                     android:fontFamily="sans-serif-regular"
                     android:textSize="14sp"
                     android:textOn="Vibrate"
-                    android:drawableStart="@drawable/ic_vibrate_select"
+                    android:drawableStart="@drawable/ic_action_vibrate"
                     android:background="@android:color/transparent"
                     android:textOff="Vibrate"
-                    android:textColor="@color/toggle_color_label"
                     android:layout_gravity="center"/>
         </FrameLayout>
         <FrameLayout android:layout_width="match_parent"
@@ -76,11 +75,10 @@
                 android:id="@+id/create_timer_type_silent"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:drawableStart="@drawable/ic_silent_select"
+                android:drawableStart="@drawable/ic_action_silent"
                 android:background="@android:color/transparent"
                 android:fontFamily="sans-serif-regular"
                 android:textSize="14sp"
-                android:textColor="@color/toggle_color_label"
                 android:textOn="Silent"
                 android:textOff="Silent"
                 android:layout_gravity="center"/>
