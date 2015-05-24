@@ -14,4 +14,9 @@
             android:title="List"
             android:icon="@drawable/ic_action_view_as_list"/>
 
+    <item
+            android:id="@+id/action_tutorial"
+            android:title="Tutorial"
+            Vibernate2:showAsAction="always"
+            android:icon="@drawable/ic_action_about" />
 </menu>

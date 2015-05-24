@@ -4,22 +4,11 @@
                 android:layout_height="match_parent"
                 android:background="@color/colorPrimaryDark">
 
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/white"
-            android:text="Hello! Welcome to Vibernate!"
-            android:id="@+id/tutorialTextView"
-            android:textSize="14sp"
-            android:layout_below="@+id/tutorialImageView" android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"/>
     <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/tutorialImageView"
-            android:src="@drawable/week_view"
-            android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
-            android:layout_marginTop="15dp"/>
+            android:src="@drawable/tutorial_image_2"
+            android:layout_alignParentTop="true" android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>

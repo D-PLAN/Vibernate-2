@@ -55,13 +55,11 @@ public class MainActivity extends ActionBarActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isFirstLaunch = prefs.getBoolean(FIRST_LAUNCH, true);
 
-        // uncomment the code below before release
-        // currently the tutorial will run every time the app starts
-//        if(isFirstLaunch) {
+        if(isFirstLaunch) {
             Intent tutorial = new Intent();
             tutorial.setClass(MainActivity.this, VibernateTutorial.class);
             startActivity(tutorial);
-//        }
+        }
 
         TimerSessionHolder.getInstance().setContext(getApplicationContext());
 
@@ -89,6 +87,11 @@ public class MainActivity extends ActionBarActivity {
                         break;
                     case R.id.action_list:
                         mViewPager.setCurrentItem(1);
+                        break;
+                    case R.id.action_tutorial:
+                        Intent tutorial = new Intent();
+                        tutorial.setClass(MainActivity.this, VibernateTutorial.class);
+                        startActivity(tutorial);
                         break;
                     default:
                         break;
@@ -126,7 +129,6 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onPageScrollStateChanged(int i) {}
         });
-
 
     }
 
