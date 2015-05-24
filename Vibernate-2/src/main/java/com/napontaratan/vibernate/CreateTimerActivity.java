@@ -414,6 +414,7 @@ public class CreateTimerActivity extends FragmentActivity {
 
             // set current day to false because we are editing a timer not creating a new one
             days.get(currentDay).setChecked(false);
+            bDays[currentDay] = false;
 
             for (int i=0; i < bundleDays.length ; i++) {
                 if (bundleDays[i] == true) {
