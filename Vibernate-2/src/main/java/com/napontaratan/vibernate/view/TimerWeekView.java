@@ -9,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.*;
@@ -393,8 +394,7 @@ public class TimerWeekView extends View {
 
             timerOnOffSwitch.setOnCheckedChangeListener(null);
             timerOnOffSwitch.setChecked(!selectedTimer.getTimerSnooze());
-            timerOnOffSwitch.getTrackDrawable().setColorFilter(selectedTimer.getColor(), PorterDuff.Mode.MULTIPLY);
-            timerOnOffSwitch.getThumbDrawable().setColorFilter(selectedTimer.getColor(), PorterDuff.Mode.MULTIPLY);
+            drawSwitch(timerOnOffSwitch, selectedTimer.getColor(), getResources().getColor(android.R.color.darker_gray));
             timerOnOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -423,6 +423,16 @@ public class TimerWeekView extends View {
             timerDaysView.setText(dayText);
         }
 
+    }
+
+    private void drawSwitch(Switch timerOnOffSwitch, int onColor, int offColor) {
+        if(timerOnOffSwitch.isChecked()) {
+            timerOnOffSwitch.getTrackDrawable().setColorFilter(onColor, PorterDuff.Mode.MULTIPLY);
+            timerOnOffSwitch.getThumbDrawable().setColorFilter(onColor, PorterDuff.Mode.MULTIPLY);
+        } else {
+            timerOnOffSwitch.getTrackDrawable().setColorFilter(offColor, PorterDuff.Mode.MULTIPLY);
+            timerOnOffSwitch.getThumbDrawable().setColorFilter(offColor, PorterDuff.Mode.MULTIPLY);
+        }
     }
 
     /**
