@@ -340,12 +340,14 @@ public class CreateTimerActivity extends FragmentActivity {
                 TimerSession.TimerSessionType type;
                 if (typeVibrate.isChecked()) type = TimerSession.TimerSessionType.VIBRATE;
                 else type = TimerSession.TimerSessionType.SILENT;
-                String start = startTime.getText().toString().replace(":", "");
-                String end = endTime.getText().toString().replace(":", "");
-                int start_hour = Integer.parseInt(start.substring(0, 2));
-                int start_min  = Integer.parseInt(start.substring(2));
-                int end_hour   = Integer.parseInt(end.substring(0,2));
-                int end_min    = Integer.parseInt(end.substring(2));
+                String start = startTime.getText().toString();
+                String end = endTime.getText().toString();
+                int startSplitIndex = start.indexOf(":");
+                int endSplitIndex = end.indexOf(":");
+                int start_hour = Integer.parseInt(start.substring(0, startSplitIndex));
+                int start_min  = Integer.parseInt(start.substring(startSplitIndex + 1));
+                int end_hour   = Integer.parseInt(end.substring(0, endSplitIndex));
+                int end_min    = Integer.parseInt(end.substring(endSplitIndex + 1));
 
                 // if this is a timer modify, check if anything is changed
                 createTimerSession(name, type, start_hour, start_min, end_hour, end_min, days, colorPicked);
