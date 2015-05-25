@@ -74,9 +74,6 @@ public final class TimerController {
             }
             createSystemTimer(endTime.getTimeInMillis(), id, disableVibration, true);
         }
-        if(start != null && end != null && immediateTimerId != -1) {
-            modifyImmediateTimer(1 , start, end, immediateTimerId, activateVibration);
-        }
 
     }
 
@@ -146,31 +143,8 @@ public final class TimerController {
             cancelSystemTimer(id, activateVibration);
             cancelSystemTimer(id + 10, disableVibration);
         }
-        if(start != null && end != null && immediateTimerId != -1) {
-            modifyImmediateTimer(0 , start, end, immediateTimerId, disableVibration);
-        }
     }
 
-    private void modifyImmediateTimer(int status, Calendar start, Calendar end, int id, Intent intent) {
-        // if timer has started or canceled, do it immediately just once
-        // default behaviour is in ~15s
-        // switch back to normal ringtone
-        // 0 - cancel, 1 - update
-        Calendar cal = Calendar.getInstance();
-        int hour = cal.get(Calendar.HOUR_OF_DAY);
-        int min = cal.get(Calendar.MINUTE);
-        if(cal.after(start) && cal.before(end)) {
-            switch (status) {
-                case 0:
-                    createSystemTimer(cal.getTimeInMillis(), id, intent, false);
-                    break;
-                case 1:
-                    createSystemTimer(cal.getTimeInMillis(), id ,intent, false);
-                    break;
-                default: break;
-            }
-        }
-    }
 
     /**
 	 * Create a PendingIntent that will activate at the specified time
