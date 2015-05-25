@@ -1,6 +1,8 @@
 package com.napontaratan.vibernate;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -151,7 +153,28 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             deleteIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    removeItem(getPosition());
+                    new AlertDialog.Builder(v.getContext())
+                            .setTitle("Delete timer")
+                            .setMessage("Are you sure you want to delete this timer?")
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    removeItem(getPosition());
+                                }
+                            })
+                            .setIcon(null)
+                            .show();
+
+
+
+
+
+
+
+
+
+
+
+
                 }
             });
         }
