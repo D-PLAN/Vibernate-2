@@ -406,11 +406,11 @@ public class TimerWeekView extends View {
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     selectedTimer.setActive(b);
                     if (b) {
-                        timerSessionHolder.wakeTimer(selectedTimer);
+                        timerSessionHolder.setTimerActive(selectedTimer);
                         timerOnOffSwitch.getTrackDrawable().setColorFilter(selectedTimer.getColor(), PorterDuff.Mode.MULTIPLY);
                         timerOnOffSwitch.getThumbDrawable().setColorFilter(selectedTimer.getColor(), PorterDuff.Mode.MULTIPLY);
                     } else {
-                        timerSessionHolder.snoozeTimer(selectedTimer);
+                        timerSessionHolder.setTimerInactive(selectedTimer);
                         timerOnOffSwitch.getTrackDrawable().setColorFilter(getResources().getColor(android.R.color.darker_gray), PorterDuff.Mode.MULTIPLY);
                         timerOnOffSwitch.getThumbDrawable().setColorFilter(getResources().getColor(android.R.color.darker_gray), PorterDuff.Mode.MULTIPLY);
                     }

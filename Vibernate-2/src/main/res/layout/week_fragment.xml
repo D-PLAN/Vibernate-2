@@ -71,7 +71,7 @@
                 android:background="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="30px">
+                android:padding="20dp">
             <!--What you want to show in SurfaceView-->
             <RelativeLayout android:id="@+id/timer_info_layout"
                             android:layout_width="match_parent"
@@ -81,6 +81,7 @@
                 <TextView android:id="@+id/timer_name"
                           android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
+                          android:layout_marginBottom="20dp"
                           android:ellipsize="middle"
                           android:maxWidth="450px"
                           android:singleLine="true"
@@ -88,6 +89,7 @@
                 <ImageView android:id="@+id/timer_type_icon"
                            android:layout_height="wrap_content"
                            android:layout_width="wrap_content"
+                           android:layout_marginBottom="20dp"
                            android:layout_toRightOf="@+id/timer_name"/>
                 <Switch android:id="@+id/timer_switch"
                         android:layout_height="wrap_content"
@@ -142,7 +144,6 @@
                           android:text="@string/timer_hint_2"
                           style="@style/TimerPlaceholderBottom"/>
             </RelativeLayout>
-
         </LinearLayout>
         <!-- Surface View End -->
     </com.daimajia.swipe.SwipeLayout>
