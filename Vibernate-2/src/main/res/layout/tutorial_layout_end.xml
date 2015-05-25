@@ -17,11 +17,11 @@
                 android:layout_centerHorizontal="true">
             <FrameLayout
                     android:layout_width="0dp"
-                    android:layout_height="200px"
+                    android:layout_height="60dp"
                     android:layout_weight="3">
                 <ImageView
-                        android:layout_width="200px"
-                        android:layout_height="200px"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
                         android:id="@+id/author_1"
                         android:src="@drawable/napon"
                         android:layout_gravity="right"/>
@@ -66,11 +66,11 @@
             </LinearLayout>
             <FrameLayout
                     android:layout_width="0dp"
-                    android:layout_height="200px"
+                    android:layout_height="60dp"
                     android:layout_weight="3">
                 <ImageView
-                        android:layout_width="200px"
-                        android:layout_height="200px"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
                         android:id="@+id/author_2"
                         android:src="@drawable/daniel"
                         android:layout_gravity="left"/>
@@ -85,11 +85,11 @@
                 android:layout_centerHorizontal="true">
             <FrameLayout
                     android:layout_width="0dp"
-                    android:layout_height="200px"
+                    android:layout_height="60dp"
                     android:layout_weight="3">
                 <ImageView
-                        android:layout_width="200px"
-                        android:layout_height="200px"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
                         android:id="@+id/author_3"
                         android:src="@drawable/paul"
                         android:layout_gravity="right"/>
@@ -133,11 +133,11 @@
             </LinearLayout>
             <FrameLayout
                     android:layout_width="0dp"
-                    android:layout_height="200px"
+                    android:layout_height="60dp"
                     android:layout_weight="3">
                 <ImageView
-                        android:layout_width="200px"
-                        android:layout_height="200px"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
                         android:id="@+id/author_4"
                         android:src="@drawable/amelia"
                         android:layout_gravity="left"/>
@@ -152,11 +152,11 @@
                 android:layout_centerHorizontal="true">
             <FrameLayout
                     android:layout_width="0dp"
-                    android:layout_height="200px"
+                    android:layout_height="60dp"
                     android:layout_weight="3">
                 <ImageView
-                        android:layout_width="200px"
-                        android:layout_height="200px"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
                         android:id="@+id/author_5"
                         android:src="@drawable/lia"
                         android:layout_gravity="right"/>
