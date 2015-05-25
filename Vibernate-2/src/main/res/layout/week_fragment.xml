@@ -12,7 +12,6 @@
                   android:layout_weight="1"
                   android:padding="5dp"
                   android:background="@color/white">
-
         <TextView android:text="@string/day_sun" style="@style/WeekText"/>
         <TextView android:text="@string/day_mon" style="@style/WeekText"/>
         <TextView android:text="@string/day_tues" style="@style/WeekText"/>
@@ -20,7 +19,6 @@
         <TextView android:text="@string/day_thurs" style="@style/WeekText"/>
         <TextView android:text="@string/day_fri" style="@style/WeekText"/>
         <TextView android:text="@string/day_sat" style="@style/WeekText"/>
-
     </LinearLayout>
 
     <!-- Timers -->
@@ -35,7 +33,6 @@
                 android:layout_height="wrap_content"/>
     </RelativeLayout>
 
-
     <!-- Individual timer info -->
     <com.daimajia.swipe.SwipeLayout xmlns:swipe="http://schemas.android.com/apk/res-auto"
                                     android:id="@+id/timer_swipe_layout"
@@ -49,19 +46,23 @@
                 android:background="@color/colorPrimaryDark"
                 android:id="@+id/bottom_wrapper"
                 android:layout_height="match_parent"
-                android:layout_width="match_parent" >
-            <!--What you want to show-->
-            <ImageView android:id="@+id/timer_edit_icon"
-                       android:layout_height="wrap_content"
-                       android:layout_width="wrap_content"
-                       android:layout_centerInParent="true"
-                       android:src="@drawable/ic_action_edit"/>
-            <ImageView android:id="@+id/timer_delete_icon"
-                       android:layout_height="wrap_content"
-                       android:layout_width="wrap_content"
-                       android:layout_centerInParent="true"
-                       android:layout_toRightOf="@+id/timer_edit_icon"
-                       android:src="@drawable/ic_action_delete"/>
+                android:layout_width="match_parent">
+            <RelativeLayout android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true">
+                <!--What you want to show-->
+                <ImageView android:id="@+id/timer_edit_icon"
+                           android:layout_height="wrap_content"
+                           android:layout_width="wrap_content"
+                           android:layout_marginRight="30dp"
+                           android:src="@drawable/ic_action_edit"/>
+                <ImageView android:id="@+id/timer_delete_icon"
+                           android:layout_height="wrap_content"
+                           android:layout_width="wrap_content"
+                           android:layout_marginLeft="30dp"
+                           android:layout_toRightOf="@+id/timer_edit_icon"
+                           android:src="@drawable/ic_action_delete"/>
+            </RelativeLayout>
         </RelativeLayout>
         <!-- Bottom View End-->
 
