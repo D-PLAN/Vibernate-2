@@ -9,7 +9,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.*;
@@ -374,11 +373,13 @@ public class TimerWeekView extends View {
                 @Override
                 public void onClick(View view) {
                     new AlertDialog.Builder(view.getContext())
+
                             .setTitle("Delete timer")
                             .setMessage("Are you sure you want to delete this timer?")
                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     timerSessionHolder.removeTimer(selectedTimer);
+                                    timerRectsMaps.remove(selectedTimer.getId());
                                     timerRectsMaps.remove(selectedTimer.getId());
                                     invalidateDisplayTimerInfo();
                                     Toast.makeText(getContext(), "Timer " + "'" + selectedTimer.getName() + "'"+ " deleted", Toast.LENGTH_SHORT).show();
@@ -389,7 +390,7 @@ public class TimerWeekView extends View {
                                     //Toast.makeText(getContext(), "Timer kept", Toast.LENGTH_SHORT).show();
                                 }
                             })
-                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setIcon(null)
                             .show();
                 }
             });
