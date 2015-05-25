@@ -142,7 +142,7 @@ public class MainActivity extends ActionBarActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new CalendarFragment();
+                    return new WeekViewFragment();
                 case 1:
                     return new ListViewFragment();
             }
