@@ -67,11 +67,13 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             public void onClick(View v) {
                 if (current.getActive()) {
                     current.setActive(false);
+                    timerSessionHolder.setTimerInactive(current);
+
                 } else {
                     holder.colorTab.setBackgroundColor(context.getResources().getColor(R.color.light_grey_text));
                     current.setActive(true);
+                    timerSessionHolder.setTimerActive(current);
                 }
-
             }
         });
 

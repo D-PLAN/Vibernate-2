@@ -160,14 +160,14 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
     /**
      * Snooze an existing timer
      */
-    public void snoozeTimer(TimerSession timerSession) {
+    public void setTimerInactive(TimerSession timerSession) {
         timerController.cancelAlarm(timerSession);
     }
 
     /**
      * wake an existing snoozed timer
      */
-    public void wakeTimer(TimerSession timerSession) {
+    public void setTimerActive(TimerSession timerSession) {
         timerController.setAlarm(timerSession);
     }
 
@@ -200,6 +200,8 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
         }
         return false;
     }
+
+
 
     // ======   Observer   =============
     public void update(Observable observable, Object o) {
