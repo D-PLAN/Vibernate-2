@@ -81,7 +81,7 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
                 }
                 timers.add(timerSession);
                 timersIdMap.put(timerSession.getId(), timerSession);
-                notifyViewChanged();
+                notifyViewChanged(timerSession);
             }
         }
     }
@@ -130,7 +130,7 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
             timerController.removeAlarm(timerSession);
             timersIdMap.remove(timerSession.getId());
             timers.remove(timerSession);
-            notifyViewChanged();
+            notifyViewChanged(null);
             return true;
         }
         return false;
@@ -141,7 +141,7 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
         timerController.removeAllAlarm(timers);
         timers = new ArrayList<TimerSession>();
         timersIdMap = new HashMap<Integer, TimerSession>();
-        notifyViewChanged();
+        notifyViewChanged(null);
     }
 
     @Override
@@ -204,16 +204,17 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
     // ======   Observer   =============
     public void update(Observable observable, Object o) {
         timerController.updateTimer((TimerSession) observable);
-        notifyViewChanged();
+        notifyViewChanged((TimerSession) observable);
     }
 
-    private void notifyViewChanged() {
+    private void notifyViewChanged(TimerSession timerSession) {
         // notify both week and list view
         if(recyclerViewAdapter != null) {
             recyclerViewAdapter.notifyDataSetChanged();
         }
         if(timerWeekView != null) {
             timerWeekView.invalidateDisplayTimerInfo();
+            if(timerSession != null)  timerWeekView.displayTimerInfo(timerSession);
         }
     }
 }

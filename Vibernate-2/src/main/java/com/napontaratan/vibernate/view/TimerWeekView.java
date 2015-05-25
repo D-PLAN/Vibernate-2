@@ -338,7 +338,7 @@ public class TimerWeekView extends View {
         }
     }
 
-    private void displayTimerInfo(final TimerSession selectedTimer) {
+    public void displayTimerInfo(final TimerSession selectedTimer) {
         // Display this timer's specific information on the bottom cardview
         if(selectedTimer != null) {
             setupCardView();
