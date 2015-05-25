@@ -414,7 +414,7 @@ public class TimerWeekView extends View {
                         timerOnOffSwitch.getTrackDrawable().setColorFilter(getResources().getColor(android.R.color.darker_gray), PorterDuff.Mode.MULTIPLY);
                         timerOnOffSwitch.getThumbDrawable().setColorFilter(getResources().getColor(android.R.color.darker_gray), PorterDuff.Mode.MULTIPLY);
                     }
-                    Toast.makeText(getContext(), (b == true) ? "Switching timer on" : "Switching timer off", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), (b == true) ? "Switching timer on" : "Switching timer off", Toast.LENGTH_SHORT).show();
                 }
             });
 
