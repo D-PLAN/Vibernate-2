@@ -442,7 +442,7 @@ public class CreateTimerActivity extends FragmentActivity {
 
         Calendar start = generateCalendar(startHour, startMin);
         Calendar end = generateCalendar(endHour, endMin);
-        if (start.after(end)) {
+        if (!start.before(end)) {
             createDialog("Invalid Time Range", "Please specify a valid range.");
             return;
         }

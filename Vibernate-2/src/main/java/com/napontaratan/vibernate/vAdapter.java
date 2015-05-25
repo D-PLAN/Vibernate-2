@@ -128,8 +128,8 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             box = itemView.findViewById(R.id.click_area);
             wrapper = (RelativeLayout) itemView.findViewById(R.id.row_wrapper);
             swipeLayout = (SwipeLayout) itemView.findViewById(R.id.listview_swipe_layout);
-            editIcon = (ImageView) itemView.findViewById(R.id.listview_edit_icon);
-            deleteIcon = (ImageView) itemView.findViewById(R.id.listview_delete_icon);
+            editIcon = (ImageView) itemView.findViewById(R.id.timer_edit_icon);
+            deleteIcon = (ImageView) itemView.findViewById(R.id.timer_delete_icon);
 
             swipeLayout.setLeftSwipeEnabled(false);
             swipeLayout.setOnClickListener(new View.OnClickListener() {

@@ -14,24 +14,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent">
         <!-- Bottom View Start-->
-        <RelativeLayout
-                android:background="@color/colorPrimaryDark"
-                android:id="@+id/row_wrapper"
-                android:layout_height="match_parent"
-                android:layout_width="match_parent" >
-            <!--What you want to show-->
-            <ImageView android:id="@+id/listview_edit_icon"
-                       android:layout_height="wrap_content"
-                       android:layout_width="wrap_content"
-                       android:layout_centerInParent="true"
-                       android:src="@drawable/ic_action_edit"/>
-            <ImageView android:id="@+id/listview_delete_icon"
-                       android:layout_height="wrap_content"
-                       android:layout_width="wrap_content"
-                       android:layout_centerInParent="true"
-                       android:layout_toRightOf="@+id/listview_edit_icon"
-                       android:src="@drawable/ic_action_delete"/>
-        </RelativeLayout>
+        <include android:id="@+id/row_wrapper"
+                 layout="@layout/swipelayout_bottom_view"/>
 
     <!-- Row -->
     <LinearLayout
@@ -129,13 +113,13 @@
                         android:layout_height="wrap_content"
                         android:text="START"
                         android:textColor="@color/black"
-                        android:textSize="10sp" android:layout_marginLeft="10dp"/>
+                        android:textSize="10dp" android:layout_marginLeft="10dp"/>
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/black"
                         android:id="@+id/v_startTime"
-                        android:textSize="20sp" android:layout_gravity="center_vertical"
+                        android:textSize="20dp" android:layout_gravity="center_vertical"
                         android:layout_marginLeft="10dp"/>
             </LinearLayout>
 
@@ -156,13 +140,13 @@
                         android:layout_height="wrap_content"
                         android:text="END"
                         android:textColor="@color/black"
-                        android:textSize="10sp" android:layout_marginLeft="10dp"/>
+                        android:textSize="10dp" android:layout_marginLeft="10dp"/>
                 <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:textColor="@color/black"
                         android:id="@+id/v_endTime"
-                        android:textSize="20sp" android:layout_gravity="center_vertical"
+                        android:textSize="20dp" android:layout_gravity="center_vertical"
                         android:layout_marginLeft="10dp"/>
             </LinearLayout>
         </LinearLayout>

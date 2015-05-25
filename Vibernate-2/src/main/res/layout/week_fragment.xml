@@ -42,28 +42,8 @@
                                     android:layout_height="0dp"
                                     android:layout_weight="2.5">
         <!-- Bottom View Start-->
-        <RelativeLayout
-                android:background="@color/colorPrimaryDark"
-                android:id="@+id/bottom_wrapper"
-                android:layout_height="match_parent"
-                android:layout_width="match_parent">
-            <RelativeLayout android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerInParent="true">
-                <!--What you want to show-->
-                <ImageView android:id="@+id/timer_edit_icon"
-                           android:layout_height="wrap_content"
-                           android:layout_width="wrap_content"
-                           android:layout_marginRight="30dp"
-                           android:src="@drawable/ic_action_edit"/>
-                <ImageView android:id="@+id/timer_delete_icon"
-                           android:layout_height="wrap_content"
-                           android:layout_width="wrap_content"
-                           android:layout_marginLeft="30dp"
-                           android:layout_toRightOf="@+id/timer_edit_icon"
-                           android:src="@drawable/ic_action_delete"/>
-            </RelativeLayout>
-        </RelativeLayout>
+        <include android:id="@+id/bottom_wrapper"
+                 layout="@layout/swipelayout_bottom_view"/>
         <!-- Bottom View End-->
 
         <!-- Surface View Start -->
