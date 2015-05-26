@@ -380,8 +380,7 @@ public class TimerWeekView extends View {
                                 public void onClick(DialogInterface dialog, int which) {
                                     timerSessionHolder.removeTimer(selectedTimer);
                                     timerRectsMaps.remove(selectedTimer.getId());
-                                    timerRectsMaps.remove(selectedTimer.getId());
-                                    invalidateDisplayTimerInfo();
+                                    invalidateDisplayTimerInfo(null);
                                 }
                             })
                             .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -431,6 +430,12 @@ public class TimerWeekView extends View {
 
             String dayText = TimerUtils.getDaysInFormat(selectedTimer);
             timerDaysView.setText(dayText);
+        } else {
+            timerPlaceholder.setVisibility(View.VISIBLE);
+            timerInfoView.setVisibility(View.GONE);
+            if(swipeLayout != null) swipeLayout.setLeftSwipeEnabled(false);
+            swipeLayout.setOnClickListener(null);
+            prevTimer = -1;
         }
 
     }
@@ -448,13 +453,9 @@ public class TimerWeekView extends View {
     /**
      * Clears the display of timer's information. Called after timer has been edited or deleted
      */
-    public void invalidateDisplayTimerInfo() {
-        setupCardView();
-        timerPlaceholder.setVisibility(View.VISIBLE);
-        timerInfoView.setVisibility(View.GONE);
-        if(swipeLayout != null) swipeLayout.setLeftSwipeEnabled(false);
-        swipeLayout.setOnClickListener(null);
-        prevTimer = -1;
+    public void invalidateDisplayTimerInfo(TimerSession timerSession) {
+//        setupCardView();
+        displayTimerInfo(timerSession);
         this.invalidate();
     }
 

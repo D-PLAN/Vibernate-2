@@ -2,6 +2,7 @@ package com.napontaratan.vibernate.model;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 import com.napontaratan.vibernate.controller.TimerController;
 import com.napontaratan.vibernate.view.TimerWeekView;
 
@@ -16,14 +17,14 @@ import java.util.*;
 public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
 
     private TimerController timerController;
-    private List<TimerSession> timers;
-    private HashMap<Integer, TimerSession> timersIdMap;
     private RecyclerView.Adapter recyclerViewAdapter;
     private TimerWeekView timerWeekView;
+    // SparseArray are more memory efficient
+    // but unsuitable for large dataset > 100 items
+    private SparseArray<TimerSession> timers;
 
     private TimerSessionHolder() {
-        timers = new ArrayList<TimerSession>();
-        timersIdMap = new HashMap<Integer, TimerSession>();
+        timers = new SparseArray<TimerSession>();
     }
 
     private static final TimerSessionHolder instance = new TimerSessionHolder();
@@ -54,14 +55,16 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
     private void initialPopulateHolder(List<TimerSession> allTimers) {
         if(isEmpty()) {
             for(TimerSession timerSession: allTimers) {
-                timers.add(timerSession);
-                timersIdMap.put(timerSession.getId(), timerSession);
+                timers.put(timerSession.getId(), timerSession);
                 timerSession.addObserver(this);
             }
         }
     }
 
     // ======   Common data structure operations =============
+    public boolean isEmpty() {
+        return !(timers.size() > 0);
+    }
 
     /**
      * Adds a new timer if it passes conflict checks to collection and db
@@ -74,30 +77,43 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
             if(isTimerConflict(timerSession)) {
                 throw new TimerConflictException("Timer " + timerSession + " conflicts with existing timers");
             } else {
-                timerSession.setId(timerController.generateNextId());
-                timerSession.addObserver(this);
-                if(timerSession.getActive()) {
-                    timerController.setAlarm(timerSession);
-                }
-                timers.add(timerSession);
-                timersIdMap.put(timerSession.getId(), timerSession);
-                notifyViewChanged(timerSession);
+                add(timerSession);
             }
         }
     }
 
+    private void add(TimerSession timerSession) {
+        timerSession.setId(timerController.generateNextId());
+        timerSession.addObserver(this);
+        if(timerSession.getActive()) {
+            timerController.setAlarm(timerSession);
+        }
+        timers.put(timerSession.getId(), timerSession);
+        notifyViewChanged(timerSession);
+    }
+
+    /**
+     * Returns timersession base on position in the data structure
+     * @param pos
+     * @return timersession at pos in the data structure
+     */
     public TimerSession get(int pos) {
-        return timers.get(pos);
+        return timers.valueAt(pos);
     }
 
+    /**
+     * Returns timersession base on it's id
+     * @param id
+     * @return timersession with id
+     */
     public TimerSession getTimerById(int id) {
-        return timersIdMap.get(id);
+        return timers.get(id);
     }
-
 
     public List<TimerSession> getTimerOnThisDay(int day) {
         List<TimerSession> timersOnThisDay = new ArrayList<TimerSession>();
-        for(TimerSession session: timers) {
+        for(int i = 0; i < timers.size(); i++) {
+            TimerSession session = timers.get(timers.keyAt(i));
             if(session.getDays()[day]) {
                 timersOnThisDay.add(session);
             }
@@ -116,41 +132,22 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
     }
 
     /**
-     * Removes an existing timer from collection and db
+     * Removes an existing timer from collection and db by position in data structure
      * @param pos
      * @return true if successfully removed, false otherwise
      */
     public boolean removeTimer(int pos) {
-        TimerSession timerSession = timers.get(pos);
-        return remove(timerSession);
+        return remove(timers.valueAt(pos));
     }
 
     private boolean remove(TimerSession timerSession) {
         if(timerSession != null) {
             timerController.removeAlarm(timerSession);
-            timersIdMap.remove(timerSession.getId());
-            timers.remove(timerSession);
+            timers.remove(timerSession.getId());
             notifyViewChanged(null);
             return true;
         }
         return false;
-    }
-
-
-    public void removeAll() {
-        timerController.removeAllAlarm(timers);
-        timers = new ArrayList<TimerSession>();
-        timersIdMap = new HashMap<Integer, TimerSession>();
-        notifyViewChanged(null);
-    }
-
-    @Override
-    public Iterator<TimerSession> iterator() {
-        return timers.iterator();
-    }
-
-    public boolean isEmpty() {
-        return timers.isEmpty() && timersIdMap.isEmpty();
     }
 
     public int getSize() {
@@ -165,12 +162,11 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
     }
 
     /**
-     * wake an existing snoozed timer
+     * Wake an existing snoozed timer
      */
     public void setTimerActive(TimerSession timerSession) {
         timerController.setAlarm(timerSession);
     }
-
 
     // ======   Helpers  =============
     private boolean isTimerConflict(TimerSession timer) {
@@ -196,12 +192,9 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
             if(startTime.compareTo(timer.getEndTime()) < 0 && endTime.compareTo(timer.getStartTime()) > 0) {
                 return true;
             }
-
         }
         return false;
     }
-
-
 
     // ======   Observer   =============
     public void update(Observable observable, Object o) {
@@ -215,8 +208,36 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
             recyclerViewAdapter.notifyDataSetChanged();
         }
         if(timerWeekView != null) {
-            timerWeekView.invalidateDisplayTimerInfo();
-            if(timerSession != null)  timerWeekView.displayTimerInfo(timerSession);
+            timerWeekView.invalidateDisplayTimerInfo(timerSession);
+        }
+    }
+
+    @Override
+    public Iterator<TimerSession> iterator() {
+        return new SparseIterator<TimerSession>(timers);
+    }
+
+    private static final class SparseIterator<TimerSession> implements Iterator<TimerSession> {
+        private int pos = 0;
+        private SparseArray<TimerSession> array;
+
+        private SparseIterator(SparseArray<TimerSession> array) {
+            this.array = array;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return pos < array.size();
+        }
+
+        @Override
+        public TimerSession next() {
+            return array.valueAt(pos++);
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
         }
     }
 }

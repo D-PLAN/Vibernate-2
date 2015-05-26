@@ -53,14 +53,12 @@ public final class TimerController {
         Calendar cal = Calendar.getInstance();
         int today = cal.get(Calendar.DAY_OF_WEEK);
         Calendar start = null;
-        int immediateTimerId = -1;
         for (Calendar startTime : startTimes) {
             int day = startTime.get(Calendar.DAY_OF_WEEK);
             int id = timerId + day;
             long time = startTime.getTimeInMillis();
             if(day == today){
                start = startTime;
-                immediateTimerId = id;
             }
             createSystemTimer(time, id, activateVibration, true);
         }
@@ -96,16 +94,6 @@ public final class TimerController {
 	}
 
 	/**
-	 * Remove all TimerSession objects form the db and cancels the services
-	 */
-	public void removeAllAlarm(List<TimerSession> timers) {
-		for(TimerSession timer: timers) {
-			cancelAlarm(timer);
-		}
-		datastore.deleteAllFromDB();
-	}
-
-	/**
 	 * Cancel the services corresponding to the VibrateTimer object
 	 */
 	public void cancelAlarm(TimerSession timerSession) {
@@ -132,13 +120,11 @@ public final class TimerController {
             }
         }
         Calendar end = null;
-        int immediateTimerId = -1;
         for(Calendar endTime : endTimes){
             int day = endTime.get(Calendar.DAY_OF_WEEK);
             int id = timerSession.getId() + day;
             if(day == today) {
                 end = endTime;
-                immediateTimerId = id;
             }
             cancelSystemTimer(id, activateVibration);
             cancelSystemTimer(id + 10, disableVibration);

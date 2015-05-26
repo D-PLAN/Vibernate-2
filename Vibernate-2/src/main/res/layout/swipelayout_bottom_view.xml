@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:background="@color/colorPrimaryDark"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+    <RelativeLayout android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true">
+        <!--What you want to show-->
+        <ImageView android:id="@+id/timer_edit_icon"
+                   android:layout_height="wrap_content"
+                   android:layout_width="wrap_content"
+                   android:layout_marginRight="30dp"
+                   android:src="@drawable/ic_action_edit"/>
+        <ImageView android:id="@+id/timer_delete_icon"
+                   android:layout_height="wrap_content"
+                   android:layout_width="wrap_content"
+                   android:layout_marginLeft="30dp"
+                   android:layout_toRightOf="@+id/timer_edit_icon"
+                   android:src="@drawable/ic_action_delete"/>
+    </RelativeLayout>
+</RelativeLayout>
