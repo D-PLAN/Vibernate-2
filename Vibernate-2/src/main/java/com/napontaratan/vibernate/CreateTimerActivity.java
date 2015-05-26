@@ -202,9 +202,11 @@ public class CreateTimerActivity extends FragmentActivity {
         int nextMin = currentMin;
         int currentDay = c.get(Calendar.DAY_OF_WEEK) - 1;
 
+        String currentHourString = (currentHour < 10)? "0" + currentHour : Integer.toString(currentHour);
+        String nextHourString = (currentHour < 10)? "0" + currentHour : Integer.toString(currentHour);
         String minString = (currentMin < 10)?  "0" + currentMin: Integer.toString(currentMin);
-        String currentString = currentHour + ":" + minString;
-        String nextString = nextHour + ":" + minString;
+        String currentString = currentHourString + ":" + minString;
+        String nextString = nextHourString + ":" + minString;
 
         startTime.setText(currentString);
         endTime.setText(nextString);
