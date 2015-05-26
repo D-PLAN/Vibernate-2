@@ -163,6 +163,11 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
                                     removeItem(getPosition());
                                 }
                             })
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //Toast.makeText(getContext(), "Timer kept", Toast.LENGTH_SHORT).show();
+                                }
+                            })
                             .setIcon(null)
                             .show();
 

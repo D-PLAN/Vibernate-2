@@ -383,6 +383,11 @@ public class TimerWeekView extends View {
                                     invalidateDisplayTimerInfo(null);
                                 }
                             })
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    //Toast.makeText(getContext(), "Timer kept", Toast.LENGTH_SHORT).show();
+                                    }
+                            })
                             .setIcon(null)
                             .show();
                 }
