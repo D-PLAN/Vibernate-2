@@ -348,7 +348,7 @@ public class TimerWeekView extends View {
                     SwipeLayoutInfoView.timerInfoView.setVisibility(View.GONE);
 
                     SwipeLayoutInfoView.timerPlaceholderTopText.setText(view.getResources().getText(R.string.timer_no_display_weekview));
-                    SwipeLayoutInfoView.timerPlaceholderBottomText.setText("You can find timer " + selectedTimerSession.getName() + " in list view.");
+                    SwipeLayoutInfoView.timerPlaceholderBottomText.setText("You can find timer " + selectedTimerSession.getName() + " in list view");
 
                 } else {
                     SwipeLayoutInfoView.timerPlaceholderView.setVisibility(View.GONE);
