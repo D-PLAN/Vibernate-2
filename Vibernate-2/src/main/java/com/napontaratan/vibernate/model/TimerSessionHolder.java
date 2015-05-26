@@ -208,7 +208,7 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
             recyclerViewAdapter.notifyDataSetChanged();
         }
         if(timerWeekView != null) {
-            timerWeekView.invalidateDisplayTimerInfo(timerSession);
+            timerWeekView.invalidateTimerWeekView(timerSession);
         }
     }
 

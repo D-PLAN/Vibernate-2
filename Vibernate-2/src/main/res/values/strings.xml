@@ -20,6 +20,7 @@
 
     <string name="timer_hint_1">Click on a block</string>
     <string name="timer_hint_2">to view details</string>
+    <string name="timer_no_display_weekview">Timer is too short to be displayed</string>
 
     <!-- Tutorial Instructions -->
     <string name="tutorial_instruction">
