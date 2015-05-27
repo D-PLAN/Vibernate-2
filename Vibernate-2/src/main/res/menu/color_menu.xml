@@ -6,6 +6,7 @@
 
     <item android:id="@+id/action_search"
           android:title="@string/action_color"
+          android:onClick="onPaletteClick"
           android:icon="@drawable/palette_white"
           Vibernate:showAsAction="always">
     </item>
