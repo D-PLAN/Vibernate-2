@@ -78,6 +78,7 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
                 throw new TimerConflictException("Timer " + timerSession + " conflicts with existing timers");
             } else {
                 add(timerSession);
+                timerController.updateDeviceState(timerSession);
             }
         }
     }
@@ -128,6 +129,8 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
      * @return true if successfully removed, false otherwise
      */
     public boolean removeTimer(TimerSession timerSession) {
+        timerSession.setActive(false);
+        timerController.updateDeviceState(timerSession);
         return remove(timerSession);
     }
 
@@ -137,7 +140,7 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
      * @return true if successfully removed, false otherwise
      */
     public boolean removeTimer(int pos) {
-        return remove(timers.valueAt(pos));
+        return removeTimer(timers.valueAt(pos));
     }
 
     private boolean remove(TimerSession timerSession) {
@@ -159,6 +162,7 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
      */
     public void setTimerInactive(TimerSession timerSession) {
         timerController.cancelAlarm(timerSession);
+        timerController.updateDeviceState(timerSession);
     }
 
     /**
@@ -166,6 +170,18 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
      */
     public void setTimerActive(TimerSession timerSession) {
         timerController.setAlarm(timerSession);
+        timerController.updateDeviceState(timerSession);
+    }
+
+    // major updates only
+    public void updateTimer(TimerSession newTimer, TimerSession oldTimer) throws TimerConflictException{
+        remove(oldTimer);
+        if(isTimerConflict(newTimer)) {
+            throw new TimerConflictException("Timer is in conflict with existing timers");
+        } else {
+            timerController.updateDeviceState(newTimer, oldTimer);
+            add(newTimer);
+        }
     }
 
     // ======   Helpers  =============

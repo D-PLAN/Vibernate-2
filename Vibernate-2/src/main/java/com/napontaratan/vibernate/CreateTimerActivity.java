@@ -21,6 +21,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
+import com.napontaratan.vibernate.controller.TimerController;
 import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
 import com.napontaratan.vibernate.model.TimerSessionHolder;
@@ -115,6 +116,7 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
     public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
         setContentView(R.layout.create_timer);
+
         initializeToolbar();
         setupElements();
 
@@ -170,7 +172,7 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
         Calendar nextHour = Calendar.getInstance();
         nextHour.add(Calendar.HOUR_OF_DAY, 1);
         boolean[] default_days = new boolean[7];
-        default_days[nextHour.get(Calendar.DAY_OF_WEEK)] = true;
+        default_days[getIntFromDayOfWeek(nextHour.get(Calendar.DAY_OF_WEEK))] = true;
         initializeView("", TimerSession.TimerSessionType.VIBRATE, Calendar.getInstance(), nextHour, default_days, colorPicked);
     }
 
@@ -326,9 +328,13 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
                 TimerSession newTimer = produceNewTSObject();
                 // check if fields are valid
                 if(!checkValidity(newTimer)) return;
-
-                if(bundledTimer != null) modifyTimer(newTimer);
-                else createTimerSession(newTimer);
+                try {
+                    if(bundledTimer != null) modifyTimer(newTimer);
+                    else createTimerSession(newTimer);
+                } catch (TimerConflictException e) {
+                    createDialog("Timer Conflict", "The time specified is in conflict with another timer. Please try again.");
+                    return;
+                }
             }
         });
     }
@@ -384,19 +390,14 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
     }
 
     // Create a new timer unless it is in conflict with another existing timer
-    private void createTimerSession(TimerSession newTimer) {
+    private void createTimerSession(TimerSession newTimer) throws TimerConflictException {
         TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
-        try {
-            timerSessionHolder.addTimer(newTimer);
-            finish();
-        } catch (TimerConflictException e) {
-            createDialog("Timer Conflict", "The time specified is in conflict with another timer. Please try again.");
-            return;
-        }
+        timerSessionHolder.addTimer(newTimer);
+        finish();
     }
 
     // Doesn't create a new system timer if only the name or color has been modified
-    private void modifyTimer(TimerSession newTimer) {
+    private void modifyTimer(TimerSession newTimer) throws TimerConflictException {
         TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
         int modify = isModified(newTimer);
         switch(modify) {
@@ -410,8 +411,8 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
                 break;
             case 1: // big change
                 newTimer.setActive(bundledTimer.getActive());
-                timerSessionHolder.removeTimer(bundledTimer);
-                createTimerSession(newTimer);
+                timerSessionHolder.updateTimer(newTimer, bundledTimer);
+                finish();
                 break;
         }
     }
@@ -597,6 +598,26 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
     private String fixTimeFormat(int n) {
         if(n < 10) return "0" + n;
         else return Integer.toString(n);
+    }
+
+    private int getIntFromDayOfWeek(int DAY_OF_WEEK) {
+        switch(DAY_OF_WEEK) {
+            case Calendar.SUNDAY:
+                return 0;
+            case Calendar.MONDAY:
+                return 1;
+            case Calendar.TUESDAY:
+                return 2;
+            case Calendar.WEDNESDAY:
+                return 3;
+            case Calendar.THURSDAY:
+                return 4;
+            case Calendar.FRIDAY:
+                return 5;
+            case Calendar.SATURDAY:
+                return 6;
+        }
+        return -1;
     }
 
     // ONLY FOR DEBUGGING
