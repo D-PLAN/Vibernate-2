@@ -323,7 +323,7 @@ public class TimerWeekView extends View {
 
         private static final String TIME_STRING_FORMAT = "HH:mm";
 
-        private static int prevSelectedTimerSession = -1;
+        private static int prevSelectedTimerSessionHash = -1;
 
 
         // Display this timer's specific information on the bottom cardview
@@ -337,8 +337,8 @@ public class TimerWeekView extends View {
 
             if(selectedTimerSession != null) {
                 // Don't need to re draw info if it's the same as last selected
-                if(SwipeLayoutInfoView.prevSelectedTimerSession == selectedTimerSession.getId()) return;
-                SwipeLayoutInfoView.prevSelectedTimerSession = selectedTimerSession.getId();
+                if(SwipeLayoutInfoView.prevSelectedTimerSessionHash == selectedTimerSession.hashCode()) return;
+                SwipeLayoutInfoView.prevSelectedTimerSessionHash = selectedTimerSession.hashCode();
 
                 if(timerHiddenRectsMaps.get(selectedTimerSession.getId()) != null) {
                     // Time is too short to be displayed to users
@@ -435,7 +435,7 @@ public class TimerWeekView extends View {
                 }
 
             } else if(!(SwipeLayoutInfoView.timerPlaceholderView.getVisibility() == View.VISIBLE)){
-                SwipeLayoutInfoView.prevSelectedTimerSession = -1;
+                SwipeLayoutInfoView.prevSelectedTimerSessionHash = -1;
                 SwipeLayoutInfoView.timerPlaceholderView.setVisibility(View.VISIBLE);
                 SwipeLayoutInfoView.timerPlaceholderTopText.setText(view.getResources().getString(R.string.timer_hint_1));
                 SwipeLayoutInfoView.timerPlaceholderBottomText.setText(view.getResources().getString(R.string.timer_hint_2));
