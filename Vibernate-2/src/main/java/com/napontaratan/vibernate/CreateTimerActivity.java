@@ -172,24 +172,23 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
         nextHour.add(Calendar.HOUR_OF_DAY, 1);
         boolean[] default_days = new boolean[7];
         default_days[getIntFromDayOfWeek(nextHour.get(Calendar.DAY_OF_WEEK))] = true;
-        initializeView("", TimerSession.TimerSessionType.VIBRATE, Calendar.getInstance(), nextHour, default_days, colorPicked);
+        initializeView("", TimerSession.TimerSessionType.VIBRATE, Calendar.getInstance(), nextHour, default_days);
     }
 
     public void initializeView(TimerSession t) {
         bundledTimerDays = Arrays.copyOf(t.getDays(), 7);
-        initializeView(t.getName(), t.getType(), t.getStartTime(), t.getEndTime(), bundledTimerDays, t.getColor());
+        colorPicked = t.getColor();
+        initializeView(t.getName(), t.getType(), t.getStartTime(), t.getEndTime(), bundledTimerDays);
     }
 
     // Apply values to UI elements
-    public void initializeView(String name, TimerSession.TimerSessionType type, Calendar start_time, Calendar end_time, boolean[] days, int color) {
+    public void initializeView(String name, TimerSession.TimerSessionType type, Calendar start_time, Calendar end_time, boolean[] days) {
         nameField.setText(name);
         if(type == TimerSession.TimerSessionType.VIBRATE) {
-            vibrate_toggle.setChecked(true);
-            vibrate_toggle.setTextColor(color);
+            markVibrateType(vibrate_toggle, true);
         }
         else {
-            silent_toggle.setChecked(true);
-            silent_toggle.setTextColor(color);
+            markVibrateType(silent_toggle, true);
         }
 
         start_time_display.setText(generateTimeFromCalendar(start_time));
@@ -201,8 +200,8 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
         }
 
         checkDays();
-        changeButtonColors(color);
-        changeThemeColor(color);
+        changeButtonColors(colorPicked);
+        changeThemeColor(colorPicked);
     }
 
     // Attach listeners to UI elements
@@ -212,13 +211,9 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
             @Override
             public void onClick(View view) {
                 hideSoftKeyboard();
+                markVibrateType(vibrate_toggle, true);
                 if(silent_toggle.isChecked()) {
-                    silent_toggle.setChecked(false);
-                    silent_toggle.setTextColor(getResources().getColor(android.R.color.black));
-                }
-                if(!vibrate_toggle.isChecked()) {
-                    vibrate_toggle.setChecked(true);
-                    vibrate_toggle.setTextColor(colorPicked);
+                    markVibrateType(silent_toggle, false);
                 }
             }
         });
@@ -226,13 +221,9 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
             @Override
             public void onClick(View view) {
                 hideSoftKeyboard();
+                markVibrateType(silent_toggle, true);
                 if(vibrate_toggle.isChecked()) {
-                    vibrate_toggle.setChecked(false);
-                    vibrate_toggle.setTextColor(getResources().getColor(android.R.color.black));
-                }
-                if(!silent_toggle.isChecked()) {
-                    silent_toggle.setChecked(true);
-                    silent_toggle.setTextColor(colorPicked);
+                    markVibrateType(vibrate_toggle, false);
                 }
             }
         });
@@ -524,6 +515,14 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
         toggle_btn_days.get(d).setChecked(b);
     }
 
+    // set highlight to toggle btn text
+    // and set toggle btn to be checked
+    private void markVibrateType(ToggleButton btn, Boolean b) {
+        btn.setChecked(b);
+        if(b) btn.setTextColor(colorPicked); // checked
+        else  btn.setTextColor(getResources().getColor(android.R.color.black)); // unchecked
+    }
+
     // if Mon-Fri are checked, check the weekdays button
     // if Sat,Sun are checked, check the weekends button
     private void checkDays() {
@@ -544,10 +543,13 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
     private int isModified(TimerSession newTimer) {
         if (!newTimer.getStartTime().equals(bundledTimer.getStartTime()) || !newTimer.getEndTime().equals(bundledTimer.getEndTime()) ||
                 !arrayCompare(newTimer.getDays(),bundledTimer.getDays()) || newTimer.getType() != bundledTimer.getType()){
+            System.out.println("RETURNING 1");
             return 1;
         } else if (newTimer.getColor() != bundledTimer.getColor() || !newTimer.getName().equals(bundledTimer.getName())) {
+            System.out.println("RETURNING 0");
             return 0;
         } else {
+            System.out.println("RETURNING -1");
             return -1;
         }
     }
