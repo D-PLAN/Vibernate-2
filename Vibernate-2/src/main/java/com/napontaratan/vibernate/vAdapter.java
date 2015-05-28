@@ -100,7 +100,7 @@ public class vAdapter extends RecyclerView.Adapter<vAdapter.vViewHolder> {
             timerSessionHolder.addTimer(timer);
             notifyItemInserted(timerSessionHolder.getSize());
         } catch (TimerConflictException e) {
-            System.out.println("Timer Conflict please check your time again");
+            e.printStackTrace();
         }
     }
 

@@ -50,12 +50,10 @@ public class VibernateDB extends SQLiteOpenHelper {
 				"alarm BLOB )";
 
 		db.execSQL(CREATE_ALARM_TABLE);
-		System.out.println("on create");
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		System.out.println("on upgrade");
 		db.execSQL("DROP TABLE IF EXISTS alarms");
 		this.onCreate(db);
 	}
@@ -71,7 +69,6 @@ public class VibernateDB extends SQLiteOpenHelper {
 	 * @author Napon, Paul, Amelia
 	 */
 	public void addToDB(TimerSession timerSession) {
-		System.out.println("add to db");
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues values = new ContentValues();
 
@@ -79,7 +76,7 @@ public class VibernateDB extends SQLiteOpenHelper {
 			values.put(KEY_ID, timerSession.getId());
 			values.put(KEY_ALARM, TimerSession.serialize(timerSession));
 		} catch (Exception e) {
-			System.out.println("IOException caught in addToDB()");
+			e.printStackTrace();
 		}
 
 		db.insert(TABLE_NAME, null, values);
@@ -93,7 +90,7 @@ public class VibernateDB extends SQLiteOpenHelper {
 		try {
 			values.put(KEY_ALARM, TimerSession.serialize(timerSession));
 		} catch (Exception e) {
-			System.out.println("Serialize Timer Exception when updating in DB");
+		    e.printStackTrace();
 		}
 
 		db.update (TABLE_NAME, values, "id="+timerSession.getId(), null);
@@ -118,9 +115,9 @@ public class VibernateDB extends SQLiteOpenHelper {
 				try {
 					timerSession = (TimerSession) TimerSession.deserialize(cursor.getBlob(1));
 				} catch (ClassNotFoundException e) {
-					Log.d("Exception", "ClassNotFoundException caught in getAllAlarmsFromDB()");
+					e.printStackTrace();
 				} catch (IOException e) {
-					Log.d("Exception", "IOException caught in getAllAlarmsFromDB()");
+					e.printStackTrace();
 				}
 
 				result.add(timerSession);
@@ -156,7 +153,6 @@ public class VibernateDB extends SQLiteOpenHelper {
 	 * @author Napon
 	 */
 	public boolean contains(int id) {
-		System.out.println("query");
 		SQLiteDatabase sqldb = this.getWritableDatabase();
 		String Query = "Select * from " + TABLE_NAME + " where " + KEY_ID + "=" + id;
 		Cursor cursor = sqldb.rawQuery(Query, null);

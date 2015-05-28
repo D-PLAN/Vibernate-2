@@ -162,30 +162,6 @@ public final class TimerController {
         return datastore.getAllTimers();
     }
 
-//    public void updateDeviceState(TimerSession timer) {
-//        Calendar now = Calendar.getInstance();
-//        List<Calendar> starts = timer.getStartAlarmCalendars();
-//        List<Calendar> ends   = timer.getEndAlarmCalendars();
-//        for(int i = 0; i < starts.size(); i++) {
-//            Log.d("updateDeviceState", "start " + printCal(starts.get(i)));
-//            Log.d("updateDeviceState", "end " + printCal(ends.get(i)));
-//            // if timer is between start and end
-//            if(now.after(starts.get(i)) && now.before(ends.get(i))) {
-//                Log.d("updateDeviceState", "TIME IN RANGE");
-//                AudioManager audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-//                if(!timer.getActive()) {
-//                    audio.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-//                } else if(timer.getType() == TimerSession.TimerSessionType.VIBRATE) {
-//                    audio.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
-//                } else {
-//                    audio.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-//                }
-//
-//                return;
-//            }
-//        }
-//
-//    }
 
     /**
      * If current time is within the range of the timer and
@@ -236,7 +212,6 @@ public final class TimerController {
         end.set(Calendar.HOUR_OF_DAY, timer.getEndTime().get(Calendar.HOUR_OF_DAY));
         end.set(Calendar.MINUTE, timer.getEndTime().get(Calendar.MINUTE));
         boolean isInTimeRange = now.after(start) && now.before(end);
-        Log.d("isInTimeRange", "returning " + isInTimeRange);
         return isInTimeRange;
     }
 
@@ -247,11 +222,9 @@ public final class TimerController {
         boolean[] days = timer.getDays();
         for(int i = 0; i < 7; i++) {
             if (days[i] && i == today) {
-                Log.d("isDayInRange", "returning true");
                 return true;
             }
         }
-        Log.d("isDayInRange", "returning false");
         return false;
     }
 

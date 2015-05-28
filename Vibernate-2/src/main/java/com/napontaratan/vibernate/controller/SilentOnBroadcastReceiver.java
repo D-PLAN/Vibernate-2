@@ -11,7 +11,7 @@ import android.media.AudioManager;
 public class SilentOnBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        System.out.println("Silent receiver triggered");
+//        System.out.println("Silent receiver triggered");
         AudioManager audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         audio.setRingerMode(AudioManager.RINGER_MODE_SILENT);
     }
