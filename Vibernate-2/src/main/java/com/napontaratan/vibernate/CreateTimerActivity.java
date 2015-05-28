@@ -543,13 +543,10 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
     private int isModified(TimerSession newTimer) {
         if (!newTimer.getStartTime().equals(bundledTimer.getStartTime()) || !newTimer.getEndTime().equals(bundledTimer.getEndTime()) ||
                 !arrayCompare(newTimer.getDays(),bundledTimer.getDays()) || newTimer.getType() != bundledTimer.getType()){
-            System.out.println("RETURNING 1");
             return 1;
         } else if (newTimer.getColor() != bundledTimer.getColor() || !newTimer.getName().equals(bundledTimer.getName())) {
-            System.out.println("RETURNING 0");
             return 0;
         } else {
-            System.out.println("RETURNING -1");
             return -1;
         }
     }
