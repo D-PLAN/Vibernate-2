@@ -516,6 +516,7 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
         if(dialog != null && dialog.isShowing()) dialog.dismiss();
         dialog = new AlertDialog.Builder(this)
                 .setTitle(title)
+                .setIcon(R.drawable.ic_launcher)
                 .setMessage(msg)
                 .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                     @Override

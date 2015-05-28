@@ -484,7 +484,7 @@ public class TimerWeekView extends View {
                             timerRectsMaps.remove(selectedTimerSession.getId());
                         }
                     })
-                    .setIcon(null)
+                    .setIcon(R.drawable.ic_launcher)
                     .show();
         }
 
