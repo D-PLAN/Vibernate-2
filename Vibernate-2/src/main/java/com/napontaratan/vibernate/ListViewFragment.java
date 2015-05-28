@@ -31,6 +31,4 @@ public class ListViewFragment extends Fragment {
         return rootView;
     }
 
-
-
 }

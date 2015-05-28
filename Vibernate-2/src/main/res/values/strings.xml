@@ -56,4 +56,58 @@
         Team Members
     </string>
 
+    <string-array name="hints">
+        <item>Visit space</item>
+        <item>Ride elephant</item>
+        <item>Hug raccoon</item>
+        <item>Massage panda</item>
+        <item>Milk cow</item>
+        <item>Drink milk</item>
+        <item>Grow mushrooms</item>
+        <item>Eat spongecake</item>
+        <item>Watch Teletubbies</item>
+        <item>Eat homework</item>
+        <item>Meet Bill Gates</item>
+        <item>Meet Steve Jobs</item>
+        <item>Smell flowers</item>
+        <item>Go toilet</item>
+        <item>Skip class</item>
+        <item>Escape Sauron</item>
+        <item>Jedi training</item>
+        <item>Fly spaceship</item>
+        <item>Play quidditch</item>
+        <item>Buy wand</item>
+        <item>Learn magic</item>
+        <item>Wizard training</item>
+        <item>Break hearts</item>
+        <item>Watch rainbow</item>
+        <item>Eat sriracha</item>
+        <item>Eat nutella</item>
+        <item>Take nap</item>
+        <item>Drink water</item>
+        <item>Play tetris</item>
+        <item>Find love</item>
+        <item>Wash hands</item>
+        <item>Bike seawall</item>
+        <item>Befriend Yordles</item>
+        <item>Eat peanut</item>
+        <item>Send snapchat</item>
+        <item>Eat mango</item>
+        <item>Drive taxi</item>
+        <item>Run marathon</item>
+        <item>Draw durian</item>
+        <item>Make ice cream</item>
+        <item>Take shower</item>
+        <item>Make supper</item>
+        <item>Play recorder</item>
+        <item>Hop on one foot</item>
+        <item>Eat timbit</item>
+        <item>Pop balloons</item>
+        <item>Go to war</item>
+        <item>Do quests</item>
+        <item>Farm EXP</item>
+        <item>Buy lightsaber</item>
+        <item>Retirement</item>
+    </string-array>
+
 </resources>

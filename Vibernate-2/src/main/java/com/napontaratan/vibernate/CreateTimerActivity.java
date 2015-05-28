@@ -30,10 +30,7 @@ import com.napontaratan.vibernate.view.CreateTimerTimePicker;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 public class CreateTimerActivity extends FragmentActivity implements TimePickerDialog.OnTimeSetListener {
 
@@ -184,6 +181,8 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
     // Apply values to UI elements
     public void initializeView(String name, TimerSession.TimerSessionType type, Calendar start_time, Calendar end_time, boolean[] days) {
         nameField.setText(name);
+        nameField.setHint("Enter a name (eg. " + generateHint() + ")");
+
         if(type == TimerSession.TimerSessionType.VIBRATE) {
             markVibrateType(vibrate_toggle, true);
         }
@@ -202,6 +201,12 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
         checkDays();
         changeButtonColors(colorPicked);
         changeThemeColor(colorPicked);
+    }
+
+    private CharSequence generateHint() {
+        String[] hints = getResources().getStringArray(R.array.hints);
+        int index = new Random().nextInt(hints.length);
+        return hints[index];
     }
 
     // Attach listeners to UI elements
