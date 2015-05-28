@@ -210,7 +210,7 @@ public final class TimerSession extends Observable implements Serializable, Comp
 	}
 	/**
 	 * Convert an array of Bytes back to its object form
-	 * @param byte[] - data
+	 * @param  -data
 	 * @return (Object) VibrateTimer
 	 * @throws IOException
 	 * @throws ClassNotFoundException

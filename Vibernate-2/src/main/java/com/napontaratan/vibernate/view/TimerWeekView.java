@@ -382,7 +382,7 @@ public class TimerWeekView extends View {
 
         private static final String TIME_STRING_FORMAT = "HH:mm";
 
-        private static int prevSelectedTimerSession = -1;
+        private static int prevSelectedTimerSessionHash = -1;
 
 
         // Display this timer's specific information on the bottom cardview
@@ -395,21 +395,16 @@ public class TimerWeekView extends View {
 
             if(selectedTimerSession != null) {
                 // Don't need to re draw info if it's the same as last selected
-                if(SwipeLayoutInfoView.prevSelectedTimerSession == selectedTimerSession.getId()) return;
-                SwipeLayoutInfoView.prevSelectedTimerSession = selectedTimerSession.getId();
+                if(SwipeLayoutInfoView.prevSelectedTimerSessionHash == selectedTimerSession.hashCode()) return;
+                SwipeLayoutInfoView.prevSelectedTimerSessionHash = selectedTimerSession.hashCode();
 
                 if(shortTimer) {
                     // Time is too short to be displayed to users
                     // Address user
-                    SwipeLayoutInfoView.timerPlaceholderView.setVisibility(View.VISIBLE);
-                    SwipeLayoutInfoView.timerInfoView.setVisibility(View.GONE);
-
-                    SwipeLayoutInfoView.timerPlaceholderTopText.setText(view.getResources().getText(R.string.timer_no_display_weekview));
-                    SwipeLayoutInfoView.timerPlaceholderBottomText.setText("You can find timer " + selectedTimerSession.getName() + " in list view");
-
+                    SwipeLayoutInfoView.toggleTimerInfoLayout(false, true);
+                    SwipeLayoutInfoView.showTimerTooShortText(view, selectedTimerSession);
                 } else {
-                    SwipeLayoutInfoView.timerPlaceholderView.setVisibility(View.GONE);
-                    SwipeLayoutInfoView.timerInfoView.setVisibility(View.VISIBLE);
+                    SwipeLayoutInfoView.toggleTimerInfoLayout(true, false);
 
                     SwipeLayoutInfoView.swipeBottomWrapperLayout.setBackgroundColor(selectedTimerSession.getColor());
 
@@ -417,10 +412,8 @@ public class TimerWeekView extends View {
                     SwipeLayoutInfoView.swipeLayout.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            if (SwipeLayoutInfoView.swipeLayout.getOpenStatus() == SwipeLayout.Status.Close) {
-                                SwipeLayoutInfoView.swipeLayout.open(SwipeLayout.DragEdge.Bottom);
-                            } else {
-                                SwipeLayoutInfoView.swipeLayout.close(true);
+                            if(selectedTimerSession != null) {
+                                SwipeLayoutInfoView.toggleSwipeLayout();
                             }
                         }
                     });
@@ -428,28 +421,15 @@ public class TimerWeekView extends View {
                     SwipeLayoutInfoView.timerEditIcon.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Intent mIntent = new Intent(view.getContext(), CreateTimerActivity.class);
-                            Bundle mBundle = new Bundle();
-                            mBundle.putSerializable("Timer", selectedTimerSession);
-                            mIntent.putExtras(mBundle);
-                            view.getContext().startActivity(mIntent);
+                            SwipeLayoutInfoView.editTimerSession(view, selectedTimerSession);
                         }
                     });
 
                     SwipeLayoutInfoView.timerDeleteIcon.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            new AlertDialog.Builder(view.getContext())
-
-                                    .setTitle("Delete timer")
-                                    .setMessage("Are you sure you want to delete this timer?")
-                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            timerSessionHolder.removeTimer(selectedTimerSession);
-                                        }
-                                    })
-                                    .setIcon(null)
-                                    .show();
+                             SwipeLayoutInfoView.deleteTimerSession(view, selectedTimerSession,
+                                    timerSessionHolder);
                         }
                     });
 
@@ -464,19 +444,16 @@ public class TimerWeekView extends View {
 
                     SwipeLayoutInfoView.timerOnOffSwitch.setOnCheckedChangeListener(null);
                     SwipeLayoutInfoView.timerOnOffSwitch.setChecked(selectedTimerSession.getActive());
-                    drawSwitch(SwipeLayoutInfoView.timerOnOffSwitch, selectedTimerSession.getColor(), view.getResources().getColor(android.R.color.darker_gray));
+                    SwipeLayoutInfoView.drawSwitch(view, selectedTimerSession);
                     SwipeLayoutInfoView.timerOnOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                             selectedTimerSession.setActive(b);
+                            SwipeLayoutInfoView.drawSwitch(view, selectedTimerSession);
                             if (b) {
                                 timerSessionHolder.setTimerActive(selectedTimerSession);
-                                SwipeLayoutInfoView.timerOnOffSwitch.getTrackDrawable().setColorFilter(selectedTimerSession.getColor(), PorterDuff.Mode.MULTIPLY);
-                                SwipeLayoutInfoView.timerOnOffSwitch.getThumbDrawable().setColorFilter(selectedTimerSession.getColor(), PorterDuff.Mode.MULTIPLY);
                             } else {
                                 timerSessionHolder.setTimerInactive(selectedTimerSession);
-                                SwipeLayoutInfoView.timerOnOffSwitch.getTrackDrawable().setColorFilter(view.getResources().getColor(android.R.color.darker_gray), PorterDuff.Mode.MULTIPLY);
-                                SwipeLayoutInfoView.timerOnOffSwitch.getThumbDrawable().setColorFilter(view.getResources().getColor(android.R.color.darker_gray), PorterDuff.Mode.MULTIPLY);
                             }
                         }
                     });
@@ -492,13 +469,13 @@ public class TimerWeekView extends View {
                 }
 
             } else if(!(SwipeLayoutInfoView.timerPlaceholderView.getVisibility() == View.VISIBLE)){
-                SwipeLayoutInfoView.prevSelectedTimerSession = -1;
-                SwipeLayoutInfoView.timerPlaceholderView.setVisibility(View.VISIBLE);
-                SwipeLayoutInfoView.timerPlaceholderTopText.setText(view.getResources().getString(R.string.timer_hint_1));
-                SwipeLayoutInfoView.timerPlaceholderBottomText.setText(view.getResources().getString(R.string.timer_hint_2));
-                SwipeLayoutInfoView.timerInfoView.setVisibility(View.GONE);
-                if(SwipeLayoutInfoView.swipeLayout != null) swipeLayout.setLeftSwipeEnabled(false);
-                SwipeLayoutInfoView.swipeLayout.setOnClickListener(null);
+                SwipeLayoutInfoView.prevSelectedTimerSessionHash = -1;
+                SwipeLayoutInfoView.toggleTimerInfoLayout(false, true);
+                SwipeLayoutInfoView.showPlaceholderText(view);
+                if(SwipeLayoutInfoView.swipeLayout != null) {
+                    SwipeLayoutInfoView.swipeLayout.setLeftSwipeEnabled(false);
+                    SwipeLayoutInfoView.swipeLayout.setOnClickListener(null);
+                }
             }
         }
 
@@ -527,14 +504,59 @@ public class TimerWeekView extends View {
             }
         }
 
-        private static void drawSwitch(Switch timerOnOffSwitch, int onColor, int offColor) {
-            if(timerOnOffSwitch.isChecked()) {
-                timerOnOffSwitch.getTrackDrawable().setColorFilter(onColor, PorterDuff.Mode.MULTIPLY);
-                timerOnOffSwitch.getThumbDrawable().setColorFilter(onColor, PorterDuff.Mode.MULTIPLY);
+        private static void drawSwitch(View view, TimerSession selectedTimerSession) {
+            Switch activeSwitch = SwipeLayoutInfoView.timerOnOffSwitch;
+            int switchColorInt = activeSwitch.isChecked()?
+                    selectedTimerSession.getColor() : view.getResources().getColor(android.R.color.darker_gray);
+            activeSwitch.getTrackDrawable().setColorFilter(switchColorInt, PorterDuff.Mode.MULTIPLY);
+            activeSwitch.getThumbDrawable().setColorFilter(switchColorInt, PorterDuff.Mode.MULTIPLY);
+        }
+
+        private static void editTimerSession(View view, TimerSession selectedTimerSession) {
+            Intent mIntent = new Intent(view.getContext(), CreateTimerActivity.class);
+            Bundle mBundle = new Bundle();
+            mBundle.putSerializable("Timer", selectedTimerSession);
+            mIntent.putExtras(mBundle);
+            // reset swipelayout
+            SwipeLayoutInfoView.toggleSwipeLayout();
+            view.getContext().startActivity(mIntent);
+        }
+
+        private static void toggleSwipeLayout() {
+            if (SwipeLayoutInfoView.swipeLayout.getOpenStatus() == SwipeLayout.Status.Close) {
+                SwipeLayoutInfoView.swipeLayout.open(SwipeLayout.DragEdge.Bottom);
             } else {
-                timerOnOffSwitch.getTrackDrawable().setColorFilter(offColor, PorterDuff.Mode.MULTIPLY);
-                timerOnOffSwitch.getThumbDrawable().setColorFilter(offColor, PorterDuff.Mode.MULTIPLY);
+                SwipeLayoutInfoView.swipeLayout.close(true);
             }
+        }
+
+        private static void deleteTimerSession(View view, final TimerSession selectedTimerSession,
+                                               final TimerSessionHolder timerSessionHolder) {
+            new AlertDialog.Builder(view.getContext())
+                    .setTitle("Delete timer")
+                    .setMessage("Are you sure you want to delete this timer?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            timerSessionHolder.removeTimer(selectedTimerSession);
+                        }
+                    })
+                    .setIcon(R.drawable.ic_launcher)
+                    .show();
+        }
+
+        private static void toggleTimerInfoLayout(boolean info, boolean placeholder) {
+            SwipeLayoutInfoView.timerPlaceholderView.setVisibility(placeholder? View.VISIBLE: View.GONE);
+            SwipeLayoutInfoView.timerInfoView.setVisibility(info? View.VISIBLE: View.GONE);
+        }
+
+        private static void showPlaceholderText(View view) {
+            SwipeLayoutInfoView.timerPlaceholderTopText.setText(view.getResources().getString(R.string.timer_hint_1));
+            SwipeLayoutInfoView.timerPlaceholderBottomText.setText(view.getResources().getString(R.string.timer_hint_2));
+        }
+
+        private static void showTimerTooShortText(View view, TimerSession selectedTimerSession) {
+            SwipeLayoutInfoView.timerPlaceholderTopText.setText(view.getResources().getText(R.string.timer_no_display_weekview));
+            SwipeLayoutInfoView.timerPlaceholderBottomText.setText("You can find timer " + selectedTimerSession.getName() + " in list view");
         }
 
     }

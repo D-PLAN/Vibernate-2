@@ -1,5 +1,6 @@
 package com.napontaratan.vibernate.view;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import com.napontaratan.vibernate.CreateTimerActivity;
 import com.napontaratan.vibernate.R;
 
 import java.util.Calendar;
@@ -16,37 +18,25 @@ import java.util.Calendar;
 /**
  * Created by napontaratan on 15-04-06.
  */
-public class CreateTimerTimePicker extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
+public class CreateTimerTimePicker extends DialogFragment {
 
-    private int hour = 9;
-    private int minute = 0;
+    private Activity mActivity;
+    private TimePickerDialog.OnTimeSetListener mListener;
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-        // Create a new instance of TimePickerDialog and return it
-        return new TimePickerDialog(getActivity(), this, hour, minute,
+        Bundle args = this.getArguments();
+        int hour = args.getInt(CreateTimerActivity.KEY_HOUR);
+        int min = args.getInt(CreateTimerActivity.KEY_MINUTE);
+        return new TimePickerDialog(mActivity, mListener, hour, min,
                 DateFormat.is24HourFormat(getActivity()));
     }
 
     @Override
-    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        String tag = this.getTag();
-        TextView textToUpdate;
-        if(tag.equals("startTimePicker")) textToUpdate = (TextView) this.getActivity().findViewById(R.id.create_timer_start_time_clock);
-        else textToUpdate = (TextView) this.getActivity().findViewById(R.id.create_timer_end_time_clock);
-        StringBuffer time = new StringBuffer();
-        if(hourOfDay < 10) time.append("0");
-        time.append(hourOfDay);
-        time.append(":");
-        if(minute < 10) time.append("0");
-        time.append(minute);
-        textToUpdate.setText(time.toString());
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mActivity = activity;
+        mListener = (TimePickerDialog.OnTimeSetListener) activity;
     }
-
-    public void setTime(int h, int m) {
-        hour = h;
-        minute = m;
-    }
-
 }

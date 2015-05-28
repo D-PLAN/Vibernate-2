@@ -1,6 +1,8 @@
 package com.napontaratan.vibernate;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -11,7 +13,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -19,6 +20,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
+
 import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
 import com.napontaratan.vibernate.model.TimerSessionHolder;
@@ -33,17 +35,40 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-public class CreateTimerActivity extends FragmentActivity {
+public class CreateTimerActivity extends FragmentActivity implements TimePickerDialog.OnTimeSetListener {
 
+    private static String COLOR_CAL_TAG  = "cal";
+    private static String START_TIME_TAG = "start";
+    private static String END_TIME_TAG   = "end";
+    public static String KEY_HOUR        = "hour";
+    public static String KEY_MINUTE      = "minute";
+
+    // if modifying a timer, the information is passed through a bundle
+    private TimerSession bundledTimer;
+    private boolean[] bundledTimerDays; // used to compare if timer has changed
+
+    // ELEMENTS
     private CreateTimerTimePicker timePicker;
-    private List<ToggleButton> days;
-    private int colorPicked = -13388315;
-    private boolean[] bDays = new boolean[7];
-    private TimerSession ts;
-    private boolean[] bundleDays;
-    EditText nameField;
+    private ColorPickerDialog colorPicker;
+    private Toolbar toolbar;
+    private Dialog dialog;
 
-    int color_default;
+    private EditText nameField;
+
+    private TextView start_time_display;
+    private TextView end_time_display;
+
+    private ToggleButton vibrate_toggle;
+    private ToggleButton silent_toggle;
+    private ToggleButton weekdays_toggle;
+    private ToggleButton weekends_toggle;
+    private List<ToggleButton> toggle_btn_days;
+    private boolean[] boolean_days = new boolean[7];
+
+    private ImageButton done;
+
+    // VALUES
+    private int colorPicked;
 
 //    @Override
 //    protected void onStart() {
@@ -57,25 +82,70 @@ public class CreateTimerActivity extends FragmentActivity {
 //        GoogleAnalytics.getInstance(this).reportActivityStop(this);
 //    }
 
+    public void setupElements() {
+        nameField = (EditText) findViewById(R.id.create_timer_name_field);
+        nameField.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        nameField.clearFocus();
+
+        vibrate_toggle = (ToggleButton) findViewById(R.id.create_timer_type_vibrate);
+        silent_toggle  = (ToggleButton) findViewById(R.id.create_timer_type_silent);
+
+        timePicker     = new CreateTimerTimePicker();
+
+        start_time_display = (TextView) findViewById(R.id.create_timer_start_time_clock);
+        end_time_display   = (TextView) findViewById(R.id.create_timer_end_time_clock);
+
+        weekdays_toggle = (ToggleButton) findViewById(R.id.create_timer_weekdays_btn);
+        weekends_toggle = (ToggleButton) findViewById(R.id.create_timer_weekends_btn);
+
+        toggle_btn_days = new ArrayList<ToggleButton>();
+        toggle_btn_days.add((ToggleButton) findViewById(R.id.create_timer_sun));
+        toggle_btn_days.add((ToggleButton) findViewById(R.id.create_timer_mon));
+        toggle_btn_days.add((ToggleButton) findViewById(R.id.create_timer_tue));
+        toggle_btn_days.add((ToggleButton) findViewById(R.id.create_timer_wed));
+        toggle_btn_days.add((ToggleButton) findViewById(R.id.create_timer_thu));
+        toggle_btn_days.add((ToggleButton) findViewById(R.id.create_timer_fri));
+        toggle_btn_days.add((ToggleButton) findViewById(R.id.create_timer_sat));
+
+        colorPicked = getResources().getColor(R.color.colorPrimary);
+        done = (ImageButton) findViewById(R.id.add_timer_button);
+    }
+
     @Override
-    public void onCreate(Bundle savedInstance){
+    public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
         setContentView(R.layout.create_timer);
-        timePicker = new CreateTimerTimePicker();
+
+        initializeToolbar();
+        setupElements();
 
         Bundle extras = getIntent().getExtras();
-        if(extras != null) {
-            ts = (TimerSession)extras.getSerializable("Timer");
-            bundleDays = Arrays.copyOf(ts.getDays(), 7);
+        if (extras != null) {
+            bundledTimer = (TimerSession) extras.getSerializable("Timer");
+            initializeView(bundledTimer);
         } else {
-            ts = null;
+            initializeView();
         }
 
-        //CheckMark Button made up here so that we can dynamically change color
-        final ImageButton done = (ImageButton) findViewById(R.id.add_timer_button);
+        setupFunctionality();
+    }
 
-        /* toolbar */
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.create_timer_toolbar);
+    // called via XML
+    public void onPaletteClick(MenuItem item) {
+        hideSoftKeyboard();
+        colorPicker.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
+            @Override
+            public void onColorSelected(int color) {
+                colorPicked = color;
+                changeThemeColor(color);
+                changeButtonColors(color);
+            }
+        });
+        colorPicker.show(getFragmentManager(), COLOR_CAL_TAG);
+    }
+
+    private void initializeToolbar() {
+        toolbar = (Toolbar) findViewById(R.id.create_timer_toolbar);
         toolbar.setTitle("New Timer");
         toolbar.setNavigationIcon(R.drawable.ic_action_remove);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -85,409 +155,255 @@ public class CreateTimerActivity extends FragmentActivity {
                 finish();
             }
         });
-
-        /* ColorPicker Menu */
         toolbar.inflateMenu(R.menu.color_menu);
 
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
+        /* ColorPicker Menu */
+        String[] color_array = getBaseContext().getResources().getStringArray(R.array.default_color_choice_values);
+        int[] cArray = new int[color_array.length];
+        for (int k = 0; k < color_array.length; k++) {
+            cArray[k] = Color.parseColor(color_array[k]);
+        }
+        colorPicker = ColorPickerDialog.newInstance(R.string.color_picker_title, cArray, R.color.colorPrimary, 5, ColorPickerDialog.SIZE_SMALL);
+    }
 
+    // default (called when no bundledTimer is passed in)
+    public void initializeView() {
+        Calendar nextHour = Calendar.getInstance();
+        nextHour.add(Calendar.HOUR_OF_DAY, 1);
+        boolean[] default_days = new boolean[7];
+        default_days[getIntFromDayOfWeek(nextHour.get(Calendar.DAY_OF_WEEK))] = true;
+        initializeView("", TimerSession.TimerSessionType.VIBRATE, Calendar.getInstance(), nextHour, default_days);
+    }
+
+    public void initializeView(TimerSession t) {
+        bundledTimerDays = Arrays.copyOf(t.getDays(), 7);
+        colorPicked = t.getColor();
+        initializeView(t.getName(), t.getType(), t.getStartTime(), t.getEndTime(), bundledTimerDays);
+    }
+
+    // Apply values to UI elements
+    public void initializeView(String name, TimerSession.TimerSessionType type, Calendar start_time, Calendar end_time, boolean[] days) {
+        nameField.setText(name);
+        if(type == TimerSession.TimerSessionType.VIBRATE) {
+            markVibrateType(vibrate_toggle, true);
+        }
+        else {
+            markVibrateType(silent_toggle, true);
+        }
+
+        start_time_display.setText(generateTimeFromCalendar(start_time));
+        end_time_display.setText(generateTimeFromCalendar(end_time));
+
+        for(int i = 0; i < 7; i++){
+            if(days[i]) markDay(i, true);
+            else markDay(i, false);
+        }
+
+        checkDays();
+        changeButtonColors(colorPicked);
+        changeThemeColor(colorPicked);
+    }
+
+    // Attach listeners to UI elements
+    public void setupFunctionality() {
+        // vibrate and silent toggles cannot both be checked at the same time
+        vibrate_toggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 hideSoftKeyboard();
-                String[] color_array = getBaseContext().getResources().getStringArray(R.array.default_color_choice_values);
-                int[] cArray = new int[color_array.length];
-                for (int k = 0; k < color_array.length; k++) {
-                    ;
-                    cArray[k] = Color.parseColor(color_array[k]);
+                markVibrateType(vibrate_toggle, true);
+                if(silent_toggle.isChecked()) {
+                    markVibrateType(silent_toggle, false);
                 }
-
-                ColorPickerDialog colorCalendar = ColorPickerDialog.newInstance(
-                        R.string.color_picker_default_title,
-                        cArray,
-                        R.color.blue,
-                        5,
-                        ColorPickerDialog.SIZE_SMALL);
-
-                //Implement listener to get selected color value
-                colorCalendar.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
-                    @Override
-                    public void onColorSelected(int color) {
-                        colorPicked = color;
-                        System.out.println("colorPicked is " + colorPicked);
-
-                        //change button colors
-                        changeButtonColors(colorPicked);
-
-                        //To darken the colorPicked
-                        float[] hsv = new float[3];
-                        int colorPickedDarker = colorPicked;
-                        Color.colorToHSV(color, hsv);
-                        hsv[2] *= 0.8f; // value component
-                        colorPickedDarker = Color.HSVToColor(hsv);
-                        System.out.println("colorPickedDarker is " + colorPickedDarker);
-
-                        //Changing toolbar color
-                        toolbar.setBackgroundColor(color);
-
-                        //Changing Status Bar color
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                           Window window = getWindow();
-                            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                            window.setStatusBarColor(colorPickedDarker);
-
-                        }
-                    }
-                });
-
-                colorCalendar.show(getFragmentManager(), "cal");
-                return false;
+            }
+        });
+        silent_toggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hideSoftKeyboard();
+                markVibrateType(silent_toggle, true);
+                if(vibrate_toggle.isChecked()) {
+                    markVibrateType(vibrate_toggle, false);
+                }
             }
         });
 
-        /* name field */
-        nameField = (EditText) findViewById(R.id.create_timer_name_field);
-        nameField.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-        nameField.clearFocus();
-
-        color_default = getResources().getColor(R.color.black);
-
-        /* vibrate or silent mode */
-        final ToggleButton typeVibrate = (ToggleButton) findViewById(R.id.create_timer_type_vibrate);
-        final ToggleButton typeSilent  = (ToggleButton) findViewById(R.id.create_timer_type_silent);
-        typeVibrate.setChecked(true);
-        typeVibrate.setTextColor(colorPicked);
-        typeVibrate.setOnClickListener(new View.OnClickListener() {
+        // timePicker dialog should popup when tapping on start/end TextView
+        start_time_display.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 hideSoftKeyboard();
-                if(typeSilent.isChecked()) typeSilent.setChecked(false);
-                if(!typeVibrate.isChecked()) typeVibrate.setChecked(true);
+                String[] start = start_time_display.getText().toString().split(":");
+                int h = Integer.parseInt(start[0]);
+                int m = Integer.parseInt(start[1]);
+                showTimePickerDialog(h, m, START_TIME_TAG);
             }
         });
-
-        typeSilent.setOnClickListener(new View.OnClickListener() {
+        end_time_display.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 hideSoftKeyboard();
-                if(typeVibrate.isChecked()) typeVibrate.setChecked(false);
-                if(!typeSilent.isChecked()) typeSilent.setChecked(true);
+                String[] end = end_time_display.getText().toString().split(":");
+                int h = Integer.parseInt(end[0]);
+                int m = Integer.parseInt(end[1]);
+                showTimePickerDialog(h, m, END_TIME_TAG);
             }
         });
 
-        typeVibrate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-                if(checked) compoundButton.setTextColor(colorPicked);
-                else compoundButton.setTextColor(color_default);
-            }
-        });
-
-        typeSilent.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-                if(checked) compoundButton.setTextColor(colorPicked);
-                else compoundButton.setTextColor(color_default);
-            }
-        });
-
-
-        /* start time & end time */
-        final TextView startTime = (TextView) findViewById(R.id.create_timer_start_time_clock);
-        final TextView endTime = (TextView) findViewById(R.id.create_timer_end_time_clock);
-
-        Calendar c = Calendar.getInstance();
-        int currentHour = c.get(Calendar.HOUR_OF_DAY);
-        int currentMin = c.get(Calendar.MINUTE);
-        int nextHour = (currentHour+1 < 24)? currentHour + 1: currentHour;
-        int nextMin = currentMin;
-        int currentDay = c.get(Calendar.DAY_OF_WEEK) - 1;
-
-        String currentHourString = (currentHour < 10)? "0" + currentHour : Integer.toString(currentHour);
-        String nextHourString = (currentHour < 10)? "0" + currentHour : Integer.toString(currentHour);
-        String minString = (currentMin < 10)?  "0" + currentMin: Integer.toString(currentMin);
-        String currentString = currentHourString + ":" + minString;
-        String nextString = nextHourString + ":" + minString;
-
-        startTime.setText(currentString);
-        endTime.setText(nextString);
-
-        startTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideSoftKeyboard();
-                String[] start = startTime.getText().toString().split(":");
-                timePicker.setTime(Integer.parseInt(start[0]), Integer.parseInt(start[1]));
-                timePicker.show(getSupportFragmentManager(), "startTimePicker");
-            }
-        });
-
-        endTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideSoftKeyboard();
-                String[] end = endTime.getText().toString().split(":");
-                timePicker.setTime(Integer.parseInt(end[0]), Integer.parseInt(end[1]));
-                timePicker.show(getSupportFragmentManager(), "endTimePicker");
-            }
-        });
-
-        /* choosing days */
-        final ToggleButton weekdays_btn = (ToggleButton) findViewById(R.id.create_timer_weekdays_btn);
-        final ToggleButton weekends_btn = (ToggleButton) findViewById(R.id.create_timer_weekends_btn);
-
-        days = new ArrayList<ToggleButton>();
-        days.add((ToggleButton) findViewById(R.id.create_timer_sun));
-        days.add((ToggleButton) findViewById(R.id.create_timer_mon));
-        days.add((ToggleButton) findViewById(R.id.create_timer_tue));
-        days.add((ToggleButton) findViewById(R.id.create_timer_wed));
-        days.add((ToggleButton) findViewById(R.id.create_timer_thu));
-        days.add((ToggleButton) findViewById(R.id.create_timer_fri));
-        days.add((ToggleButton) findViewById(R.id.create_timer_sat));
-
-        //setting current day to be highlighted
-        days.get(currentDay).setChecked(true);
-        bDays[currentDay] = true;
-
-        changeButtonColors(getResources().getColor(R.color.colorPrimary));
-
-        // if sunday(0) OR saturday(6)   is clicked
+        // circle days btn
+        // if sunday(0) OR saturday(6) is clicked
         for(int i = 0; i < 7; i+=6){
             final int finalI = i;
-            days.get(i).setOnClickListener(new View.OnClickListener() {
+            toggle_btn_days.get(i).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(days.get(finalI).isChecked()) {
-                        bDays[finalI] = true;
-                        for(int j = 0; j < 7; j+=6){
-                            if(!days.get(j).isChecked()) return;
-                        }
-                        weekends_btn.setChecked(true);
+                    if(toggle_btn_days.get(finalI).isChecked()) {
+                        boolean_days[finalI] = true;
+                        checkDays();
                     } else {
-                        weekends_btn.setChecked(false);
-                        bDays[finalI] = false;
+                        weekends_toggle.setChecked(false);
+                        boolean_days[finalI] = false;
                     }
                 }
             });
         }
-
-        // if one of the days from mon-fri is clicked
+        // if one of the toggle_btn_days from mon-fri is clicked
         for(int i = 1; i < 6; i++){
             final int finalI = i;
-            days.get(i).setOnClickListener(new View.OnClickListener() {
+            toggle_btn_days.get(i).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(days.get(finalI).isChecked()) {
-                        bDays[finalI] = true;
-                        for(int j = 1; j < 6; j++){
-                            if(!days.get(j).isChecked()) return;
-                        }
-                        weekdays_btn.setChecked(true);
+                    if(toggle_btn_days.get(finalI).isChecked()) {
+                        boolean_days[finalI] = true;
+                        checkDays();
                     } else {
-                        weekdays_btn.setChecked(false);
-                        bDays[finalI] = false;
+                        weekdays_toggle.setChecked(false);
+                        boolean_days[finalI] = false;
                     }
                 }
             });
         }
 
-        weekdays_btn.setOnClickListener(new View.OnClickListener() {
+        // weekdays and weekends button
+        weekdays_toggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 hideSoftKeyboard();
-                if(weekdays_btn.isChecked()) {
-                    for(int i = 0; i < 7; i++){
-                        if(i != 0 && i != 6) {
-                            days.get(i).setChecked(true);
-                            bDays[i] = true;
-                        }
-                    }
+                if(weekdays_toggle.isChecked()) {
+                    for(int i = 1; i <= 5; i++)
+                        markDay(i, true);
                 } else {
-                    for(int i = 0; i < 7; i++){
-                        if(i != 0 && i != 6) {
-                            days.get(i).setChecked(false);
-                            bDays[i] = false;
-                        }
-                    }
+                    for(int i = 1; i <= 5; i++)
+                        markDay(i, false);
+                }
+            }
+        });
+        weekends_toggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideSoftKeyboard();
+                if(weekends_toggle.isChecked()) {
+                    for(int i = 0; i < 7; i+=6)
+                        markDay(i, true);
+                } else {
+                    for(int i = 0; i < 7; i+=6)
+                        markDay(i, false);
                 }
             }
         });
 
-        weekends_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideSoftKeyboard();
-                if(weekends_btn.isChecked()) {
-                    for(int i = 0; i < 7; i++){
-                        if(i == 0 || i == 6) {
-                            days.get(i).setChecked(true);
-                            bDays[i] = true;
-                        }
-                    }
-                } else {
-                    for(int i = 0; i < 7; i++){
-                        if(i == 0 || i == 6) {
-                            days.get(i).setChecked(false);
-                            bDays[i] = false;
-                        }
-                    }
-                }
-            }
-        });
-
-        /* Click on check mark */
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String name = nameField.getText().toString();
-                TimerSession.TimerSessionType type;
-                if (typeVibrate.isChecked()) type = TimerSession.TimerSessionType.VIBRATE;
-                else type = TimerSession.TimerSessionType.SILENT;
-                String start = startTime.getText().toString();
-                String end = endTime.getText().toString();
-                int startSplitIndex = start.indexOf(":");
-                int endSplitIndex = end.indexOf(":");
-                int start_hour = Integer.parseInt(start.substring(0, startSplitIndex));
-                int start_min  = Integer.parseInt(start.substring(startSplitIndex + 1));
-                int end_hour   = Integer.parseInt(end.substring(0, endSplitIndex));
-                int end_min    = Integer.parseInt(end.substring(endSplitIndex + 1));
-
-                // if this is a timer modify, check if anything is changed
-                createTimerSession(name, type, start_hour, start_min, end_hour, end_min, days, colorPicked);
+                TimerSession newTimer = produceNewTSObject();
+                // check if fields are valid
+                if(!checkValidity(newTimer)) return;
+                try {
+                    if(bundledTimer != null) modifyTimer(newTimer);
+                    else createTimerSession(newTimer);
+                } catch (TimerConflictException e) {
+                    createDialog("Timer Conflict", "The time specified is in conflict with another timer. Please try again.");
+                }
             }
         });
-
-        //grabbing information from bundle
-        if (ts != null) {
-
-            //For color changes
-            float[] hsv = new float[3];
-            colorPicked = ts.getColor();
-            changeButtonColors(colorPicked);
-            Color.colorToHSV(ts.getColor(), hsv);
-            hsv[2] *= 0.8f; // value component
-            int colorPickedDarker = ts.getColor();
-            colorPickedDarker = Color.HSVToColor(hsv);
-
-            //Changing toolbar color
-            toolbar.setBackgroundColor(ts.getColor());
-
-            //Changing Status Bar color
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Window window = getWindow();
-                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                window.setStatusBarColor(colorPickedDarker);
-            }
-            //Change name
-            nameField.setText(ts.getName(), TextView.BufferType.EDITABLE);
-            nameField.clearFocus();
-
-            //Vibrate/Silent
-            if (ts.getType() == TimerSession.TimerSessionType.VIBRATE) {
-                typeVibrate.setChecked(true);
-                typeSilent.setChecked(false);
-            } else {
-                typeSilent.setChecked(true);
-                typeVibrate.setChecked(false);
-            }
-
-            //Saved StartTime and EndTime
-            Calendar editedCalendar = ts.getStartTime();
-            int savedStartHour = editedCalendar.get(Calendar.HOUR_OF_DAY);
-            int savedStartMin = editedCalendar.get(Calendar.MINUTE);
-            editedCalendar = ts.getEndTime();
-            int savedEndHour = editedCalendar.get(Calendar.HOUR_OF_DAY);
-            int savedEndMin = editedCalendar.get(Calendar.MINUTE);
-
-            String savedStartHourString = (savedStartHour < 10)?  "0" + savedStartHour: Integer.toString(savedStartHour);
-            String savedStartMinString = (savedStartMin < 10)?  "0" + savedStartMin: Integer.toString(savedStartMin);
-            String savedEndHourString = (savedEndHour < 10)?  "0" + savedEndHour: Integer.toString(savedEndHour);
-            String savedEndMinString = (savedEndMin < 10)?  "0" + savedEndMin: Integer.toString(savedEndMin);
-
-            String start = savedStartHourString + ":" + savedStartMinString;
-            String end = savedEndHourString + ":" + savedEndMinString;
-
-            startTime.setText(start);
-            endTime.setText(end);
-
-            // set current day to false because we are editing a timer not creating a new one
-            days.get(currentDay).setChecked(false);
-            bDays[currentDay] = false;
-
-            for (int i=0; i < bundleDays.length ; i++) {
-                if (bundleDays[i] == true) {
-                    days.get(i).setChecked(true);
-                    bDays[i] = true;
-                }
-            }
-
-            if(bundleDays[0] && bundleDays[6]) weekends_btn.setChecked(true);
-            if(bundleDays[1] && bundleDays[2] && bundleDays[3] && bundleDays[4] && bundleDays[5]) weekdays_btn.setChecked(true);
-        }
     }
 
-    private void createTimerSession (String name, TimerSession.TimerSessionType type, int startHour, int startMin, int endHour, int endMin, List<ToggleButton> days, int color) {
-        if (name == null || name.equals("")) {
+    // Rules:
+    //    - cannot create a timer with an empty name
+    //    - cannot create a timer that ends before it begins
+    //    - cannot create a timer without a day
+    private boolean checkValidity(TimerSession newTimer) {
+        String name = newTimer.getName().trim();
+        if (name.equals("")) {
             createDialog("Insufficient info", "Please specify a timer name.");
-            return;
+            return false;
         }
 
-        boolean daySelected = false;
-        for (int i = 0; i < 7; i++) {
-            if (bDays[i]) {
-                daySelected = true;
-                break;
-            }
-        }
-
-        if (!daySelected) {
-            createDialog("Insufficient info", "Please specify a day.");
-            return;
-        }
-
-        Calendar start = generateCalendar(startHour, startMin);
-        Calendar end = generateCalendar(endHour, endMin);
-        if (!start.before(end)) {
+        if (!newTimer.getStartTime().before(newTimer.getEndTime())) {
             createDialog("Invalid Time Range", "Please specify a valid range.");
-            return;
+            return false;
         }
 
-        TimerSession newTimer = new TimerSession(name, type, start, end, bDays, color);
+        boolean[] days = newTimer.getDays();
+        for (int i = 0; i < 7; i++) {
+            if (days[i]) return true;
+        }
+
+        createDialog("Insufficient info", "Please specify a day.");
+        return false;
+    }
+
+    // Sum up the values on the interface and produce a new TimerSession object
+    private TimerSession produceNewTSObject() {
+        String name = nameField.getText().toString();
+        TimerSession.TimerSessionType type;
+        if(vibrate_toggle.isChecked()) type = TimerSession.TimerSessionType.VIBRATE;
+        else type = TimerSession.TimerSessionType.SILENT;
+
+        String[] temp = start_time_display.getText().toString().split(":");
+        int h = Integer.parseInt(temp[0]);
+        int m = Integer.parseInt(temp[1]);
+        Calendar startTime = generateCalendar(h,m);
+
+        temp = end_time_display.getText().toString().split(":");
+        h = Integer.parseInt(temp[0]);
+        m = Integer.parseInt(temp[1]);
+        Calendar endTime = generateCalendar(h,m);
+
+        return new TimerSession(name, type, startTime, endTime, boolean_days, colorPicked);
+    }
+
+    // Create a new timer unless it is in conflict with another existing timer
+    private void createTimerSession(TimerSession newTimer) throws TimerConflictException {
         TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
-
-        try {
-            if (ts == null || (ts != null && isModified(newTimer) == 1)) {
-                if (ts != null && isModified(newTimer) == 1) {
-                    newTimer.setActive(ts.getActive());
-                    timerSessionHolder.removeTimer(ts);
-                }
-                timerSessionHolder.addTimer(newTimer);
-                Log.d("CreateTimer", "creating timer with the following information: \n" +
-                        "Name: " + name + "\n" +
-                        "Type: " + type + "\n" +
-                        "StartTime" + start.get(Calendar.HOUR_OF_DAY) + ":" + start.get(Calendar.MINUTE) + "\n" +
-                        "EndTime" + end.get(Calendar.HOUR_OF_DAY) + ":" + end.get(Calendar.MINUTE) + "\n" +
-                        "Days" + printArray(bDays) + "\n");
-            } else {
-                if (ts != null && isModified(newTimer) == 0) {
-                    TimerSession existingTimer = timerSessionHolder.getTimerById(ts.getId());
-                    existingTimer.setName(name);
-                    existingTimer.setColor(color);
-                    Log.d("CreateTimer", "Bundle not null and only name or color changed");
-                } else {
-                    Log.d("CreateTimer", "Bundle not null and Timer not modified");
-                }
-            }
-        } catch (TimerConflictException e) {
-            createDialog("Timer Conflict", "The time specified is in conflict with another timer. Please try again.");
-            return;
-        }
-
+        timerSessionHolder.addTimer(newTimer);
         finish();
+    }
+
+    // Doesn't create a new system timer if only the name or color has been modified
+    private void modifyTimer(TimerSession newTimer) throws TimerConflictException {
+        TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
+        int modify = isModified(newTimer);
+        switch(modify) {
+            case -1: // no new change has been made
+                break;
+            case 0: // minor change
+                TimerSession existingTimer = timerSessionHolder.getTimerById(bundledTimer.getId());
+                existingTimer.setName(newTimer.getName());
+                existingTimer.setColor(newTimer.getColor());
+                finish();
+                break;
+            case 1: // big change
+                newTimer.setActive(bundledTimer.getActive());
+                timerSessionHolder.updateTimer(newTimer, bundledTimer);
+                finish();
+                break;
+        }
     }
 
     //change weekdays + weekends button colors
     private void changeButtonColors(int colorPicked) {
-        for(ToggleButton day : days) {
+        for(ToggleButton day : toggle_btn_days) {
             if(day.isChecked()) {
                 changeButtonColor(day, colorPicked);
             } else {
@@ -497,31 +413,26 @@ public class CreateTimerActivity extends FragmentActivity {
             }
         }
 
-        ToggleButton weekdays_btn = (ToggleButton) findViewById(R.id.create_timer_weekdays_btn);
-        ToggleButton weekends_btn = (ToggleButton) findViewById(R.id.create_timer_weekends_btn);
-
-        if(weekdays_btn.isChecked()) {
-            changeButtonColor(weekdays_btn, colorPicked);
+        if(weekdays_toggle.isChecked()) {
+            changeButtonColor(weekdays_toggle, colorPicked);
         } else {
-            weekdays_btn.setChecked(true);
-            changeButtonColor(weekdays_btn, colorPicked);
-            weekdays_btn.setChecked(false);
+            weekdays_toggle.setChecked(true);
+            changeButtonColor(weekdays_toggle, colorPicked);
+            weekdays_toggle.setChecked(false);
         }
-        if(weekends_btn.isChecked()) {
-            changeButtonColor(weekends_btn, colorPicked);
+        if(weekends_toggle.isChecked()) {
+            changeButtonColor(weekends_toggle, colorPicked);
         } else {
-            weekends_btn.setChecked(true);
-            changeButtonColor(weekends_btn, colorPicked);
-            weekends_btn.setChecked(false);
+            weekends_toggle.setChecked(true);
+            changeButtonColor(weekends_toggle, colorPicked);
+            weekends_toggle.setChecked(false);
         }
 
-        ToggleButton vibrate_btn = (ToggleButton) findViewById(R.id.create_timer_type_vibrate);
-        ToggleButton silent_btn  = (ToggleButton) findViewById(R.id.create_timer_type_silent);
-
-        if(vibrate_btn.isChecked()) vibrate_btn.setTextColor(colorPicked);
-        else silent_btn.setTextColor(colorPicked);
+        if(vibrate_toggle.isChecked()) vibrate_toggle.setTextColor(colorPicked);
+        else silent_toggle.setTextColor(colorPicked);
     }
 
+    // change the color of the checked state of the ToggleButton
     private void changeButtonColor(ToggleButton btn, int rgbColor) {
         try {
             StateListDrawable stateListDrawable = (StateListDrawable) btn.getBackground();
@@ -530,21 +441,29 @@ public class CreateTimerActivity extends FragmentActivity {
             Method getStateDrawableIndex = StateListDrawable.class.getMethod("getStateDrawableIndex", int[].class);
             int index = (int) getStateDrawableIndex.invoke(stateListDrawable,currentState);
             GradientDrawable drawable = (GradientDrawable) getStateDrawable.invoke(stateListDrawable,index);
-            drawable.setColor(colorPicked);
+            drawable.setColor(rgbColor);
             drawable.invalidateSelf();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            return;
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-            return;
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return;
         } catch (Exception e) {
             e.printStackTrace();
-            return;
         }
+    }
+
+    // change toolbar and status bar color
+    private void changeThemeColor(int color) {
+        //To darken the colorPicked
+        float[] hsv = new float[3];
+        Color.colorToHSV(color, hsv);
+        hsv[2] *= 0.8f;
+        int colorPickedDarker = Color.HSVToColor(hsv);
+
+        //Changing Status Bar color
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(colorPickedDarker);
+        }
+        colorPicked = color;
+        toolbar.setBackgroundColor(color);
     }
 
     //to get rid of keyboard
@@ -555,6 +474,7 @@ public class CreateTimerActivity extends FragmentActivity {
         }
     }
 
+    // generate a calendar object on the current day with hour and minute
     private Calendar generateCalendar(int hour, int minute) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, hour);
@@ -564,9 +484,12 @@ public class CreateTimerActivity extends FragmentActivity {
         return cal;
     }
 
-    public void createDialog(String title, String msg) {
-        new AlertDialog.Builder(this)
+    // create an alert dialog
+    private void createDialog(String title, String msg) {
+        if(dialog != null && dialog.isShowing()) dialog.dismiss();
+        dialog = new AlertDialog.Builder(this)
                 .setTitle(title)
+                .setIcon(R.drawable.ic_launcher)
                 .setMessage(msg)
                 .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                     @Override
@@ -576,26 +499,114 @@ public class CreateTimerActivity extends FragmentActivity {
                 }).show();
     }
 
+    // create a string in the format HH:mm from a calendar object
+    private String generateTimeFromCalendar(Calendar c) {
+        int hour = c.get(Calendar.HOUR_OF_DAY);
+        int min = c.get(Calendar.MINUTE);
+        String hour_str = (hour < 10)?  "0" + hour: Integer.toString(hour);
+        String min_str = (min < 10)?  "0" + min: Integer.toString(min);
+        return hour_str + ":" + min_str;
+    }
+
+    // set boolean at index d to false and
+    // uncheck the toggle button on screen
+    private void markDay(int d, boolean b) {
+        boolean_days[d] = b;
+        toggle_btn_days.get(d).setChecked(b);
+    }
+
+    // set highlight to toggle btn text
+    // and set toggle btn to be checked
+    private void markVibrateType(ToggleButton btn, Boolean b) {
+        btn.setChecked(b);
+        if(b) btn.setTextColor(colorPicked); // checked
+        else  btn.setTextColor(getResources().getColor(android.R.color.black)); // unchecked
+    }
+
+    // if Mon-Fri are checked, check the weekdays button
+    // if Sat,Sun are checked, check the weekends button
+    private void checkDays() {
+        weekdays_toggle.setChecked(true);
+        for(int i = 1; i <= 5; i++) {
+            if(!boolean_days[i]) {
+                weekdays_toggle.setChecked(false);
+                break;
+            }
+        }
+        weekends_toggle.setChecked(false);
+        if(boolean_days[0] && boolean_days[6]) weekends_toggle.setChecked(true);
+    }
+
     // return 1 if modified
     // return 0 if only color or name are modified
     // return -1 if nothing is modified
     private int isModified(TimerSession newTimer) {
-        Log.d("TSDAYS", printArray(bundleDays));
-        Log.d("NEWDAYS", printArray(newTimer.getDays()));
-        if (!newTimer.getStartTime().equals(ts.getStartTime()) || !newTimer.getEndTime().equals(ts.getEndTime()) ||
-                newTimer.getDays() != ts.getDays() || newTimer.getType() != ts.getType()){
-            Log.d("isModified", "returning 1");
+        if (!newTimer.getStartTime().equals(bundledTimer.getStartTime()) || !newTimer.getEndTime().equals(bundledTimer.getEndTime()) ||
+                !arrayCompare(newTimer.getDays(),bundledTimer.getDays()) || newTimer.getType() != bundledTimer.getType()){
+            System.out.println("RETURNING 1");
             return 1;
-        } else if (newTimer.getColor() != ts.getColor() || !newTimer.getName().equals(ts.getName())) {
-            Log.d("isModified", "returning 0");
+        } else if (newTimer.getColor() != bundledTimer.getColor() || !newTimer.getName().equals(bundledTimer.getName())) {
+            System.out.println("RETURNING 0");
             return 0;
         } else {
-            Log.d("isModified", "returning -1");
+            System.out.println("RETURNING -1");
             return -1;
         }
     }
 
-    String printArray(boolean[] array) {
+    private boolean arrayCompare(boolean[] arr1, boolean[] arr2) {
+        for(int i = 0; i < arr1.length; i++) {
+            if(arr1[i] != arr2[i]) return false;
+        }
+        return true;
+    }
+
+    private void showTimePickerDialog(int h, int m, String tag) {
+        Bundle b = new Bundle();
+        b.putInt(KEY_HOUR, h);
+        b.putInt(KEY_MINUTE, m);
+        timePicker.setArguments(b);
+        timePicker.show(getSupportFragmentManager(), tag);
+    }
+
+    @Override
+    public void onTimeSet(TimePicker t, int h, int m) {
+        if(timePicker.getTag().equals(START_TIME_TAG)) {
+            start_time_display.setText(fixTimeFormat(h) + ":" + fixTimeFormat(m));
+        } else {
+            end_time_display.setText(fixTimeFormat(h) + ":" + fixTimeFormat(m));
+        }
+    }
+
+    // Given a time append 0 if needed
+    // eg. 1 -> 01
+    private String fixTimeFormat(int n) {
+        if(n < 10) return "0" + n;
+        else return Integer.toString(n);
+    }
+
+    private int getIntFromDayOfWeek(int DAY_OF_WEEK) {
+        switch(DAY_OF_WEEK) {
+            case Calendar.SUNDAY:
+                return 0;
+            case Calendar.MONDAY:
+                return 1;
+            case Calendar.TUESDAY:
+                return 2;
+            case Calendar.WEDNESDAY:
+                return 3;
+            case Calendar.THURSDAY:
+                return 4;
+            case Calendar.FRIDAY:
+                return 5;
+            case Calendar.SATURDAY:
+                return 6;
+        }
+        return -1;
+    }
+
+    // ONLY FOR DEBUGGING
+    private String printArray(boolean[] array) {
         StringBuffer sb = new StringBuffer();
         for(int i = 0; i < array.length; i++){
             if(array[i]) sb.append("1 ");
