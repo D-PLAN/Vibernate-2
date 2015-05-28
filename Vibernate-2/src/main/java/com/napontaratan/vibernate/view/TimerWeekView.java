@@ -9,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.*;
@@ -48,6 +49,10 @@ public class TimerWeekView extends View {
     private final double PERCENTAGE_TIMER_WIDTH = 0.5;
     private final double PERCENTAGE_TIMER_PADDING_LEFT = 0.25;
 
+    //divider layout
+    private RectF[] dividerRects;
+    private int divXLeft;
+    private int divXRight;
 
     // timer layout
     private float timerPadding;
@@ -56,20 +61,14 @@ public class TimerWeekView extends View {
 
     private float timerYStart;
     private float timerYEnd;
-    private float timerXLeft;
-    private float timerXRight;
-
-    //divider layout
-    private int divXLeft;
-    private int divXRight;
+    private float[] timerXLefts;
+    private float[] timerXRights;
 
     // Paints
     private Paint dividerPaint = new Paint();
     private Paint timerPaint = new Paint();
 
     // Rects
-    private RectF containerRect;
-    private RectF dividerRect;
     private final static int BORDER_RADIUS = 15;
 
     // Bitmaps
@@ -82,9 +81,9 @@ public class TimerWeekView extends View {
     //timer info
     private int earliestTime;
 
-    private HashMap<Integer, List<RectF>> timerRectsMaps;
-    private Map<Integer, TimerSession> timerHiddenRectsMaps;
+    private SparseArray<List<RectF>> timerRectsById;
     private TimerSessionHolder timerSessionHolder;
+    private List<TimerSession> shortTimerSessions;
     private TimerSession selectedTimerSession;
 
     public TimerWeekView(Context context) {
@@ -114,8 +113,9 @@ public class TimerWeekView extends View {
     private void init(AttributeSet attrs, int defStyle) {
         isDimensionsSet = false;
 
-        timerRectsMaps =  new HashMap<Integer, List<RectF>>();
-        timerHiddenRectsMaps = new HashMap<Integer, TimerSession>();
+        dividerRects = new RectF[NUM_DIVIDERS];
+        timerRectsById =  new SparseArray<List<RectF>>();
+        shortTimerSessions = new ArrayList<TimerSession>();
 
         timerSessionHolder = TimerSessionHolder.getInstance();
         timerSessionHolder.setView(this);
@@ -125,19 +125,19 @@ public class TimerWeekView extends View {
 
         timerPaint.setStyle(Paint.Style.FILL);
 
-        containerRect = new RectF();
-        dividerRect = new RectF();
+        timerXLefts = new float[NUM_COLUMNS];
+        timerXRights = new float[NUM_COLUMNS];
 
         vibrateBitmapWhite = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_action_vibrate_white);
         silentBitmapWhite = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_action_silent_white );
 
         vibrateDrawable = new BitmapDrawable(getResources(), vibrateBitmapWhite);
         silentDrawable = new BitmapDrawable(getResources(), silentBitmapWhite);
-
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+        //These are member variables to reduce allocations per draw cycle.
         if(!isDimensionsSet) {
             int paddingLeft = getPaddingLeft();
             int paddingTop = getPaddingTop();
@@ -158,108 +158,164 @@ public class TimerWeekView extends View {
             timerWidth = (int) (columnWidth * PERCENTAGE_TIMER_WIDTH);
             timerPaddingLeft = (int) (columnWidth * PERCENTAGE_TIMER_PADDING_LEFT);
 
+            calculateDividers();
+            calculateTimerRectWidth();
+            calculateTimerTypeIconDimension();
             isDimensionsSet = true;
         }
 
         drawDividers(canvas);
 
         if(!timerSessionHolder.isEmpty()) {
-            //These are member variables to reduce allocations per draw cycle.
-            timerRectsMaps =  new HashMap<Integer, List<RectF>>();
-            timerHiddenRectsMaps = new HashMap<Integer, TimerSession>();
-            float timerLength = getTimerBlockLength();
-
-            for(int i = 0; i < NUM_COLUMNS; i++) {
-                containerXLeft = (i * columnWidth) + (i * dividerWidth);
-                containerXRight = containerXLeft + columnWidth;
-                //for each timer in this day
-                timerXLeft = containerXLeft + timerPaddingLeft;
-                timerXRight = timerXLeft + timerWidth;
-                if(!(iconDimension > 0)) {
-                    iconDimension = timerXRight - timerXLeft;
-                }
-                List<TimerSession> timersForTheDay = timerSessionHolder.getTimerOnThisDay(i);
-                timerYStart = 0;
-                timerYEnd = 0;
-                for(int j = 0; j < timersForTheDay.size(); j++) {
-                    TimerSession timerSession = timersForTheDay.get(j);
-                    timerYStart = scaled(timerSession.getStartTime(), timerLength);
-                    if(j == 0) {
-                        timerYStart += timerPadding;
-                    }
-                    timerYEnd = scaled(timerSession.getEndTime(), timerLength);
-                    if(isTimerBlockVisible(timerYStart, timerYEnd)) {
-                        // draw the actual timers itself as rectangle blocks
-                        RectF timerRect = new RectF();
-                        timerRect.set(timerXLeft, timerYStart, timerXRight, timerYEnd);
-                        timerPaint.setColor(timerSession.getColor());
-                        canvas.drawRoundRect(timerRect, BORDER_RADIUS, BORDER_RADIUS, timerPaint);
-                        if(timerSession.getType() == TimerSession.TimerSessionType.VIBRATE) {
-                            vibrateDrawable.setBounds((int)timerXLeft, (int) timerYStart, (int)timerXRight, (int)(timerYStart + iconDimension));
-                            vibrateDrawable.draw(canvas);
-                        } else if (timerSession.getType() == TimerSession.TimerSessionType.SILENT) {
-                            silentDrawable.setBounds((int)timerXLeft, (int) timerYStart, (int)timerXRight, (int)(timerYStart + iconDimension));
-                            silentDrawable.draw(canvas);
-                        }
-                        // keep track of timerSession rects
-                        // if timerSession id is already in map, add current timerSession to it's value
-                        List<RectF> currTimers = (timerRectsMaps.get(timerSession.getId()) == null)? new ArrayList<RectF>() :
-                                timerRectsMaps.get(timerSession.getId());
-                        currTimers.add(timerRect);
-                        timerRectsMaps.put(timerSession.getId(), currTimers);
-                    } else {
-                        timerHiddenRectsMaps.put(timerSession.getId(), timerSession);
-                    }
-                }
-            }
+            timerRectsById =  new SparseArray<List<RectF>>(); // clear out
+            drawTimerBlocks(canvas);
         }
-
-        SwipeLayoutInfoView.displayTimerInfo(this.getRootView(), selectedTimerSession, timerSessionHolder, timerRectsMaps, timerHiddenRectsMaps);
+        SwipeLayoutInfoView.displayTimerInfo(this.getRootView(),
+                selectedTimerSession, timerSessionHolder, shortTimerSessions.contains(selectedTimerSession));
     }
 
-    private void drawDividers(Canvas canvas) {
+    private void calculateDividers() {
         for(int i = 0; i < NUM_DIVIDERS; i++) {
             // i+1  to account for every timer block before the divider
             divXLeft = (((i+1) % (NUM_DIVIDERS +1)) * columnWidth) + (i * dividerWidth);
             divXRight = divXLeft + dividerWidth;
-            dividerRect.set(divXLeft, 0, divXRight, contentHeight);
-            canvas.drawRoundRect(dividerRect, 0, 0, dividerPaint);
+            RectF dividerRect = new RectF(divXLeft, 0, divXRight, contentHeight);
+            dividerRects[i] = dividerRect;
         }
     }
 
-    private float getTimerBlockLength() {
+    private void calculateTimerRectWidth() {
+        float timerXLeft;
+        float timerXRight;
+        for(int i = 0; i < NUM_COLUMNS; i++) {
+            containerXLeft = (i * columnWidth) + (i * dividerWidth);
+            containerXRight = containerXLeft + columnWidth;
+            timerXLeft = containerXLeft + timerPaddingLeft;
+            timerXLefts[i] = timerXLeft;
+            timerXRight = timerXLeft + timerWidth;
+            timerXRights[i] = timerXRight;
+        }
+    }
+
+    private void calculateTimerTypeIconDimension() {
+        iconDimension = timerXRights[0] - timerXLefts[0];
+    }
+
+    private void drawDividers(Canvas canvas) {
+        for(int i = 0; i < NUM_DIVIDERS; i++) {
+            canvas.drawRoundRect(dividerRects[i], 0, 0, dividerPaint);
+        }
+    }
+
+    private void drawTimerBlocks(Canvas canvas) {
+        markShortTimers();
+        float timerLength = calculateTimerBlockLength();
+        for(int i = 0; i < NUM_COLUMNS; i++) {
+            List<TimerSession> timerOnThisDay = getDrawableTimer(i);
+            timerYStart = timerPadding;
+            timerYEnd = 0;
+            for(int j = 0; j < timerOnThisDay.size(); j++) {
+                TimerSession timerSession = timerOnThisDay.get(j);
+                timerYStart = scaled(timerSession.getStartTime(), timerLength);
+                timerYEnd = scaled(timerSession.getEndTime(), timerLength);
+                if(j == 0) {
+                    timerYStart += timerPadding;
+                }
+                if(j == timerOnThisDay.size()-1) {
+                    timerYEnd -= timerPadding;
+                }
+                RectF timerRect = new RectF(timerXLefts[i], timerYStart, timerXRights[i], timerYEnd);
+                drawTimerRect(canvas, timerSession, timerRect);
+                RectF iconRect = new RectF(timerXLefts[i], timerYStart, timerXRights[i], timerYStart+iconDimension);
+                drawTimerTypeIcon(canvas, timerSession, iconRect);
+                storeTimerRects(timerSession.getId(), timerRect);
+            }
+        }
+    }
+
+    private void markShortTimers() {
+        // Short timers are not to be displayed
+        // Calculating height should not take these timers into account
+        shortTimerSessions = new ArrayList<TimerSession>();
+        float currTimeLength = calculateTimerBlockLength();
+        for(TimerSession timerSession: timerSessionHolder) {
+            float yStart = scaled(timerSession.getStartTime(), currTimeLength);
+            float yEnd = scaled(timerSession.getEndTime(), currTimeLength);
+            if(!isTimerBlockVisible(yStart, yEnd)) {
+                shortTimerSessions.add(timerSession);
+            }
+        }
+    }
+
+    private List<TimerSession>  getDrawableTimer(int day) {
+        // Filter out short timers that will not be drawn
+        List<TimerSession> timerOnThisDay = timerSessionHolder.getTimerOnThisDay(day);
+        List<TimerSession> clone = new ArrayList<TimerSession>(timerOnThisDay);
+        for(TimerSession timerSession: timerOnThisDay) {
+            if(shortTimerSessions.contains(timerSession)) {
+                clone.remove(timerSession);
+            }
+        }
+        return clone;
+    }
+
+    private void drawTimerRect(Canvas canvas, TimerSession timerSession,  RectF timerRect) {
+        timerPaint.setColor(timerSession.getColor());
+        canvas.drawRoundRect(timerRect, BORDER_RADIUS, BORDER_RADIUS, timerPaint);
+    }
+
+    private void drawTimerTypeIcon(Canvas canvas, TimerSession timerSession, RectF rectFBound) {
+        Rect rectBound = new Rect();
+        rectFBound.round(rectBound);
+        if(timerSession.getType() == TimerSession.TimerSessionType.VIBRATE) {
+            vibrateDrawable.setBounds(rectBound);
+            vibrateDrawable.draw(canvas);
+        } else if (timerSession.getType() == TimerSession.TimerSessionType.SILENT) {
+            silentDrawable.setBounds(rectBound);
+            silentDrawable.draw(canvas);
+        }
+    }
+
+    private void storeTimerRects(int timerId, RectF timerRect) {
+        // This will be used to identify timers
+        // in touch event later
+        List<RectF> timerRects = (timerRectsById.get(timerId) == null)? new ArrayList<RectF>() :
+                            timerRectsById.get(timerId);
+        timerRects.add(timerRect);
+        timerRectsById.put(timerId, timerRects);
+    }
+
+    private float calculateTimerBlockLength() {
+        // To determine the drawing pixel per minute
         // Drawing height is determine by get the total duration of the day for the week
         // and dividing it with the total content height scale to minutes
-        // to determine the pixel per minute
+        // Excludes short timers
         earliestTime = 86400;
         int latest = 0;
         for(TimerSession timerSession: timerSessionHolder) {
-            int startHour = timerSession.getStartTime().get(Calendar.MINUTE) + (60* timerSession.getStartTime().get(Calendar.HOUR_OF_DAY));
-            int endHour = timerSession.getEndTime().get(Calendar.MINUTE) + (60* timerSession.getEndTime().get(Calendar.HOUR_OF_DAY));
-            if(startHour < earliestTime) {
-                earliestTime = startHour;
-            }
-            if(endHour > latest) {
-                latest = endHour;
+            if(!shortTimerSessions.contains(timerSession)) {
+                int startHour = timerSession.getStartTime().get(Calendar.MINUTE) + (60* timerSession.getStartTime().get(Calendar.HOUR_OF_DAY));
+                int endHour = timerSession.getEndTime().get(Calendar.MINUTE) + (60* timerSession.getEndTime().get(Calendar.HOUR_OF_DAY));
+                if(startHour < earliestTime) {
+                    earliestTime = startHour;
+                }
+                if(endHour > latest) {
+                    latest = endHour;
+                }
             }
         }
-        // factor in top and bottom padding
-        float padding = 2 * timerPadding;
-        float height = (float) (contentHeight - padding);
         float duration = (float)(latest - earliestTime);
-        return height / duration;
-    }
-
-
-    private boolean isTimerBlockVisible(float yStart, float yEnd) {
-        return (yEnd - yStart) > iconDimension;
+        return contentHeight / duration;
     }
 
     private float scaled(Calendar realTime, float timerLength) {
         //we scale the time so that the earliest time would be the starting point instead of 0
-        // scaling by HOUR
         int time = realTime.get(Calendar.MINUTE) + (60 * realTime.get(Calendar.HOUR_OF_DAY));
         return (float)(time - earliestTime) * timerLength;
+    }
+
+    private boolean isTimerBlockVisible(float yStart, float yEnd) {
+        return (yEnd - yStart) > iconDimension;
     }
 
     @Override
@@ -271,10 +327,26 @@ public class TimerWeekView extends View {
         float y = e.getY();
         //  show the corresponding timer info on the bottom cardview
         selectedTimerSession = getSelectedTimer(x, y);
-        SwipeLayoutInfoView.displayTimerInfo(this.getRootView(), selectedTimerSession, timerSessionHolder, timerRectsMaps, timerHiddenRectsMaps);
+        SwipeLayoutInfoView.displayTimerInfo(this.getRootView(), selectedTimerSession,
+                timerSessionHolder, shortTimerSessions.contains(selectedTimerSession));
         return true;
     }
 
+    private TimerSession getSelectedTimer(float x, float y) {
+        // Find the rectangle that contains this point
+        // get the timer using id correspoding to this timer
+        for(int i = 0; i < timerRectsById.size(); i++) {
+            List<RectF> timerRects = timerRectsById.valueAt(i);
+            int timerId = timerRectsById.keyAt(i);
+            for(RectF rect: timerRects) {
+                if(rect.contains(x, y)) {
+                    return timerSessionHolder.getTimerById(timerId);
+                }
+            }
+
+        }
+        return null;
+    }
 
     /**
      * Clears the display of timer's information. Called after timer has been edited or deleted
@@ -284,22 +356,9 @@ public class TimerWeekView extends View {
         this.invalidate();
     }
 
-    private TimerSession getSelectedTimer(float x, float y) {
-        // Find the rectangle that contains this point
-        // get the timer using id correspoding to this timer
-        Iterator it = timerRectsMaps.entrySet().iterator();
-        while(it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            List<RectF> listOfTimerRects = (List<RectF>) pair.getValue();
-            for(RectF rect: listOfTimerRects)
-                if(rect.contains(x, y)) {
-                    int timerId = (int) pair.getKey();
-                    return timerSessionHolder.getTimerById(timerId);
-                }
-        }
-        return null;
-    }
-
+    /**
+     *   Swipe Layout
+     */
     private static class SwipeLayoutInfoView {
 
         private static View root;
@@ -331,8 +390,7 @@ public class TimerWeekView extends View {
         // If timer is too short to be display, tell user that
         public static void displayTimerInfo(final View view, final TimerSession selectedTimerSession,
                                             final TimerSessionHolder timerSessionHolder,
-                                            final Map<Integer, List<RectF>> timerRectsMaps,
-                                            final Map<Integer, TimerSession> timerHiddenRectsMaps) {
+                                            boolean shortTimer) {
             setupView(view);
 
             if(selectedTimerSession != null) {
@@ -340,7 +398,7 @@ public class TimerWeekView extends View {
                 if(SwipeLayoutInfoView.prevSelectedTimerSession == selectedTimerSession.getId()) return;
                 SwipeLayoutInfoView.prevSelectedTimerSession = selectedTimerSession.getId();
 
-                if(timerHiddenRectsMaps.get(selectedTimerSession.getId()) != null) {
+                if(shortTimer) {
                     // Time is too short to be displayed to users
                     // Address user
                     SwipeLayoutInfoView.timerPlaceholderView.setVisibility(View.VISIBLE);
@@ -388,7 +446,6 @@ public class TimerWeekView extends View {
                                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int which) {
                                             timerSessionHolder.removeTimer(selectedTimerSession);
-                                            timerRectsMaps.remove(selectedTimerSession.getId());
                                         }
                                     })
                                     .setIcon(null)
