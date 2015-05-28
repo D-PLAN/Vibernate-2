@@ -175,10 +175,10 @@ public class TimerSessionHolder implements Iterable<TimerSession>, Observer {
 
     // major updates only
     public void updateTimer(TimerSession newTimer, TimerSession oldTimer) throws TimerConflictException{
-        remove(oldTimer);
         if(isTimerConflict(newTimer)) {
             throw new TimerConflictException("Timer is in conflict with existing timers");
         } else {
+            remove(oldTimer);
             timerController.updateDeviceState(newTimer, oldTimer);
             add(newTimer);
         }

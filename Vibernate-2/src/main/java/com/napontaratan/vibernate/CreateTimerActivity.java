@@ -21,7 +21,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
-import com.napontaratan.vibernate.controller.TimerController;
 import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
 import com.napontaratan.vibernate.model.TimerSessionHolder;
@@ -333,7 +332,6 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
                     else createTimerSession(newTimer);
                 } catch (TimerConflictException e) {
                     createDialog("Timer Conflict", "The time specified is in conflict with another timer. Please try again.");
-                    return;
                 }
             }
         });
@@ -345,7 +343,7 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
     //    - cannot create a timer without a day
     private boolean checkValidity(TimerSession newTimer) {
         String name = newTimer.getName().trim();
-        if (name == null || name.equals("")) {
+        if (name.equals("")) {
             createDialog("Insufficient info", "Please specify a timer name.");
             return false;
         }
@@ -356,23 +354,18 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
         }
 
         boolean[] days = newTimer.getDays();
-        boolean daySelected = false;
         for (int i = 0; i < 7; i++) {
             if (days[i]) return true;
         }
 
-        if (!daySelected) {
-            createDialog("Insufficient info", "Please specify a day.");
-            return false;
-        }
-
-        return true;
+        createDialog("Insufficient info", "Please specify a day.");
+        return false;
     }
 
     // Sum up the values on the interface and produce a new TimerSession object
     private TimerSession produceNewTSObject() {
         String name = nameField.getText().toString();
-        TimerSession.TimerSessionType type = null;
+        TimerSession.TimerSessionType type;
         if(vibrate_toggle.isChecked()) type = TimerSession.TimerSessionType.VIBRATE;
         else type = TimerSession.TimerSessionType.SILENT;
 
@@ -459,18 +452,8 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
             GradientDrawable drawable = (GradientDrawable) getStateDrawable.invoke(stateListDrawable,index);
             drawable.setColor(rgbColor);
             drawable.invalidateSelf();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            return;
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-            return;
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return;
         } catch (Exception e) {
             e.printStackTrace();
-            return;
         }
     }
 
@@ -478,10 +461,9 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
     private void changeThemeColor(int color) {
         //To darken the colorPicked
         float[] hsv = new float[3];
-        int colorPickedDarker = color;
         Color.colorToHSV(color, hsv);
         hsv[2] *= 0.8f;
-        colorPickedDarker = Color.HSVToColor(hsv);
+        int colorPickedDarker = Color.HSVToColor(hsv);
 
         //Changing Status Bar color
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
