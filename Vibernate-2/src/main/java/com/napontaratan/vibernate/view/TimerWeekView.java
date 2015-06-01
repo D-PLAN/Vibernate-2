@@ -80,6 +80,9 @@ public class TimerWeekView extends View {
 
     //timer info
     private int earliestTime;
+    private int latestTime;
+    private int earliestTimerId;
+    private int latestTimerId;
 
     private SparseArray<List<RectF>> timerRectsById;
     private TimerSessionHolder timerSessionHolder;
@@ -212,16 +215,16 @@ public class TimerWeekView extends View {
         float timerLength = calculateTimerBlockLength();
         for(int i = 0; i < NUM_COLUMNS; i++) {
             List<TimerSession> timerOnThisDay = getDrawableTimer(i);
-            timerYStart = timerPadding;
+            timerYStart = 0;
             timerYEnd = 0;
             for(int j = 0; j < timerOnThisDay.size(); j++) {
                 TimerSession timerSession = timerOnThisDay.get(j);
                 timerYStart = scaled(timerSession.getStartTime(), timerLength);
                 timerYEnd = scaled(timerSession.getEndTime(), timerLength);
-                if(j == 0) {
+                if(timerSession.getId() == earliestTimerId) {
                     timerYStart += timerPadding;
                 }
-                if(j == timerOnThisDay.size()-1) {
+                if(timerSession.getId() == latestTimerId) {
                     timerYEnd -= timerPadding;
                 }
                 RectF timerRect = new RectF(timerXLefts[i], timerYStart, timerXRights[i], timerYEnd);
@@ -241,7 +244,7 @@ public class TimerWeekView extends View {
         for(TimerSession timerSession: timerSessionHolder) {
             float yStart = scaled(timerSession.getStartTime(), currTimeLength);
             float yEnd = scaled(timerSession.getEndTime(), currTimeLength);
-            if(!isTimerBlockVisible(yStart, yEnd)) {
+            if(!isTimerBlockVisible(timerSession.getId(), yStart, yEnd)) {
                 shortTimerSessions.add(timerSession);
             }
         }
@@ -291,20 +294,22 @@ public class TimerWeekView extends View {
         // and dividing it with the total content height scale to minutes
         // Excludes short timers
         earliestTime = 86400;
-        int latest = 0;
+        latestTime = 0;
         for(TimerSession timerSession: timerSessionHolder) {
             if(!shortTimerSessions.contains(timerSession)) {
                 int startHour = timerSession.getStartTime().get(Calendar.MINUTE) + (60* timerSession.getStartTime().get(Calendar.HOUR_OF_DAY));
                 int endHour = timerSession.getEndTime().get(Calendar.MINUTE) + (60* timerSession.getEndTime().get(Calendar.HOUR_OF_DAY));
                 if(startHour < earliestTime) {
                     earliestTime = startHour;
+                    earliestTimerId = timerSession.getId();
                 }
-                if(endHour > latest) {
-                    latest = endHour;
+                if(endHour > latestTime) {
+                    latestTime = endHour;
+                    latestTimerId = timerSession.getId();
                 }
             }
         }
-        float duration = (float)(latest - earliestTime);
+        float duration = (float)(latestTime - earliestTime);
         return contentHeight / duration;
     }
 
@@ -314,8 +319,10 @@ public class TimerWeekView extends View {
         return (float)(time - earliestTime) * timerLength;
     }
 
-    private boolean isTimerBlockVisible(float yStart, float yEnd) {
-        return (yEnd - yStart) > iconDimension;
+    private boolean isTimerBlockVisible(int timerId, float yStart, float yEnd) {
+        float adjustedYStart = (timerId == earliestTimerId)? yStart + timerPadding: yStart;
+        float adjustedYEnd = (timerId == latestTimerId)?  yEnd - timerPadding: yEnd;
+        return (adjustedYEnd - adjustedYStart) > iconDimension;
     }
 
     @Override

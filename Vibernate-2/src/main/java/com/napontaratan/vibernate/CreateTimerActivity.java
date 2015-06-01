@@ -51,6 +51,7 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
     private Dialog dialog;
 
     private EditText nameField;
+    private CharSequence defaultName;
 
     private TextView start_time_display;
     private TextView end_time_display;
@@ -181,7 +182,8 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
     // Apply values to UI elements
     public void initializeView(String name, TimerSession.TimerSessionType type, Calendar start_time, Calendar end_time, boolean[] days) {
         nameField.setText(name);
-        nameField.setHint("Enter a name (eg. " + generateHint() + ")");
+        defaultName = generateHint();
+        nameField.setHint("Enter a name (eg. " + defaultName + ")");
 
         if(type == TimerSession.TimerSessionType.VIBRATE) {
             markVibrateType(vibrate_toggle, true);
@@ -339,10 +341,6 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
     //    - cannot create a timer without a day
     private boolean checkValidity(TimerSession newTimer) {
         String name = newTimer.getName().trim();
-        if (name.equals("")) {
-            createDialog("Insufficient info", "Please specify a timer name.");
-            return false;
-        }
 
         if (!newTimer.getStartTime().before(newTimer.getEndTime())) {
             createDialog("Invalid Time Range", "Please specify a valid range.");
@@ -360,7 +358,8 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
 
     // Sum up the values on the interface and produce a new TimerSession object
     private TimerSession produceNewTSObject() {
-        String name = nameField.getText().toString();
+        String name = (nameField.getText().toString().equals(""))?
+                defaultName.toString(): nameField.getText().toString();
         TimerSession.TimerSessionType type;
         if(vibrate_toggle.isChecked()) type = TimerSession.TimerSessionType.VIBRATE;
         else type = TimerSession.TimerSessionType.SILENT;
