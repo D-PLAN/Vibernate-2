@@ -41,15 +41,15 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         /* Analytics Code */
-//        analytics = GoogleAnalytics.getInstance(this);
-//        analytics.setLocalDispatchPeriod(1800);
-//
-//        tracker = analytics.newTracker("UA-XXXXX-Y");
-//        tracker.enableExceptionReporting(true);
-//        tracker.enableAdvertisingIdCollection(true);
-//        tracker.enableAutoActivityTracking(true);
-//
-//        analytics.reportActivityStart(this);
+        analytics = GoogleAnalytics.getInstance(this);
+        analytics.setLocalDispatchPeriod(1800);
+
+        tracker = analytics.newTracker("UA-XXXXX-Y");
+        tracker.enableExceptionReporting(true);
+        tracker.enableAdvertisingIdCollection(true);
+        tracker.enableAutoActivityTracking(true);
+
+        analytics.reportActivityStart(this);
 
         /* Tutorial Code */
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);

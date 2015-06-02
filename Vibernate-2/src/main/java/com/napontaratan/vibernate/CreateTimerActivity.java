@@ -21,6 +21,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
 import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
 import com.napontaratan.vibernate.model.TimerSessionHolder;
@@ -68,17 +69,17 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
     // VALUES
     private int colorPicked;
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        GoogleAnalytics.getInstance(this).reportActivityStart(this);
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        GoogleAnalytics.getInstance(this).reportActivityStop(this);
-//    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+    }
 
     public void setupElements() {
         nameField = (EditText) findViewById(R.id.create_timer_name_field);
