@@ -22,14 +22,17 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.napontaratan.vibernate.action.TimerSessionAction;
+import com.napontaratan.vibernate.dispatcher.Dispatcher;
 import com.napontaratan.vibernate.model.TimerConflictException;
 import com.napontaratan.vibernate.model.TimerSession;
-import com.napontaratan.vibernate.model.TimerSessionHolder;
+import com.napontaratan.vibernate.model.TimerUtils;
+import com.napontaratan.vibernate.model.VibernateSettings;
+import com.napontaratan.vibernate.store.TimerSessionStore;
 import com.napontaratan.vibernate.view.ColorPickerDialog;
 import com.napontaratan.vibernate.view.ColorPickerSwatch;
 import com.napontaratan.vibernate.view.CreateTimerTimePicker;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -40,6 +43,8 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
     private static String END_TIME_TAG   = "end";
     public static String KEY_HOUR        = "hour";
     public static String KEY_MINUTE      = "minute";
+
+    private TimerSession.TimerAddType timerAddType;
 
     // if modifying a timer, the information is passed through a bundle
     private TimerSession bundledTimer;
@@ -68,6 +73,8 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
 
     // VALUES
     private int colorPicked;
+
+    private Dispatcher dispatcher;
 
     @Override
     protected void onStart() {
@@ -115,12 +122,19 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
         super.onCreate(savedInstance);
         setContentView(R.layout.create_timer);
 
+        dispatcher = Dispatcher.getInstance();
+
+        Bundle bundle = getIntent().getExtras();
+
+        bundledTimer = bundle.get(VibernateSettings.TIMER_ID_KEY) == null?
+                null: TimerSessionStore.getInstance().getTimerSessions().get((Integer) bundle.get(VibernateSettings.TIMER_ID_KEY));
+        timerAddType = bundledTimer == null? (TimerSession.TimerAddType)bundle.get(VibernateSettings.TIMER_ADD_KEY) :
+                bundledTimer.getAddType() == null? TimerSession.TimerAddType.RECURRING: bundledTimer.getAddType();
+
         initializeToolbar();
         setupElements();
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            bundledTimer = (TimerSession) extras.getSerializable("Timer");
+        if (bundledTimer != null) {
             initializeView(bundledTimer);
         } else {
             initializeView();
@@ -145,7 +159,7 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
 
     private void initializeToolbar() {
         toolbar = (Toolbar) findViewById(R.id.create_timer_toolbar);
-        toolbar.setTitle("New Timer");
+        toolbar.setTitle(String.format("New %s timer", timerAddType.toString()));
         toolbar.setNavigationIcon(R.drawable.ic_action_remove);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
 
@@ -170,14 +184,14 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
         Calendar nextHour = Calendar.getInstance();
         nextHour.add(Calendar.HOUR_OF_DAY, 1);
         boolean[] default_days = new boolean[7];
-        default_days[getIntFromDayOfWeek(nextHour.get(Calendar.DAY_OF_WEEK))] = true;
+        default_days[TimerUtils.getVibernateDayOfWeek(nextHour)] = true;
         initializeView("", TimerSession.TimerSessionType.VIBRATE, Calendar.getInstance(), nextHour, default_days);
     }
 
     public void initializeView(TimerSession t) {
         bundledTimerDays = Arrays.copyOf(t.getDays(), 7);
         colorPicked = t.getColor();
-        initializeView(t.getName(), t.getType(), t.getStartTime(), t.getEndTime(), bundledTimerDays);
+        initializeView(t.getName(), t.getSessionType(), t.getStartTime(), t.getEndTime(), bundledTimerDays);
     }
 
     // Apply values to UI elements
@@ -325,24 +339,23 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
             public void onClick(View view) {
                 TimerSession newTimer = produceNewTSObject();
                 // check if fields are valid
-                if(!checkValidity(newTimer)) return;
+                if (!checkValidity(newTimer)) return;
                 try {
-                    if(bundledTimer != null) modifyTimer(newTimer);
+                    if (bundledTimer != null) modifyTimer(newTimer);
                     else createTimerSession(newTimer);
                 } catch (TimerConflictException e) {
-                    createDialog("Timer Conflict", "The time specified is in conflict with another timer. Please try again.");
+                    createDialog("Timer Conflict", String.format("%s. Please try again.", e.getMessage()));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });
     }
 
     // Rules:
-    //    - cannot create a timer with an empty name
     //    - cannot create a timer that ends before it begins
     //    - cannot create a timer without a day
     private boolean checkValidity(TimerSession newTimer) {
-        String name = newTimer.getName().trim();
-
         if (!newTimer.getStartTime().before(newTimer.getEndTime())) {
             createDialog("Invalid Time Range", "Please specify a valid range.");
             return false;
@@ -352,7 +365,6 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
         for (int i = 0; i < 7; i++) {
             if (days[i]) return true;
         }
-
         createDialog("Insufficient info", "Please specify a day.");
         return false;
     }
@@ -361,9 +373,10 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
     private TimerSession produceNewTSObject() {
         String name = (nameField.getText().toString().equals(""))?
                 defaultName.toString(): nameField.getText().toString();
-        TimerSession.TimerSessionType type;
-        if(vibrate_toggle.isChecked()) type = TimerSession.TimerSessionType.VIBRATE;
-        else type = TimerSession.TimerSessionType.SILENT;
+        TimerSession.TimerSessionType sessionType;
+        if(vibrate_toggle.isChecked()) sessionType = TimerSession.TimerSessionType.VIBRATE;
+        else sessionType = TimerSession.TimerSessionType.SILENT;
+        TimerSession.TimerAddType addType = timerAddType;
 
         String[] temp = start_time_display.getText().toString().split(":");
         int h = Integer.parseInt(temp[0]);
@@ -375,32 +388,31 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
         m = Integer.parseInt(temp[1]);
         Calendar endTime = generateCalendar(h,m);
 
-        return new TimerSession(name, type, startTime, endTime, boolean_days, colorPicked);
+        return new TimerSession(name, addType, sessionType, startTime, endTime, boolean_days, colorPicked);
     }
 
     // Create a new timer unless it is in conflict with another existing timer
-    private void createTimerSession(TimerSession newTimer) throws TimerConflictException {
-        TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
-        timerSessionHolder.addTimer(newTimer);
+    private void createTimerSession(TimerSession newTimer) throws Exception {
+        dispatcher.dispatchAction(TimerSessionAction.ADD, newTimer);
         finish();
     }
 
     // Doesn't create a new system timer if only the name or color has been modified
-    private void modifyTimer(TimerSession newTimer) throws TimerConflictException {
-        TimerSessionHolder timerSessionHolder = TimerSessionHolder.getInstance();
+    private void modifyTimer(TimerSession newTimer) throws Exception {
         int modify = isModified(newTimer);
+        newTimer.setActive(bundledTimer.getActive());
         switch(modify) {
-            case -1: // no new change has been made
-                break;
             case 0: // minor change
-                TimerSession existingTimer = timerSessionHolder.getTimerById(bundledTimer.getId());
-                existingTimer.setName(newTimer.getName());
-                existingTimer.setColor(newTimer.getColor());
+                bundledTimer.setName(newTimer.getName());
+                bundledTimer.setColor(newTimer.getColor());
+                dispatcher.dispatchAction(TimerSessionAction.EDIT_PROPERTY, bundledTimer);
                 finish();
                 break;
             case 1: // big change
-                newTimer.setActive(bundledTimer.getActive());
-                timerSessionHolder.updateTimer(newTimer, bundledTimer);
+                dispatcher.dispatchAction(TimerSessionAction.REPLACE_TIMER, bundledTimer, newTimer);
+                finish();
+                break;
+            default: // no change has been made
                 finish();
                 break;
         }
@@ -547,7 +559,7 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
     // return -1 if nothing is modified
     private int isModified(TimerSession newTimer) {
         if (!newTimer.getStartTime().equals(bundledTimer.getStartTime()) || !newTimer.getEndTime().equals(bundledTimer.getEndTime()) ||
-                !arrayCompare(newTimer.getDays(),bundledTimer.getDays()) || newTimer.getType() != bundledTimer.getType()){
+                !arrayCompare(newTimer.getDays(),bundledTimer.getDays()) || newTimer.getSessionType() != bundledTimer.getSessionType()){
             return 1;
         } else if (newTimer.getColor() != bundledTimer.getColor() || !newTimer.getName().equals(bundledTimer.getName())) {
             return 0;
@@ -585,35 +597,5 @@ public class CreateTimerActivity extends FragmentActivity implements TimePickerD
     private String fixTimeFormat(int n) {
         if(n < 10) return "0" + n;
         else return Integer.toString(n);
-    }
-
-    private int getIntFromDayOfWeek(int DAY_OF_WEEK) {
-        switch(DAY_OF_WEEK) {
-            case Calendar.SUNDAY:
-                return 0;
-            case Calendar.MONDAY:
-                return 1;
-            case Calendar.TUESDAY:
-                return 2;
-            case Calendar.WEDNESDAY:
-                return 3;
-            case Calendar.THURSDAY:
-                return 4;
-            case Calendar.FRIDAY:
-                return 5;
-            case Calendar.SATURDAY:
-                return 6;
-        }
-        return -1;
-    }
-
-    // ONLY FOR DEBUGGING
-    private String printArray(boolean[] array) {
-        StringBuffer sb = new StringBuffer();
-        for(int i = 0; i < array.length; i++){
-            if(array[i]) sb.append("1 ");
-            else sb.append("0 ");
-        }
-        return sb.toString();
     }
 }

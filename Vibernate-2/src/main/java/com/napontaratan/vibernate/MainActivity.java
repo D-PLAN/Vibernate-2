@@ -1,7 +1,7 @@
 package com.napontaratan.vibernate;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.app.*;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,22 +12,17 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
-import com.napontaratan.vibernate.model.TimerSessionHolder;
-
+import com.napontaratan.vibernate.dispatcher.Dispatcher;
+import com.napontaratan.vibernate.model.*;
+import com.napontaratan.vibernate.store.TimerSessionStore;
 
 public class MainActivity extends ActionBarActivity {
 
     public static String FIRST_LAUNCH = "Tutorial";
-    public static GoogleAnalytics analytics;
-    public static Tracker tracker;
-
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-    private ViewPager mViewPager;
-    private Toolbar toolbar;
-    private ImageButton addButton;
 
     @Override
     protected void onStop() {
@@ -39,18 +34,32 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setup();
+    }
 
+    private void setup() {
+        VibernateLogger.init();
+        setupAnalytics();
+        setupTutorial();
+        setupDispatcherAndStore(getApplicationContext());
+        setupResources();
+        setupViews();
+    }
+
+    private void setupAnalytics() {
         /* Analytics Code */
-        analytics = GoogleAnalytics.getInstance(this);
+        GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
         analytics.setLocalDispatchPeriod(1800);
 
-        tracker = analytics.newTracker("UA-XXXXX-Y");
+        Tracker tracker = analytics.newTracker("UA-XXXXX-Y");
         tracker.enableExceptionReporting(true);
         tracker.enableAdvertisingIdCollection(true);
         tracker.enableAutoActivityTracking(true);
 
         analytics.reportActivityStart(this);
+    }
 
+    private void setupTutorial() {
         /* Tutorial Code */
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isFirstLaunch = prefs.getBoolean(FIRST_LAUNCH, true);
@@ -60,19 +69,72 @@ public class MainActivity extends ActionBarActivity {
             tutorial.setClass(MainActivity.this, VibernateTutorial.class);
             startActivity(tutorial);
         }
+    }
 
-        TimerSessionHolder.getInstance().setContext(getApplicationContext());
+    public static void setupDispatcherAndStore(Context ctx) {
+        TimerSessionStore timerSessionStore = TimerSessionStore.getInstance();
+        timerSessionStore.setupStore(ctx);
+        Dispatcher.getInstance().registerStore(timerSessionStore);
+    }
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+    private void setupResources() {
+        TimerSessionCommonView.setupImageResources(getResources());
+    }
+
+    private void setupViews() {
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.app_name);
+        // Inflate a menu to be displayed in the toolbar
+        toolbar.inflateMenu(R.menu.main);
 
-        addButton = (ImageButton) findViewById(R.id.add_button);
-        addButton.setOnClickListener(new View.OnClickListener() {
+        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+        final ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                final MenuItem calendar_btn = toolbar.getMenu().getItem(0);
+                final MenuItem list_btn = toolbar.getMenu().getItem(1);
+                switch (i) {
+                    case 0:
+                        calendar_btn.setIcon(R.drawable.ic_action_go_to_today_selected);
+                        list_btn.setIcon(R.drawable.ic_action_view_as_list);
+                        break;
+                    case 1:
+                        calendar_btn.setIcon(R.drawable.ic_action_go_to_today);
+                        list_btn.setIcon(R.drawable.ic_action_view_as_list_selected);
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+            }
+        });
+
+        final FloatingActionsMenu floatingAddButton = (FloatingActionsMenu) findViewById(R.id.floating_add_button);
+        FloatingActionButton oneTimeAddButton = (FloatingActionButton) findViewById(R.id.onetime_add_button);
+        final Intent addTimerIntent = new Intent();
+        addTimerIntent.setClass(MainActivity.this, CreateTimerActivity.class);
+        oneTimeAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent addTimer = new Intent();
-                addTimer.setClass(MainActivity.this, CreateTimerActivity.class);
-                startActivity(addTimer);
+                floatingAddButton.toggle();
+                addTimerIntent.putExtra(VibernateSettings.TIMER_ADD_KEY, TimerSession.TimerAddType.ONETIME);
+                startActivity(addTimerIntent);
+            }
+        });
+        FloatingActionButton recurringAddButton = (FloatingActionButton) findViewById(R.id.recurring_add_button);
+        recurringAddButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                floatingAddButton.toggle();
+                addTimerIntent.putExtra(VibernateSettings.TIMER_ADD_KEY, TimerSession.TimerAddType.RECURRING);
+                startActivity(addTimerIntent);
             }
         });
 
@@ -99,37 +161,6 @@ public class MainActivity extends ActionBarActivity {
                 return true;
             }
         });
-
-        // Inflate a menu to be displayed in the toolbar
-        toolbar.inflateMenu(R.menu.main);
-
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-            @Override
-            public void onPageScrolled(int i, float v, int i1) {}
-
-            @Override
-            public void onPageSelected(int i) {
-                final MenuItem calendar_btn = toolbar.getMenu().getItem(0);
-                final MenuItem list_btn     = toolbar.getMenu().getItem(1);
-                switch (i) {
-                    case 0:
-                        calendar_btn.setIcon(R.drawable.ic_action_go_to_today_selected);
-                        list_btn.setIcon(R.drawable.ic_action_view_as_list);
-                        break;
-                    case 1:
-                        calendar_btn.setIcon(R.drawable.ic_action_go_to_today);
-                        list_btn.setIcon(R.drawable.ic_action_view_as_list_selected);
-                        break;
-                }
-            }
-            @Override
-            public void onPageScrollStateChanged(int i) {}
-        });
-
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {

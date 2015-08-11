@@ -3,8 +3,6 @@ package com.napontaratan.vibernate.controller;
 import java.util.Calendar;
 import java.util.List;
 
-import android.media.AudioManager;
-import android.util.Log;
 import com.napontaratan.vibernate.database.VibernateDB;
 import com.napontaratan.vibernate.model.TimerSession;
 
@@ -12,14 +10,21 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import com.napontaratan.vibernate.model.TimerUtils;
+import com.napontaratan.vibernate.model.VibernateSettings;
 
 public final class TimerController {
 
 	private static final int WEEK_MILLISECONDS = 604800000;
-	private VibernateDB datastore;
+    // techinically 7 timers in a week, rounded it up
+    private static final int NUM_OF_TIMERS_IN_A_WEEK = 10;
+    private VibernateDB datastore;
 	private AlarmManager am; 
 	private Context context;
+
+    private enum IntentType {
+        ACTIVATE, DEACTIVATE
+    }
 
 	public TimerController(Context context) {
 		this.context = context;
@@ -27,230 +32,148 @@ public final class TimerController {
 		datastore = VibernateDB.getInstance(context);
 	}
 
-	/**
-	 * Start a repeating vibrate service at the start time and
-	 * a repeating ringtone service at the end time 
-	 * @param timerSession is the vibrateAlarm object to create a timer for
-	 * @author Napon, Sunny
-	 */
-	public void setAlarm(TimerSession timerSession){
-		if(!datastore.contains(timerSession.getId()))
-			datastore.addToDB(timerSession);
-        setupTimers(timerSession);
-	}
-
-    private void setupTimers(TimerSession timerSession) {
-        int timerId = timerSession.getId();
-        List<Calendar> startTimes = timerSession.getStartAlarmCalendars();
-        List<Calendar> endTimes = timerSession.getEndAlarmCalendars();
-        Intent activateVibration = null;
-        if(timerSession.getType() == TimerSession.TimerSessionType.VIBRATE) {
-            activateVibration = new Intent(context, VibrateOnBroadcastReceiver.class);
-        } else if(timerSession.getType() == TimerSession.TimerSessionType.SILENT) {
-            activateVibration = new Intent(context, SilentOnBroadcastReceiver.class);
-        }
-        Intent disableVibration = new Intent(context, OffBroadcastReceiver.class);
-        // Timer on
-        Calendar cal = Calendar.getInstance();
-        int today = cal.get(Calendar.DAY_OF_WEEK);
-        Calendar start = null;
-        for (Calendar startTime : startTimes) {
-            int day = startTime.get(Calendar.DAY_OF_WEEK);
-            int id = timerId + day;
-            long time = startTime.getTimeInMillis();
-            if(day == today){
-               start = startTime;
-            }
-            createSystemTimer(time, id, activateVibration, true);
-        }
-        // Timer off
-        Calendar end = null;
-        for(Calendar endTime : endTimes){
-            int day = endTime.get(Calendar.DAY_OF_WEEK);
-            int id = timerId + day + 10;
-            if(day == today) {
-                end = endTime;
-            }
-            createSystemTimer(endTime.getTimeInMillis(), id, disableVibration, true);
-        }
-
-    }
-
-	/**
-	 * Update DB with the timer's new information
-	 * @param timerSession
-	 */
-	public void updateTimer(TimerSession timerSession) {
-        datastore.updateTimerInDB(timerSession);
-	}
-
-	/**
-	 * Remove the TimerSession object from db and cancel the services
-	 * @param timerSession VibrateTimer object to cancel
-	 * @author Napon, Sunny
-	 */
-	public void removeAlarm(TimerSession timerSession){
-		datastore.remove(timerSession);
-		cancelAlarm(timerSession);
-	}
-
-	/**
-	 * Cancel the services corresponding to the VibrateTimer object
-	 */
-	public void cancelAlarm(TimerSession timerSession) {
-		tearDownTimers(timerSession);
-	}
-
-    private void tearDownTimers(TimerSession timerSession) {
-        List<Calendar> startTimes = timerSession.getStartAlarmCalendars();
-        List<Calendar> endTimes = timerSession.getEndAlarmCalendars();
-        Intent activateVibration = null;
-        if(timerSession.getType() == TimerSession.TimerSessionType.VIBRATE) {
-            activateVibration = new Intent(context, VibrateOnBroadcastReceiver.class);
-        } else if (timerSession.getType() == TimerSession.TimerSessionType.SILENT) {
-            activateVibration = new Intent(context, SilentOnBroadcastReceiver.class);
-        }
-        Intent disableVibration = new Intent(context, OffBroadcastReceiver.class);
-        Calendar cal = Calendar.getInstance();
-        int today = cal.get(Calendar.DAY_OF_WEEK);
-        Calendar start = null;
-        for(Calendar startTime: startTimes) {
-            int day = startTime.get(Calendar.DAY_OF_WEEK);
-            if(day == today) {
-                start = startTime;
-            }
-        }
-        Calendar end = null;
-        for(Calendar endTime : endTimes){
-            int day = endTime.get(Calendar.DAY_OF_WEEK);
-            int id = timerSession.getId() + day;
-            if(day == today) {
-                end = endTime;
-            }
-            cancelSystemTimer(id, activateVibration);
-            cancelSystemTimer(id + 10, disableVibration);
+    /**
+     * Start a repeating vibrate service at the start time and
+     * a repeating ringtone service at the end time
+     * @param timerSession is the vibrateAlarm object to create a timer for
+     * @author Napon, Sunny
+     */
+    public void addTimerSession(TimerSession timerSession) {
+        timerSession.setId(generateNextId());
+        if(!datastore.contains(timerSession.getId()))
+            datastore.addToDB(timerSession);
+        if(timerSession.getActive()) {
+            setAlarm(timerSession);
         }
     }
-
 
     /**
-	 * Create a PendingIntent that will activate at the specified time
-	 * @param time - time in milliseconds
-	 * @param id - unique id from generateNextId(context)
-	 * @param intent - either VibrateOn or VibrateOff
-	 * @author Napon, Sunny
-	 */
-	private void createSystemTimer(long time, int id, Intent intent, boolean repeat){
-		PendingIntent startVibrating = PendingIntent.getBroadcast(context,
-                id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-		if(repeat) {
-			am.setRepeating(AlarmManager.RTC, time, WEEK_MILLISECONDS, startVibrating);
-        } else {
-			am.set(AlarmManager.RTC, time, startVibrating);
-		}
+     * Remove the TimerSession object from db and cancel the services
+     * @param timerSession VibrateTimer object to cancel
+     * @author Napon, Sunny
+     */
+    public void removeTimerSession(TimerSession timerSession) {
+        datastore.remove(timerSession);
+        cancelAlarm(timerSession);
+    }
 
-	}
+    /**
+     * Set the services corresponding to the TimerSession object
+     */
+	public void setAlarm(TimerSession timerSession){
+        setupTimers(timerSession);
+    }
 
-	private void cancelSystemTimer(int id, Intent intent) {
-		PendingIntent stopVibrating = PendingIntent.getBroadcast(context,
-				id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-		stopVibrating.cancel();
-		am.cancel(stopVibrating);
-	}
+    /**
+     * Cancel the services corresponding to the TimerSession object
+     */
+    public void cancelAlarm(TimerSession timerSession) {
+        tearDownTimers(timerSession);
+    }
+
+    /**
+     * Update DB with the timer's new information
+     */
+    public void updateTimer(TimerSession timerSession) {
+        datastore.updateTimerInDB(timerSession);
+    }
 
     public List<TimerSession> getAllTimers() {
         return datastore.getAllTimers();
     }
 
-
-    /**
-     * If current time is within the range of the timer and
-     * the timer is active then adjust phone's state to reflect
-     * the timer state
-     * @param timer
-     * @param oldTimer - if timer is a modification of existing timer
-     */
-    public void updateDeviceState(TimerSession timer, TimerSession oldTimer) {
-        AudioManager audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        // if timer is in range and on same day then update state and we are done
-        if(isInTimeRange(timer) && isOnTimerDay(timer)) {
-            if(!timer.getActive()) {
-                audio.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-            } else if(timer.getType() == TimerSession.TimerSessionType.VIBRATE) {
-                audio.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
-            } else {
-                audio.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-            }
-
-            return;
+    // =========   Helpers ====================
+    private void setupTimers(TimerSession timerSession) {
+        List<Calendar> startTimes = timerSession.getStartAlarmCalendars();
+        List<Calendar> endTimes = timerSession.getEndAlarmCalendars();
+        for (Calendar startTime : startTimes) {
+            createSystemTimer(IntentType.ACTIVATE, startTime, timerSession, true);
         }
-
-        // if timer isn't in range or not on same day AND oldTimer isn't null
-        // then we have to check if time now was in range of old timer
-        // if it is and the new timer is not in range that means we have to set
-        // the device state back to normal
-        // ie. modifying an in range timer so its no longer in range
-        if(oldTimer != null && oldTimer.getActive() && isInTimeRange(oldTimer) && isOnTimerDay(oldTimer)) {
-            audio.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+        for(Calendar endTime : endTimes) {
+            createSystemTimer(IntentType.DEACTIVATE, endTime, timerSession, false);
         }
     }
 
-    // No existing timer (only applicable for new creates)
-    public void updateDeviceState(TimerSession newTimer) {
-        updateDeviceState(newTimer, null);
+    private void tearDownTimers(TimerSession timerSession) {
+        List<Calendar> startTimes = timerSession.getStartAlarmCalendars();
+        for(Calendar startTime : startTimes){
+            // no need to differentiate start & end, since we just care about the day to cancel it
+            cancelSystemTimer(IntentType.ACTIVATE, startTime, timerSession, false);
+            cancelSystemTimer(IntentType.DEACTIVATE, startTime, timerSession, true);
+        }
     }
 
-    // compare if currentTime is within range of timer
-    // regardless of date/day and status(active or not)
-    private boolean isInTimeRange(TimerSession timer) {
-        Calendar now = Calendar.getInstance();
-        Calendar start = Calendar.getInstance();
-        Calendar end   = Calendar.getInstance();
-        start.set(Calendar.HOUR_OF_DAY, timer.getStartTime().get(Calendar.HOUR_OF_DAY));
-        start.set(Calendar.MINUTE, timer.getStartTime().get(Calendar.MINUTE));
-        start.set(Calendar.SECOND, timer.getStartTime().get(Calendar.SECOND));
-        end.set(Calendar.HOUR_OF_DAY, timer.getEndTime().get(Calendar.HOUR_OF_DAY));
-        end.set(Calendar.MINUTE, timer.getEndTime().get(Calendar.MINUTE));
-        boolean isInTimeRange = now.after(start) && now.before(end);
-        return isInTimeRange;
+    // ============  Create Helpers  =====================
+    private void createSystemTimer(IntentType intentType, Calendar time, TimerSession timerSession, boolean triggerUpdate) {
+        PendingIntent pendingIntent = getPendingIntent(intentType, time, timerSession);
+        boolean isDeviceStateUpdated = triggerUpdate && updateDeviceState(time, timerSession, pendingIntent);
+        scheduleAlarm(time, pendingIntent, timerSession, isDeviceStateUpdated);
     }
 
-    // compare if current time is on the same day as
-    // one of the days specified in timer
-    private boolean isOnTimerDay(TimerSession timer) {
-        int today = getIntFromDayOfWeek(Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
-        boolean[] days = timer.getDays();
-        for(int i = 0; i < 7; i++) {
-            if (days[i] && i == today) {
-                return true;
-            }
+    private PendingIntent getPendingIntent(IntentType intentType, Calendar time, TimerSession timerSession) {
+        int intentId = getTimerIntentId(intentType, time, timerSession.getId());
+        Intent intent = createTimerIntent(intentType, time, timerSession);
+        return PendingIntent.getBroadcast(context, intentId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private int getTimerIntentId(IntentType intentType, Calendar time, int timerId) {
+        int day = time.get(Calendar.DAY_OF_WEEK);
+        return (intentType == IntentType.ACTIVATE)? timerId + day : timerId + day + NUM_OF_TIMERS_IN_A_WEEK;
+    }
+
+    private Intent createTimerIntent(IntentType activationType, Calendar time, TimerSession timerSession) {
+        Intent intent = activationType == IntentType.ACTIVATE?
+                timerSession.getSessionType() == TimerSession.TimerSessionType.VIBRATE?
+                        new Intent(context, VibrateOnBroadcastReceiver.class) : new Intent(context, SilentOnBroadcastReceiver.class) :
+                new Intent(context, OffBroadcastReceiver.class);
+        intent.putExtra(VibernateSettings.TIMER_ID_KEY, timerSession.getId());
+        intent.putExtra(VibernateSettings.TIMER_DAY_KEY, TimerUtils.getVibernateDayOfWeek(time));
+        return intent;
+    }
+
+	private void scheduleAlarm(Calendar time, PendingIntent pendingIntent, final TimerSession timerSession, boolean isDeviceStateUpdated){
+        long triggerTime = getTriggerTime(timerSession, time, isDeviceStateUpdated);
+        if(timerSession.getAddType() == TimerSession.TimerAddType.RECURRING) {
+			am.setRepeating(AlarmManager.RTC, triggerTime, WEEK_MILLISECONDS, pendingIntent);
+        } else {
+			am.set(AlarmManager.RTC, triggerTime, pendingIntent);
+		}
+	}
+
+    private long getTriggerTime(TimerSession timerSession, Calendar time, boolean isDeviceStateUpdated) {
+        long triggerTime = time.getTimeInMillis();
+        boolean isRunning =  VibernateSettings.getActiveTimerSessionId(context) == timerSession.getId() &&
+                timerSession.getDays()[VibernateSettings.getActiveTimerSessionDay(context)];
+        boolean shouldUpdateTime = isDeviceStateUpdated || (triggerTime < Calendar.getInstance().getTimeInMillis());
+        return !isRunning && shouldUpdateTime? triggerTime + WEEK_MILLISECONDS : triggerTime;
+    }
+
+    // ============  Cancel Helpers  =====================
+	private void cancelSystemTimer(IntentType intentType, Calendar time, TimerSession timerSession,  boolean triggerUpdate) {
+        PendingIntent pendingIntent = getPendingIntent(intentType, time, timerSession);
+        if(triggerUpdate) updateDeviceState(time, timerSession, pendingIntent);
+        pendingIntent.cancel();
+		am.cancel(pendingIntent);
+	}
+
+    private boolean updateDeviceState(Calendar time, TimerSession timerSession, PendingIntent pendingIntent) {
+        if(isInTimeRange(time, timerSession) && timerSession.getActive()) {
+            am.set(AlarmManager.RTC, Calendar.getInstance().getTimeInMillis(), pendingIntent);
+            return true;
         }
         return false;
     }
 
-    // FOR DEBUGGING ONLY
-    private String printCal(Calendar c) {
-        return c.get(Calendar.YEAR) + " " + c.get(Calendar.MONTH) + " " + c.get(Calendar.DAY_OF_WEEK) + " " + c.get(Calendar.HOUR_OF_DAY) + " " + c.get(Calendar.MINUTE);
-    }
+    private boolean isInTimeRange(Calendar time, TimerSession timerSession) {
+        // compare if time is within currentTime
+        Calendar now = Calendar.getInstance();
+        int today = TimerUtils.getVibernateDayOfWeek(now);
 
-    private int getIntFromDayOfWeek(int DAY_OF_WEEK) {
-        switch(DAY_OF_WEEK) {
-            case Calendar.SUNDAY:
-                return 0;
-            case Calendar.MONDAY:
-                return 1;
-            case Calendar.TUESDAY:
-                return 2;
-            case Calendar.WEDNESDAY:
-                return 3;
-            case Calendar.THURSDAY:
-                return 4;
-            case Calendar.FRIDAY:
-                return 5;
-            case Calendar.SATURDAY:
-                return 6;
-        }
-        return -1;
+        boolean isInTimeRange = now.after(timerSession.getStartTime()) &&
+                now.before(timerSession.getEndTime());
+        boolean isOnTimerDay = TimerUtils.getVibernateDayOfWeek(time) == today;
+
+        return isInTimeRange && isOnTimerDay;
     }
 
 	/**
@@ -258,19 +181,10 @@ public final class TimerController {
 	 * @return a unique alarm id
 	 * @author Napon
 	 */
-	public int generateNextId() {
-		SharedPreferences prefs = context.getSharedPreferences("idcounter", Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = prefs.edit();
-		int counter = prefs.getInt("idcounter", -1);
-		if(counter == -1) {
-			counter = 0;
-			editor.putInt("idcounter", counter);
-			editor.commit();
-		} else {
-			counter = counter + 20;
-			editor.putInt("idcounter", counter);
-			editor.commit();
-		}
+	private int generateNextId() {
+		int counter = VibernateSettings.getIdCounter(context);
+        counter = counter == -1? 0: counter + 20;
+        VibernateSettings.setIdCounter(context, counter);
 		return counter;
 	}
 }

@@ -9,7 +9,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+import com.napontaratan.vibernate.model.TimerUtils;
 
 /**
  * Visual representation of the database
@@ -74,7 +74,7 @@ public class VibernateDB extends SQLiteOpenHelper {
 
 		try {
 			values.put(KEY_ID, timerSession.getId());
-			values.put(KEY_ALARM, TimerSession.serialize(timerSession));
+			values.put(KEY_ALARM, TimerUtils.serialize(timerSession));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -88,7 +88,7 @@ public class VibernateDB extends SQLiteOpenHelper {
 		ContentValues values = new ContentValues();
 
 		try {
-			values.put(KEY_ALARM, TimerSession.serialize(timerSession));
+			values.put(KEY_ALARM, TimerUtils.serialize(timerSession));
 		} catch (Exception e) {
 		    e.printStackTrace();
 		}
@@ -113,7 +113,7 @@ public class VibernateDB extends SQLiteOpenHelper {
 		if (cursor.moveToFirst()) {
 			do {
 				try {
-					timerSession = (TimerSession) TimerSession.deserialize(cursor.getBlob(1));
+					timerSession = (TimerSession) TimerUtils.deserialize(cursor.getBlob(1));
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -124,16 +124,6 @@ public class VibernateDB extends SQLiteOpenHelper {
 			} while (cursor.moveToNext());
 		}
 		return result;
-	}
-
-	/**
-	 * Clears the database by dropping table and re-creating
-	 * @author Napon, Paul, Amelia
-	 */
-	public void deleteAllFromDB(){
-		SQLiteDatabase db = this.getWritableDatabase();
-		db.delete(TABLE_NAME, null, null);
-		db.close();
 	}
 
 	/**
@@ -156,10 +146,7 @@ public class VibernateDB extends SQLiteOpenHelper {
 		SQLiteDatabase sqldb = this.getWritableDatabase();
 		String Query = "Select * from " + TABLE_NAME + " where " + KEY_ID + "=" + id;
 		Cursor cursor = sqldb.rawQuery(Query, null);
-		if(cursor.getCount()<=0){
-			return false;
-		}
-		return true;
+		return cursor.getCount() > 0;
 	}
 
 }

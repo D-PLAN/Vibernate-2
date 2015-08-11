@@ -21,7 +21,8 @@
 
     <string name="timer_hint_1">Click on a block</string>
     <string name="timer_hint_2">to view details</string>
-    <string name="timer_no_display_weekview">Timer is too short to be displayed</string>
+    <string name="short_timer_no_display_weekview">Timer is too short to be displayed</string>
+    <string name="onetime_timer_no_display_weekview">One-time timer are not displayed</string>
 
     <!-- Tutorial Instructions -->
     <string name="tutorial_instruction">
@@ -109,5 +110,10 @@
         <item>Buy lightsaber</item>
         <item>Retirement</item>
     </string-array>
+
+    <string name="create_onetime_timer">Create a one-time timer</string>
+    <string name="create_recurring_timer">Create a recurring timer</string>
+    <string name="onetime">One-Time</string>
+    <string name="recurring">Recurring</string>
 
 </resources>

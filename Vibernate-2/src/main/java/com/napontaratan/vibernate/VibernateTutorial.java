@@ -34,17 +34,17 @@ public class VibernateTutorial extends FragmentActivity{
     private TextView instruction;
     private Button beginButton;
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        GoogleAnalytics.getInstance(this).reportActivityStart(this);
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        GoogleAnalytics.getInstance(this).reportActivityStop(this);
-//    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

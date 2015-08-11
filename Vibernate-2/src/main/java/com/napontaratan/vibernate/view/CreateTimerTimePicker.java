@@ -7,11 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
-import android.util.Log;
-import android.widget.TextView;
-import android.widget.TimePicker;
 import com.napontaratan.vibernate.CreateTimerActivity;
-import com.napontaratan.vibernate.R;
 
 import java.util.Calendar;
 

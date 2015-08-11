@@ -1,10 +1,5 @@
 package com.napontaratan.vibernate.model;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.*;
 
@@ -12,14 +7,15 @@ import java.util.*;
  * VibrateTimer model
  * @author Paul, Amelia
  */
-public final class TimerSession extends Observable implements Serializable, Comparable<TimerSession>{
+public final class TimerSession implements Serializable, Comparable<TimerSession>{
 	private static final long serialVersionUID = 2881690379292284022L;
 	private String name;
 	private final Calendar startTime;
 	private final Calendar endTime;
 	private int id;
 	private final boolean[] days;
-	private final TimerSessionType type;
+	private final TimerSessionType sessionType;
+    private final TimerAddType addType;
 	private int color; // rgb value of color
 	private boolean isActive;
 
@@ -27,11 +23,27 @@ public final class TimerSession extends Observable implements Serializable, Comp
 		VIBRATE, SILENT
 	}
 
+    public enum TimerAddType {
+        ONETIME {
+			@Override
+			public String toString() {
+				return "one-time";
+			}
+		},
+		RECURRING {
+			@Override
+			public String toString() {
+				return "recurring";
+			}
+		};
+    }
+
 	// Constructor
-	public TimerSession (String name, TimerSessionType type, Calendar startTime, Calendar endTime, boolean[] days, int color) {
+	public TimerSession (String name, TimerAddType addType, TimerSessionType sessionType, Calendar startTime, Calendar endTime, boolean[] days, int color) {
 		this.color = color;
 		this.name = name;
-		this.type = type;
+		this.sessionType = sessionType;
+        this.addType = addType;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.days = days;
@@ -91,8 +103,24 @@ public final class TimerSession extends Observable implements Serializable, Comp
 
 	/**
 	 * @author daniel
-	 * @return the type of timer { SILENT, VIBRATE}
+	 * @return the sessionType of timer { SILENT, VIBRATE}
 	 */
+	public TimerAddType getAddType()
+	{
+		return this.addType;
+	}
+
+    /**
+     * @author daniel
+     * @return the sessionType of timer { SILENT, VIBRATE}
+     */
+    public TimerSessionType getSessionType()
+    {
+        return this.sessionType != null? this.sessionType : this.getType();
+    }
+
+	//TODO remove after complete backward compat
+	private TimerSessionType type;
 	public TimerSessionType getType()
 	{
 		return this.type;
@@ -111,6 +139,12 @@ public final class TimerSession extends Observable implements Serializable, Comp
 
 	public boolean[] getDays() {
 		return days;
+	}
+
+	public void setDay(int day, boolean on) {
+		if(day >= 0 && day < 7) {
+			this.days[day] = on;
+		}
 	}
 
 	public List<Calendar> getStartAlarmCalendars(){
@@ -173,53 +207,20 @@ public final class TimerSession extends Observable implements Serializable, Comp
 
     public void setName(String n) {
         name = n;
-		notifyChange();
     }
 
     public void setColor(int c) {
         color = c;
-		notifyChange();
     }
 
 	public void setActive(boolean active) {
 		this.isActive = active;
-		notifyChange();
 	}
-
 
 	@Override
 	public String toString() {  // for testing purposes
 		String response = "VibrateTimer id: " + getId() + " startTime: " + getStartTime() + " endTime: " + getEndTime();
 		return response;   
-	}
-
-	// ==== need the following to work with the database =====
-
-	/**
-	 * Convert a VibrateTimer object into an array of Bytes to be stored into the Database
-	 * @param obj - (Object) VibrateTimer object
-	 * @return byte[]
-	 * @throws IOException
-	 * @author Napon
-	 */
-	public static byte[] serialize(Object obj) throws IOException {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ObjectOutputStream os = new ObjectOutputStream(out);
-		os.writeObject(obj);
-		return out.toByteArray();
-	}
-	/**
-	 * Convert an array of Bytes back to its object form
-	 * @param  -data
-	 * @return (Object) VibrateTimer
-	 * @throws IOException
-	 * @throws ClassNotFoundException
-	 * @author Napon
-	 */
-	public static Object deserialize(byte[] data) throws IOException, ClassNotFoundException {
-		ByteArrayInputStream in = new ByteArrayInputStream(data);
-		ObjectInputStream is = new ObjectInputStream(in);
-		return is.readObject();
 	}
 
 	@Override
@@ -238,8 +239,12 @@ public final class TimerSession extends Observable implements Serializable, Comp
 			return false;
 		if (getEndTime() != null ? !getEndTime().equals(that.getEndTime()) : that.getEndTime() != null) return false;
 		if (!Arrays.equals(getDays(), that.getDays())) return false;
-		return getType() == that.getType();
-
+		// TODO remove after complete backward compat
+		if((getType() != null && that.getType() == null) || (getType() == null && that.getType() != null)) return false;
+		if(getType() != null && that.getType() != null && getType() != that.getType() ) return false;
+		if((getSessionType() != null && that.getSessionType() == null) || (getSessionType() == null && that.getSessionType() != null))  return false;
+		if(getSessionType() != null && that.getSessionType() != null && getSessionType() != that.getSessionType()) return false;
+		return getAddType() == that.getAddType();
 	}
 
 	@Override
@@ -250,14 +255,12 @@ public final class TimerSession extends Observable implements Serializable, Comp
 		result = 31 * result + (getEndTime() != null ? getEndTime().hashCode() : 0);
 		result = 31 * result + getId();
 		result = 31 * result + (getDays() != null ? Arrays.hashCode(getDays()) : 0);
+		//TODO remove after complete backward compat
 		result = 31 * result + (getType() != null ? getType().hashCode() : 0);
 		result = 31 * result + getColor();
 		result = 31 * result + (isActive ? 1 : 0);
+		result = 31 * result + (getSessionType() != null ? getSessionType().hashCode() : 0);
+		result = 31 * result + (getAddType() != null ? getAddType().hashCode() : 0);
 		return result;
-	}
-
-	private void notifyChange() {
-		setChanged();
-		notifyObservers();
 	}
 }
