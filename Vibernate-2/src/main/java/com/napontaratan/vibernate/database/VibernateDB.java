@@ -74,7 +74,7 @@ public class VibernateDB extends SQLiteOpenHelper {
 
 		try {
 			values.put(KEY_ID, timerSession.getId());
-			values.put(KEY_ALARM, TimerUtils.serialize(timerSession));
+			values.put(KEY_ALARM, TimerSession.serialize(timerSession));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -88,7 +88,7 @@ public class VibernateDB extends SQLiteOpenHelper {
 		ContentValues values = new ContentValues();
 
 		try {
-			values.put(KEY_ALARM, TimerUtils.serialize(timerSession));
+			values.put(KEY_ALARM, TimerSession.serialize(timerSession));
 		} catch (Exception e) {
 		    e.printStackTrace();
 		}
@@ -113,14 +113,15 @@ public class VibernateDB extends SQLiteOpenHelper {
 		if (cursor.moveToFirst()) {
 			do {
 				try {
-					timerSession = (TimerSession) TimerUtils.deserialize(cursor.getBlob(1));
+					timerSession = (TimerSession) TimerSession.deserialize(cursor.getBlob(1));
+					result.add(timerSession);
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
+    					db.delete(TABLE_NAME, null, null);
+					break;
 				} catch (IOException e) {
 					e.printStackTrace();
-				}
-
-				result.add(timerSession);
+				} 
 			} while (cursor.moveToNext());
 		}
 		return result;
